@@ -13,7 +13,7 @@ export default defineConfig({
     },
     build: {
         sourcemap: true,
-        cssCodeSplit: false,
+        cssCodeSplit: true,
         rollupOptions: {
             output: {
                 assetFileNames: 'assets/[name]-[hash][extname]',
