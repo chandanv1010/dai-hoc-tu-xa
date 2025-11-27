@@ -1,0 +1,68 @@
+{
+  "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.eot": {
+    "file": "assets/fontawesome-webfont-7bfcab6d.eot",
+    "src": "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.eot"
+  },
+  "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.svg": {
+    "file": "assets/fontawesome-webfont-fc378232.svg",
+    "src": "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.svg"
+  },
+  "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf": {
+    "file": "assets/fontawesome-webfont-aa58f33f.ttf",
+    "src": "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.ttf"
+  },
+  "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.woff": {
+    "file": "assets/fontawesome-webfont-ba0c59de.woff",
+    "src": "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.woff"
+  },
+  "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2": {
+    "file": "assets/fontawesome-webfont-2adefcbc.woff2",
+    "src": "public/frontend/resources/fonts/font-awesome-4.7.0/fonts/fontawesome-webfont.woff2"
+  },
+  "public/frontend/resources/fonts/uicons-regular-straight.woff2": {
+    "file": "assets/uicons-regular-straight-e013f9ca.woff2",
+    "src": "public/frontend/resources/fonts/uicons-regular-straight.woff2"
+  },
+  "public/frontend/resources/img/bg-card.png": {
+    "file": "assets/bg-card-6afff386.png",
+    "src": "public/frontend/resources/img/bg-card.png"
+  },
+  "public/frontend/resources/img/h-bg.png": {
+    "file": "assets/h-bg-a4835258.png",
+    "src": "public/frontend/resources/img/h-bg.png"
+  },
+  "public/frontend/resources/img/icon/form-bg.png": {
+    "file": "assets/form-bg-c6238ed4.png",
+    "src": "public/frontend/resources/img/icon/form-bg.png"
+  },
+  "public/frontend/resources/img/major-bg-1.png": {
+    "file": "assets/major-bg-1-47485f03.png",
+    "src": "public/frontend/resources/img/major-bg-1.png"
+  },
+  "resources/css/app.scss": {
+    "assets": [
+      "assets/fontawesome-webfont-7bfcab6d.eot",
+      "assets/fontawesome-webfont-2adefcbc.woff2",
+      "assets/fontawesome-webfont-ba0c59de.woff",
+      "assets/fontawesome-webfont-aa58f33f.ttf",
+      "assets/fontawesome-webfont-fc378232.svg",
+      "assets/uicons-regular-straight-e013f9ca.woff2",
+      "assets/h-bg-a4835258.png",
+      "assets/major-bg-1-47485f03.png",
+      "assets/bg-card-6afff386.png",
+      "assets/form-bg-c6238ed4.png"
+    ],
+    "file": "assets/app-4ed993c7.js",
+    "isEntry": true,
+    "src": "resources/css/app.scss"
+  },
+  "resources/js/app.js": {
+    "file": "assets/app-56a4f04a.js",
+    "isEntry": true,
+    "src": "resources/js/app.js"
+  },
+  "style.css": {
+    "file": "assets/style-aae281f3.css",
+    "src": "style.css"
+  }
+}

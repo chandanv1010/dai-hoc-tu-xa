@@ -1,0 +1,30 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard/
+Disallow: /user/
+Disallow: /user/catalogue/
+Disallow: /customer/
+Disallow: /customer/catalogue/
+Disallow: /language/
+Disallow: /system/
+Disallow: /review/
+Disallow: /introduce/
+Disallow: /menu/
+Disallow: /post/catalogue/
+Disallow: /post/
+Disallow: /permission/
+Disallow: /slide/
+Disallow: /widget/
+Disallow: /source/
+Disallow: /promotion/
+Disallow: /product/catalogue/
+Disallow: /product/
+Disallow: /attribute/catalogue/
+Disallow: /attribute/
+Disallow: /order/
+Disallow: /voucher/
+Disallow: /report/
+Disallow: /contact/
+Disallow: /lecturer/
+

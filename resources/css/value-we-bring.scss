@@ -1,0 +1,264 @@
+// ============================================
+// Value We Bring Section
+// ============================================
+.panel-value-we-bring {
+    background: #f8f9fa;
+    padding: 80px 0;
+    position: relative;
+
+    .value-we-bring-wrapper {
+        position: relative;
+    }
+
+    .value-we-bring-header {
+        text-align: center;
+        margin-bottom: 60px;
+
+        .value-we-bring-title {
+            font-size: 42px;
+            font-weight: 700;
+            color: #008DC2;
+            margin: 0 0 15px 0;
+            line-height: 1.3;
+
+            @media (max-width: 768px) {
+                font-size: 28px;
+                margin-bottom: 12px;
+            }
+        }
+
+        .value-we-bring-subtitle {
+            font-size: 18px;
+            color: #333;
+            margin: 0;
+            line-height: 1.6;
+
+            @media (max-width: 768px) {
+                font-size: 16px;
+            }
+        }
+    }
+
+    .value-we-bring-cards {
+        position: relative;
+
+        .uk-grid {
+            margin: 0 -15px;
+        }
+
+        .uk-width-medium-1-5 {
+            padding: 0 15px;
+        }
+    }
+
+    .value-card {
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        padding-top:50px;
+        padding-bottom: 35px;
+        z-index: 10; // Tăng padding bottom để đủ vị trí cho icon
+        position: relative;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        overflow: visible; // Để icon có thể hiển thị ngoài card
+        min-height: 385px;
+
+        // Border gradient sử dụng pseudo-element
+        &::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            padding: 2px;
+            background: linear-gradient(to right, #008DC2, #00B9FF);
+            -webkit-mask: 
+                linear-gradient(#fff 0 0) content-box, 
+                linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        // Before element với ảnh h-bg.png
+        &::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            z-index: 10;
+            left: 50%;
+            transform: translate(-50%, 0);
+            width: 181px;
+            height: 51px;
+            background-image: url('../../public/frontend/resources/img/h-bg.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            pointer-events: none;
+        }
+
+        &:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0, 102, 204, 0.15);
+        }
+
+        .value-card-banner {
+            text-align: center;
+
+            .banner-text {
+                color: #000;
+                font-weight: 700;
+                font-size: 16px;
+                display: block;
+
+                @media (max-width: 768px) {
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .value-card-content {
+            padding: 25px 20px;
+            justify-content: space-between;
+            position: relative;
+            z-index: 1; // Để content hiển thị trên before
+
+            .value-card-text {
+                color: #333;
+                font-size: 14px;
+                line-height: 1.7;
+                margin: 0 0 12px 0;
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                &.value-card-text-highlight {
+                    color: #008DC2;
+                    font-weight: 600;
+                    font-size: 13px;
+                }
+
+                @media (max-width: 768px) {
+                    font-size: 13px;
+                    line-height: 1.6;
+                }
+            }
+        }
+
+        .value-card-icon {
+            position: absolute;
+            left: 50%;
+            bottom: -40px;
+            transform: translateX(-50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2; // Để icon hiển thị trên before
+            width: auto;
+            height: auto;
+
+            // Sử dụng ảnh red-t.png
+            background-image: url('/frontend/resources/img/red-t.png');
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain;
+            width: 80px;
+            height: 80px;
+            border: 4px solid #008DC2;
+            border-radius: 50%;
+            background-color: #fff;
+
+            @media (max-width: 768px) {
+                width: 60px;
+                height: 60px;
+                bottom: -30px;
+            }
+
+            // Ẩn các element cũ
+            .icon-outer-circle,
+            .icon-inner-circle {
+                display: none;
+            }
+        }
+
+        .value-card-connector {
+            position: absolute;
+            right: -30px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 1;
+            display: flex;
+            align-items: center;
+
+            @media (max-width: 960px) {
+                display: none;
+            }
+
+            .connector-line {
+                width: 40px;
+                height: 2px;
+                background: #e0e7ff;
+                position: relative;
+            }
+
+            .connector-dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 50%;
+                background: #008DC2;
+                position: absolute;
+                right: 0;
+                top: 50%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+
+    // Responsive
+    @media (max-width: 960px) {
+        padding: 60px 0;
+
+        .value-we-bring-header {
+            margin-bottom: 40px;
+        }
+
+        .value-we-bring-cards {
+            .uk-width-medium-1-5 {
+                margin-bottom: 30px;
+
+                @media (max-width: 768px) {
+                    margin-bottom: 50px;
+                }
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        padding: 40px 0;
+
+        .value-we-bring-header {
+            margin-bottom: 30px;
+        }
+
+        .value-card {
+            .value-card-content {
+                padding: 20px 15px;
+            }
+        }
+    }
+
+    @media (max-width: 480px) {
+        .value-we-bring-cards {
+            .uk-grid {
+                margin: 0 -10px;
+            }
+
+            .uk-width-small-1-2 {
+                padding: 0 10px;
+            }
+        }
+    }
+}
+

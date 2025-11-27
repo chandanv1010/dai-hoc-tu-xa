@@ -1,0 +1,320 @@
+/* PC Header Styles */
+.pc-header {
+    background: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Top Header Bar */
+.header-top-bar {
+    background: #0066CC;
+    color: #fff;
+    padding: 8px 0;
+    font-size: 14px;
+}
+
+.header-top-bar .uk-container {
+    max-width: 1200px;
+}
+
+.header-top-left .enrollment-text {
+    font-weight: 500;
+    color: #fff;
+}
+
+.header-top-right .contact-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.header-top-right .hotline-separator {
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 5px;
+}
+
+.header-top-right .phone-link {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #fff;
+    text-decoration: none;
+    transition: opacity 0.3s;
+}
+
+.header-top-right .phone-link:hover {
+    opacity: 0.8;
+}
+
+.header-top-right .phone-link i {
+    font-size: 14px;
+}
+
+.header-top-right .hotline-label {
+    color: #fff;
+    margin-right: 5px;
+}
+
+.header-top-right .hotline-link {
+    color: #fff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: opacity 0.3s;
+}
+
+.header-top-right .hotline-link:hover {
+    opacity: 0.8;
+}
+
+/* Main Navigation */
+.header-main-nav {
+    padding: 15px 0;
+    background: #fff;
+}
+
+.header-main-nav .uk-container {
+    max-width: 1200px;
+}
+
+.header-logo {
+    flex-shrink: 0;
+}
+
+.header-logo a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-primary {
+    font-size: 18px;
+    font-weight: 600;
+    color: #0066CC;
+    line-height: 1.2;
+}
+
+.logo-secondary {
+    font-size: 16px;
+    font-weight: 500;
+    color: #DC143C;
+    line-height: 1.2;
+}
+
+.logo-image {
+    max-height: 50px;
+    margin-left: 10px;
+}
+
+/* Navigation Menu */
+.header-navigation {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    margin: 0 20px;
+}
+
+.main-menu-list {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.main-menu-list li {
+    position: relative;
+}
+
+.main-menu-list li > a {
+    color: #0066CC;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    text-transform: uppercase;
+    transition: color 0.3s;
+    padding: 5px 0;
+    display: block;
+    letter-spacing: 0.5px;
+}
+
+.main-menu-list li > a:hover {
+    color: #DC143C;
+}
+
+/* Dropdown Menu Styles */
+.main-menu-list li.children {
+    position: relative;
+}
+
+.main-menu-list li.children > a::after {
+    content: '\f107';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    margin-left: 5px;
+    font-size: 12px;
+}
+
+.main-menu-list li.children:hover .dropdown-menu {
+    display: block;
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: #fff;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    min-width: 200px;
+    z-index: 1000;
+    padding: 10px 0;
+    margin-top: 5px;
+}
+
+.dropdown-menu ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.dropdown-menu ul li a {
+    display: block;
+    padding: 8px 15px;
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    text-transform: none;
+    transition: background 0.3s;
+}
+
+.dropdown-menu ul li a:hover {
+    background: #f5f5f5;
+    color: #0066CC;
+}
+
+/* Header Actions */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.btn-search-header {
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: #f5f5f5;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s;
+    padding: 0;
+}
+
+.btn-search-header:hover {
+    background: #e0e0e0;
+}
+
+.btn-search-header i {
+    color: #666;
+    font-size: 16px;
+}
+
+.btn-download-roadmap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #DC143C;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background 0.3s;
+    white-space: nowrap;
+}
+
+.btn-download-roadmap:hover {
+    background: #B8122F;
+    color: #fff;
+}
+
+.btn-download-roadmap i {
+    font-size: 16px;
+}
+
+/* Search Form */
+.header-search-form {
+    background: #f5f5f5;
+    padding: 15px 0;
+    border-top: 1px solid #e0e0e0;
+}
+
+.header-search-form .uk-container {
+    max-width: 1200px;
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    position: relative;
+}
+
+.search-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    outline: none;
+}
+
+.search-input:focus {
+    border-color: #0066CC;
+}
+
+.search-submit {
+    padding: 10px 20px;
+    background: #0066CC;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-submit:hover {
+    background: #0052A3;
+}
+
+.search-close {
+    padding: 10px 15px;
+    background: #999;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.search-close:hover {
+    background: #777;
+}
+
+/* Responsive adjustments */
+@media (max-width: 959px) {
+    .pc-header {
+        display: none !important;
+    }
+}
+
