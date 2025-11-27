@@ -10,4 +10,5 @@
 
 // Import function.js - jQuery plugin for frontend functionality
 // Note: jQuery must be loaded before this file (loaded in head.blade.php)
+import '../css/app.scss';
 import '../../public/frontend/resources/function.js';
