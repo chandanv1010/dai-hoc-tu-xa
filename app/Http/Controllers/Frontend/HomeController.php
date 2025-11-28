@@ -88,7 +88,7 @@ class HomeController extends FrontendController
         $majors = $this->majorRepository->getHomeMajors($this->language, 6);
 
         $slides = $this->slideService->getSlide(
-            [SlideEnum::MAIN, SlideEnum::TECHSTAFF, SlideEnum::PARTNER],
+            [SlideEnum::MAIN, 'mobile-slide', SlideEnum::TECHSTAFF, SlideEnum::PARTNER],
             $this->language
         );
 
