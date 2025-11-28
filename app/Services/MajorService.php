@@ -206,6 +206,7 @@ class MajorService extends BaseService
             'image',
             'publish',
             'is_home',
+            'major_catalogue_id',
             'study_path_file',
             'is_show_feature',
             'is_show_overview',

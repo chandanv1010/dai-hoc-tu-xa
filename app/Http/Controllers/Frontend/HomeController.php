@@ -8,6 +8,7 @@ use App\Repositories\SystemRepository;
 use App\Repositories\LecturerRepository;
 use App\Repositories\SchoolRepository;
 use App\Repositories\MajorRepository;
+use App\Repositories\MajorCatalogueRepository;
 use App\Services\WidgetService;
 use App\Services\SlideService;
 use App\Enums\SlideEnum;
@@ -23,6 +24,7 @@ class HomeController extends FrontendController
     protected $lecturerRepository;
     protected $schoolRepository;
     protected $majorRepository;
+    protected $majorCatalogueRepository;
     protected $systemRepository;
     protected $widgetService;
     protected $slideService;
@@ -34,6 +36,7 @@ class HomeController extends FrontendController
         LecturerRepository $lecturerRepository,
         SchoolRepository $schoolRepository,
         MajorRepository $majorRepository,
+        MajorCatalogueRepository $majorCatalogueRepository,
         WidgetService $widgetService,
         SlideService $slideService,
         SystemRepository $systemRepository,
@@ -43,6 +46,7 @@ class HomeController extends FrontendController
         $this->lecturerRepository = $lecturerRepository;
         $this->schoolRepository = $schoolRepository;
         $this->majorRepository = $majorRepository;
+        $this->majorCatalogueRepository = $majorCatalogueRepository;
         $this->widgetService = $widgetService;
         $this->slideService = $slideService;
         $this->systemRepository = $systemRepository;
@@ -87,6 +91,9 @@ class HomeController extends FrontendController
         // Lấy danh sách majors có is_home = 1
         $majors = $this->majorRepository->getHomeMajors($this->language, 6);
 
+        // Lấy danh sách major_catalogues
+        $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
+
         $slides = $this->slideService->getSlide(
             [SlideEnum::MAIN, 'mobile-slide', SlideEnum::TECHSTAFF, SlideEnum::PARTNER],
             $this->language
@@ -113,6 +120,7 @@ class HomeController extends FrontendController
         $template = 'frontend.homepage.home.index';
 
         return view($template, compact(
+            'majorCatalogues',
             'config',
             'slides',
             'widgets',

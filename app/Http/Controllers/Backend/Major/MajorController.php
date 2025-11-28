@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\MajorService;
 use App\Repositories\MajorRepository;
 use App\Repositories\PostRepository;
+use App\Repositories\MajorCatalogueRepository;
 use App\Http\Requests\Major\StoreMajorRequest;
 use App\Http\Requests\Major\UpdateMajorRequest;
 use App\Models\Language;
@@ -17,12 +18,14 @@ class MajorController extends Controller
     protected $majorService;
     protected $majorRepository;
     protected $postRepository;
+    protected $majorCatalogueRepository;
     protected $language;
 
     public function __construct(
         MajorService $majorService,
         MajorRepository $majorRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        MajorCatalogueRepository $majorCatalogueRepository
     ) {
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
@@ -34,6 +37,7 @@ class MajorController extends Controller
         $this->majorService = $majorService;
         $this->majorRepository = $majorRepository;
         $this->postRepository = $postRepository;
+        $this->majorCatalogueRepository = $majorCatalogueRepository;
     }
 
     public function index(Request $request)
@@ -65,11 +69,13 @@ class MajorController extends Controller
         $config['seo'] = 'Quản lý Ngành học';
         $config['method'] = 'create';
         $posts = $this->postRepository->getAllByLanguage($this->language);
+        $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
         $template = 'backend.major.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
             'posts',
+            'majorCatalogues',
         ));
     }
 
@@ -97,12 +103,14 @@ class MajorController extends Controller
         $config['seo'] = 'Quản lý Ngành học';
         $config['method'] = 'edit';
         $posts = $this->postRepository->getAllByLanguage($this->language);
+        $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
         $template = 'backend.major.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
             'major',
             'posts',
+            'majorCatalogues',
         ));
     }
 

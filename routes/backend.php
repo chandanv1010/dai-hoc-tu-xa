@@ -11,6 +11,7 @@ use App\Http\Controllers\Backend\Customer\SourceController;
 use App\Http\Controllers\Backend\Post\PostCatalogueController;
 use App\Http\Controllers\Backend\Post\PostController;
 use App\Http\Controllers\Backend\Major\MajorController;
+use App\Http\Controllers\Backend\Major\MajorCatalogueController;
 use App\Http\Controllers\Backend\School\SchoolController;
 use App\Http\Controllers\Backend\LanguageController;
 use App\Http\Controllers\Backend\MenuController;
@@ -162,6 +163,17 @@ Route::group(['middleware' => ['admin','locale','backend_default_locale']], func
         Route::post('{id}/update', [MajorController::class, 'update'])->where(['id' => '[0-9]+'])->name('major.update');
         Route::get('{id}/delete', [MajorController::class, 'delete'])->where(['id' => '[0-9]+'])->name('major.delete');
         Route::delete('{id}/destroy', [MajorController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('major.destroy');
+    });
+
+    /* MAJOR CATALOGUE */
+    Route::group(['prefix' => 'major/catalogue'], function () {
+        Route::get('index', [MajorCatalogueController::class, 'index'])->name('major.catalogue.index');
+        Route::get('create', [MajorCatalogueController::class, 'create'])->name('major.catalogue.create');
+        Route::post('store', [MajorCatalogueController::class, 'store'])->name('major.catalogue.store');
+        Route::get('{id}/edit', [MajorCatalogueController::class, 'edit'])->where(['id' => '[0-9]+'])->name('major.catalogue.edit');
+        Route::post('{id}/update', [MajorCatalogueController::class, 'update'])->where(['id' => '[0-9]+'])->name('major.catalogue.update');
+        Route::get('{id}/delete', [MajorCatalogueController::class, 'delete'])->where(['id' => '[0-9]+'])->name('major.catalogue.delete');
+        Route::delete('{id}/destroy', [MajorCatalogueController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('major.catalogue.destroy');
     });
 
     Route::group(['prefix' => 'school'], function () {

@@ -117,6 +117,10 @@ return [
             'name' => ['major'],
             'subModule' => [
                 [
+                    'title' => 'QL Danh mục Ngành học',
+                    'route' => 'major/catalogue/index'
+                ],
+                [
                     'title' => 'QL Ngành học',
                     'route' => 'major/index'
                 ]

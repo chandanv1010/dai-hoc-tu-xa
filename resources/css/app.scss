@@ -40,7 +40,7 @@
 // ============================================
 .panel-value-we-bring {
     background: #f8f9fa;
-    padding: 80px 0;
+    padding: 30px 0 80px 0;
     position: relative;
 
     .value-we-bring-wrapper {
@@ -144,7 +144,7 @@
             .banner-text {
                 color: #000;
                 font-weight: 700;
-                font-size: 16px;
+                font-size: 25px;
                 display: block;
 
                 @media (max-width: 768px) {
@@ -154,10 +154,11 @@
         }
 
         .value-card-content {
-            padding: 25px 20px;
+            padding: 25px 0;
             justify-content: space-between;
             position: relative;
             z-index: 1;
+            font-size:16px;
 
             .value-card-text {
                 color: #333;
@@ -404,9 +405,6 @@
                 line-height: 1.2;
             }
 
-            .logo-image {
-                max-height: 50px;
-            }
         }
 
         .header-navigation {
@@ -628,7 +626,7 @@
 
 // Override uk-container - chỉ áp dụng cho desktop, mobile sẽ override riêng
 .uk-container {
-    max-width: 1240px;
+    max-width: 1440px;
     padding: 0;
 
     @media (max-width: 768px) {
@@ -799,11 +797,11 @@
 // Statistics Panel Styles
 // ============================================
 .panel-statistics {
-    margin-top: 40px;
-    margin-bottom: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0;
 
         @media (max-width: 768px) {
@@ -884,7 +882,7 @@
         }
 
         .stat-number {
-            font-size: 48px;
+            font-size: 30px;
             font-weight: 700;
             line-height: 1.2;
             margin-bottom: 10px;
@@ -913,7 +911,7 @@
         }
 
         .stat-label {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: 500;
             line-height: 1.4;
             color: rgba(255, 255, 255, 0.95);
@@ -930,17 +928,17 @@
 // Distance Learning Panel Styles
 // ============================================
 .panel-distance-learning {
-    margin-top: 50px;
-    margin-bottom: 50px;
+    margin-top: 20px;
+    margin-bottom: 20px;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0;
         overflow: visible !important;
     }
 
     .distance-learning-wrapper {
-        padding: 60px 0;
+        padding: 20px 0 0 0;
         overflow: visible !important;
 
         @media (max-width: 768px) {
@@ -968,9 +966,13 @@
         overflow: visible !important;
         z-index: 1;
 
+        @media (min-width: 1220px){
+            height: 576px;
+        }
+
         img {
             width: 100%;
-            height: auto;
+            height: 100%;
             border-radius: 12px;
             object-fit: cover;
             display: block;
@@ -1241,13 +1243,11 @@
 // Training Program Section
 // ============================================
 .panel-training-program {
-    margin-top: 50px;
-    margin-bottom: 50px;
     background: linear-gradient(180deg, #F0F9FF 0%, #E0F2FE 56%, #FFFFFF 100%);
-    padding: 60px 0;
+    padding: 25px 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0;
 
         @media (max-width: 768px) {
@@ -1270,7 +1270,7 @@
         .training-program-title {
             font-size: 32px;
             font-weight: 700;
-            color: #333;
+            color: #008DC2;
             margin: 0 0 20px 0;
             line-height: 1.3;
 
@@ -1701,7 +1701,6 @@
 // Why Distance Learning Panel Styles
 // ============================================
 .panel-why-distance-learning {
-    margin-top: 50px;
     background: linear-gradient(rgb(26, 61, 107) 0%, rgb(14 44 76) 33%, rgb(17 45 76) 81%);
     padding: 80px 0;
     position: relative;
@@ -2046,7 +2045,7 @@
     rgba(37, 99, 235, 0.6) 9%,
     rgba(8, 145, 178, 0.9) 100%
     );
-    padding: 60px 0;
+    padding: 25px 0;
     position: relative;
     overflow: hidden;
 
@@ -2057,10 +2056,10 @@
     }
 
     .register-banner-title {
-        font-size: 42px;
+        font-size: 35px;
         font-weight: 700;
-        color: #fff;
-        margin: 0 0 20px 0;
+        color: #fff; 
+        margin: 0 0 5px 0;
         line-height: 1.3;
 
         @media (max-width: 768px) {
@@ -2344,9 +2343,8 @@
 // ============================================
 // Schools List Section
 // ============================================
-.panel-schools-list {
-    margin-bottom: 50px;
-    padding: 60px 0;
+.panel-schools-list { 
+    padding: 60px 0 0 0;
     background: #fff;
     position: relative;
 
@@ -2361,7 +2359,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0;
 
         @media (max-width: 768px) {
@@ -2414,7 +2412,7 @@
     }
 
     .schools-list-grid {
-        margin-bottom: 40px;
+        margin-bottom: 20px;
 
         .uk-grid {
             margin-left: -15px;
@@ -2439,6 +2437,7 @@
             align-items: center;
             text-align: center;
             border: 1px solid #f0f0f0;
+            border-color:#008DC2;
 
             &:hover {
                 transform: translateY(-5px);
@@ -2447,8 +2446,8 @@
             }
 
             .school-card-icon {
-                width: 80px;
-                height: 80px;
+                width: 120px;
+                height: 120px;
                 background: #E0F2FE;
                 border-radius: 50%;
                 display: flex;
@@ -2553,7 +2552,6 @@
 
     .schools-list-footer {
         text-align: center;
-        margin-top: 40px;
 
         .schools-list-cta-button {
             display: inline-block;
@@ -2705,11 +2703,11 @@
 // Consultation Section
 // ============================================
 .panel-consultation {
-    margin-top: 50px;
+    margin-top: 25px;
     padding: 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
         background: linear-gradient(90deg, #6EC1E4 12%, #7FB3D5 61%, #5DADE2 100%);
         border-radius: 12px;
@@ -2831,13 +2829,12 @@
 // Majors List Section
 // ============================================
 .panel-majors-list {
-    margin-bottom: 50px;
-    padding: 60px 0;
+    padding: 30px 0 0 0;
     background: #fff;
     position: relative;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0;
 
         @media (max-width: 768px) {
@@ -2855,7 +2852,7 @@
 
     .majors-list-header {
         text-align: center;
-        margin-bottom: 50px;
+        margin-bottom: 30px;
 
         .majors-list-title {
             font-size: 36px;
@@ -2874,7 +2871,7 @@
             font-size: 16px;
             line-height: 1.8;
             color: #555;
-            max-width: 900px;
+            max-width: 980px;
             margin: 0 auto;
 
             @media (max-width: 768px) {
@@ -2884,6 +2881,51 @@
 
             p {
                 margin: 0;
+            }
+        }
+    }
+
+    .majors-list-filter,
+    .major-catalogue-filter {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin: 30px 0;
+        padding-bottom: 20px;
+        justify-content: center;
+
+        @media (max-width: 768px) {
+            gap: 10px;
+            margin: 20px 0;
+            padding-bottom: 15px;
+        }
+
+        .filter-tab {
+            display: inline-block;
+            padding: 10px 20px;
+            background: transparent;
+            color: #333;
+            text-decoration: none;
+            border-radius: 25px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+
+            @media (max-width: 768px) {
+                padding: 8px 15px;
+                font-size: 13px;
+            }
+
+            &:hover {
+                color: #d32f2f;
+                border-color: #d32f2f;
+            }
+
+            &.active {
+                background: #d32f2f;
+                color: #fff;
+                border-color: #d32f2f;
             }
         }
     }
@@ -3156,13 +3198,12 @@
 // Value Bring Degree Section
 // ============================================
 .panel-value-bring-degree {
-    margin-top: 50px;
     padding: 60px 0;
     background: linear-gradient(180deg, #E6F7FF 0%, #F0F9FF 100%);
     position: relative;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1240px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -3171,7 +3212,7 @@
     }
 
     .value-bring-wrapper {
-        .uk-grid {
+        .uk-grid { 
             margin-left: -15px;
             margin-right: -15px;
             display: flex;
@@ -3455,11 +3496,10 @@
 // Student Feedback Section
 // ============================================
 .panel-student-feedback {
-    margin-bottom: 50px;
-    padding: 60px 0;
+    padding: 30px 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -3786,12 +3826,11 @@
 // News Outstanding Section
 // ============================================
 .panel-news-outstanding {
-    margin-top: 50px;
-    padding: 60px 0;
+    padding: 30px 0;
     background: #F9FAFB;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -4091,9 +4130,9 @@
 // ============================================
 .fixed-buttons-left {
     position: fixed;
-    left: 20px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 20px;
+    bottom: 100px;
+    // transform: translateY(-50%);
     z-index: 999;
     display: flex;
     flex-direction: column;
@@ -4204,7 +4243,7 @@
     bottom: 30px;
     width: 50px;
     height: 50px;
-    background: #008DC2;
+    background: #7f888b;
     color: #fff;
     border: none;
     border-radius: 50%;
@@ -4257,7 +4296,7 @@
     margin-top: 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -4283,9 +4322,11 @@
 
             a {
                 display: inline-block;
-                
+                background: #fff;
+                border-radius: 10px;
+                padding:10px;
                 img {
-                    max-height: 60px;
+                    // max-height: 60px;
                     width: auto;
                     height: auto;
                 }
@@ -4434,10 +4475,13 @@
                 }
 
                 .footer-menu-link {
+                    text-transform: uppercase;
                     display: block;
-                    font-size: 16px;
+                    font-size: 18px;
                     font-weight: 600;
                     color: #fff;
+                    padding-bottom:15px;
+                    border-bottom:1px solid #fff;
                     margin-bottom: 15px;
                     text-decoration: none;
                     transition: color 0.3s ease;
@@ -4651,7 +4695,7 @@
     .uk-container {
         position: relative;
         z-index: 2;
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -4751,7 +4795,7 @@
     padding: 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -4996,7 +5040,7 @@
     padding: 40px 0;
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -5931,7 +5975,7 @@
         }
 
         .uk-container {
-            max-width: 1235px;
+            max-width: 1440px;
             padding: 0 20px;
 
             @media (max-width: 768px) {
@@ -8006,7 +8050,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -8573,7 +8617,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -8791,7 +8835,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -8989,7 +9033,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -9152,7 +9196,7 @@
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -9399,7 +9443,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -9538,7 +9582,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -9660,7 +9704,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -9931,7 +9975,7 @@ button{
     .uk-container {
         position: relative;
         z-index: 1;
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -10490,7 +10534,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -10757,7 +10801,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -11170,7 +11214,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -11444,7 +11488,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -11704,7 +11748,7 @@ button{
     }
 
     .uk-container {
-        max-width: 1235px;
+        max-width: 1440px;
         padding: 0 20px;
 
         @media (max-width: 768px) {
@@ -12814,4 +12858,8 @@ button{
             }
         }
     }
+}
+
+.footer-description{
+    margin-bottom: 25px;
 }

@@ -28,7 +28,7 @@
                     <div class="training-program-header">
                         <h2 class="training-program-title">{{ $catalogueName }}</h2>
                         @if($catalogueDescription)
-                            <p class="training-program-description">{{ $catalogueDescription }}</p>
+                            <p class="training-program-description">{!! $catalogueDescription !!}</p>
                         @endif
                     </div>
                     
@@ -91,13 +91,13 @@
                     <div class="why-distance-learning-header">
                         <h2 class="why-distance-learning-title">{{ $catalogueName }}</h2>
                         @if($catalogueDescription)
-                            <p class="why-distance-learning-subtitle">{{ $catalogueDescription }}</p>
+                            <p class="why-distance-learning-subtitle" style="color:#fff;">{!! strip_tags($catalogueDescription) !!}</p>
                         @endif
                     </div>
 
                     <!-- Main Content -->
                     <div class="why-distance-learning-content">
-                        <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                        <div class="uk-grid uk-grid-medium uk-flex uk-flex-middle" data-uk-grid-match>
                             <!-- Left: Image -->
                             <div class="uk-width-medium-1-2">
                                 <div class="why-distance-learning-image">
@@ -285,6 +285,20 @@
         
         // Lấy danh sách majors từ controller
         $majorsList = $majors ?? collect();
+        
+        // Lấy major_catalogues trực tiếp từ Model (không dùng Service/Widget)
+        $majorCataloguesForFilter = \App\Models\MajorCatalogue::select([
+                'major_catalogues.id',
+                'major_catalogues.publish',
+                'tb2.name',
+                'tb2.canonical',
+            ])
+            ->join('major_catalogue_language as tb2', 'tb2.major_catalogue_id', '=', 'major_catalogues.id')
+            ->where('tb2.language_id', '=', 1)
+            ->where('major_catalogues.publish', '=', 2)
+            ->orderBy('major_catalogues.order', 'asc')
+            ->orderBy('tb2.name', 'asc')
+            ->get();
     @endphp
 
     @if($widget || $majorsList->isNotEmpty())
@@ -303,20 +317,30 @@
                         @endif
                     </div>
 
+                    <!-- Filter Tabs (dưới mô tả) -->
+                    @if($majorCataloguesForFilter->count() > 0)
+                        <div class="major-catalogue-filter">
+                            <a href="javascript:void(0)" class="filter-tab active" data-catalogue-id="">Tất cả ngành</a>
+                            @foreach($majorCataloguesForFilter as $catalogue)
+                                <a href="javascript:void(0)" class="filter-tab" data-catalogue-id="{{ $catalogue->id }}" data-canonical="{{ $catalogue->canonical }}">{{ $catalogue->name }}</a>
+                            @endforeach
+                        </div>
+                    @endif
+
                     <!-- Majors Grid -->
-                    @if($majorsList->isNotEmpty())
-                        <div class="majors-list-grid">
+                    <div class="majors-list-grid">
+                        @if($majorsList->isNotEmpty())
                             <div class="uk-grid uk-grid-medium" data-uk-grid-match>
                                 @foreach($majorsList as $major)
                                     @include('frontend.component.major-item', ['major' => $major])
                                 @endforeach
                             </div>
+                        @endif
+                        
+                        <!-- Call to Action Button (bên trong majors-list-grid) -->
+                        <div class="majors-list-footer">
+                            <a href="{{ write_url('cac-nganh-dao-tao-tu-xa') }}" class="majors-list-cta-button" id="majors-list-cta-button">Xem các ngành đào tạo</a>
                         </div>
-                    @endif
-
-                    <!-- Call to Action Button -->
-                    <div class="majors-list-footer">
-                        <a href="{{ write_url('cac-nganh-dao-tao-tu-xa') }}" class="majors-list-cta-button">Xem các ngành đào tạo</a>
                     </div>
                 </div>
             </div>
@@ -504,6 +528,66 @@
                 
                 // Thay thế thumbnail bằng iframe
                 $wrapper.html(iframeHtml);
+            });
+        });
+
+        // AJAX filter cho major catalogues
+        $(document).ready(function() {
+            $('.major-catalogue-filter .filter-tab').on('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class từ tất cả tabs
+                $('.major-catalogue-filter .filter-tab').removeClass('active');
+                
+                // Add active class cho tab được click
+                $(this).addClass('active');
+                
+                // Lấy catalogue_id và canonical
+                var catalogueId = $(this).data('catalogue-id') || '';
+                var canonical = $(this).data('canonical') || '';
+                
+                // Hiển thị loading
+                var $grid = $('.majors-list-grid');
+                var $gridContent = $grid.find('.uk-grid');
+                
+                // Nếu không có grid container, tạo mới
+                if ($gridContent.length === 0) {
+                    $grid.prepend('<div class="uk-grid uk-grid-medium" data-uk-grid-match></div>');
+                    $gridContent = $grid.find('.uk-grid');
+                }
+                
+                $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                
+                // Gọi AJAX
+                $.ajax({
+                    url: '{{ route("ajax.major.getMajorsByCatalogue") }}',
+                    type: 'GET',
+                    data: {
+                        catalogue_id: catalogueId,
+                        limit: 6
+                    },
+                    success: function(response) {
+                        if (response.success && response.html) {
+                            // Cập nhật HTML majors (chỉ các grid items, không có grid container)
+                            $gridContent.html(response.html);
+                            
+                            // Cập nhật link button
+                            if (response.canonical) {
+                                $('#majors-list-cta-button').attr('href', response.canonical);
+                            }
+                            
+                            // Re-init UIkit grid match nếu cần
+                            if (typeof UIkit !== 'undefined' && UIkit.gridMatch) {
+                                UIkit.gridMatch($gridContent);
+                            }
+                        } else {
+                            $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Không có dữ liệu</p></div>');
+                        }
+                    },
+                    error: function() {
+                        $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Có lỗi xảy ra. Vui lòng thử lại.</p></div>');
+                    }
+                });
             });
         });
     </script>

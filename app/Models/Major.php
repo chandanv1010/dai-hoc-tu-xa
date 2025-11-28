@@ -19,6 +19,7 @@ class Major extends Model
         'publish',
         'is_home',
         'user_id',
+        'major_catalogue_id',
         'study_path_file',
         'is_show_feature',
         'is_show_overview',
@@ -71,6 +72,10 @@ class Major extends Model
     public function schools(){
         return $this->belongsToMany(School::class, 'school_major', 'major_id', 'school_id')
             ->withTimestamps();
+    }
+
+    public function major_catalogue(){
+        return $this->belongsTo(MajorCatalogue::class, 'major_catalogue_id', 'id');
     }
 
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend\Major;
 use App\Http\Controllers\FrontendController;
 use Illuminate\Http\Request;
 use App\Repositories\MajorRepository;
+use App\Repositories\MajorCatalogueRepository;
 use App\Repositories\SystemRepository;
 
 class MajorCatalogueController extends FrontendController
@@ -12,13 +13,16 @@ class MajorCatalogueController extends FrontendController
     protected $language;
     protected $system;
     protected $majorRepository;
+    protected $majorCatalogueRepository;
     protected $systemRepository;
 
     public function __construct(
         MajorRepository $majorRepository,
+        MajorCatalogueRepository $majorCatalogueRepository,
         SystemRepository $systemRepository,
     ) {
         $this->majorRepository = $majorRepository;
+        $this->majorCatalogueRepository = $majorCatalogueRepository;
         $this->systemRepository = $systemRepository;
         parent::__construct();
     }
@@ -44,6 +48,9 @@ class MajorCatalogueController extends FrontendController
         // Lấy danh sách majors với phân trang
         $majors = $this->majorRepository->paginate($request, $this->language, 12, 'cac-nganh-dao-tao-tu-xa.html');
         
+        // Lấy danh sách major catalogues để hiển thị filter tabs
+        $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
+        
         // Lấy SEO từ system
         $seo = $this->getSeo($page);
         
@@ -57,6 +64,7 @@ class MajorCatalogueController extends FrontendController
             'seo',
             'system',
             'majors',
+            'majorCatalogues',
             'page'
         ));
     }

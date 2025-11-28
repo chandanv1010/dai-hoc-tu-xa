@@ -25,6 +25,7 @@ class MajorRepository extends BaseRepository
                 'majors.career_image',
                 'majors.image',
                 'majors.publish',
+                'majors.major_catalogue_id',
                 'majors.study_path_file',
                 'majors.is_show_feature',
                 'majors.is_show_overview',
@@ -122,6 +123,62 @@ class MajorRepository extends BaseRepository
                 }
             }
         }
+
+        return $majors;
+    }
+
+    public function getMajorsForAjax($catalogue_id = null, $language_id = 0, $limit = 6)
+    {
+        $query = $this->model->select([
+                'majors.id',
+                'majors.image',
+                'majors.publish',
+                'majors.major_catalogue_id',
+            ]
+        )
+        ->where('majors.publish', '=', 2)
+        ->whereNull('majors.deleted_at');
+
+        if ($catalogue_id) {
+            $query->where('majors.major_catalogue_id', '=', $catalogue_id)
+                  ->orderBy('majors.id', 'desc');
+        } else {
+            $query->orderBy('majors.id', 'asc');
+        }
+
+        $majors = $query->limit($limit)->get();
+
+        // Load languages relationship cho từng major
+        foreach ($majors as $major) {
+            $major->load(['languages' => function($query) use ($language_id) {
+                $query->where('languages.id', $language_id);
+            }]);
+        }
+
+        return $majors;
+    }
+
+    public function getMajorsByCatalogue($catalogue_id, $language_id = 0, $page = 1)
+    {
+        $perPage = 12;
+        
+        $majors = $this->model->select([
+                'majors.id',
+                'majors.image',
+                'majors.publish',
+                'majors.major_catalogue_id',
+                'tb2.name',
+                'tb2.canonical',
+                'tb2.description',
+            ]
+        )
+        ->join('major_language as tb2', 'tb2.major_id', '=', 'majors.id')
+        ->where('tb2.language_id', '=', $language_id)
+        ->where('majors.publish', '=', 2)
+        ->where('majors.major_catalogue_id', '=', $catalogue_id)
+        ->whereNull('majors.deleted_at')
+        ->orderBy('majors.id', 'desc')
+        ->paginate($perPage, ['*'], 'page', $page);
 
         return $majors;
     }
