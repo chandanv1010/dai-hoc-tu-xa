@@ -25,6 +25,7 @@ class SchoolRepository extends BaseRepository
                 'schools.intro_image',
                 'schools.download_file',
                 'schools.announce_image',
+                'schools.announce_title',
                 'schools.enrollment_quota',
                 'schools.short_name',
                 'schools.publish',
@@ -47,6 +48,14 @@ class SchoolRepository extends BaseRepository
             ]
         )
         ->find($id);
+        
+        // Đảm bảo album được cast đúng nếu chưa được cast (fallback)
+        if ($school && isset($school->album) && is_string($school->album) && !empty($school->album)) {
+            $decoded = json_decode($school->album, true);
+            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                $school->setAttribute('album', $decoded);
+            }
+        }
         
         if ($school) {
             // Load languages relationship để có pivot với casts tự động

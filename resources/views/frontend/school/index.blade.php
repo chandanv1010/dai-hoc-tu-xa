@@ -7,32 +7,37 @@
         $canonical = write_url($pivot->canonical ?? '');
     @endphp
 
-    {{-- Khối Slide từ Album --}}
-    @if(isset($album) && !empty($album) && count($album) > 0)
-        <div class="panel-school-slide">
+    {{-- Khối Slide từ Album - PC và Mobile --}}
+    @if(isset($album) && !empty($album) && isset($album[0]) && !empty($album[0]))
+        @php
+            // Xác định ảnh cho PC và Mobile
+            $pcImage = $album[0];
+            $mobileImage = isset($album[1]) && !empty($album[1]) ? $album[1] : $album[0]; // Fallback về album[0] nếu không có album[1]
+        @endphp
+        
+        {{-- Khối Slide PC --}}
+        <div class="panel-school-slide pc">
             <div class="swiper-container school-slide-container">
                 <div class="swiper-wrapper">
-                    @foreach($album as $key => $image)
-                        <div class="swiper-slide">
-                            <span class="image img-cover">
-                                <img src="{{ image($image) }}" alt="{{ $name }}">
-                            </span>
-                        </div>
-                    @endforeach
+                    <div class="swiper-slide">
+                        <span class="image img-cover">
+                            <img src="{{ image($pcImage) }}" alt="{{ $name }}">
+                        </span>
+                    </div>
                 </div>
-                @if(count($album) > 1)
-                    <div class="swiper-pagination"></div>
-                    <div class="swiper-button-next">
-                        <svg class="swiper-navigation-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 18L15 12L9 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+            </div>
+        </div>
+
+        {{-- Khối Slide Mobile --}}
+        <div class="panel-school-slide mobile">
+            <div class="swiper-container school-slide-container">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide">
+                        <span class="image img-cover">
+                            <img src="{{ image($mobileImage) }}" alt="{{ $name }}">
+                        </span>
                     </div>
-                    <div class="swiper-button-prev">
-                        <svg class="swiper-navigation-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                @endif
+                </div>
             </div>
         </div>
     @endif
@@ -185,7 +190,7 @@
         <div class="panel-school-announce wow fadeInUp" data-wow-delay="0.3s">
             <div class="uk-container uk-container-center uk-container-1260">
                 <div class="announce-header">
-                    <h2 class="announce-title">Thông Báo Tuyển Sinh 2025</h2>
+                    <h2 class="announce-title">{{ !empty($school->announce_title) ? $school->announce_title : 'Thông Báo Tuyển Sinh' }}</h2>
                     @if(!empty($announceDescription))
                         <p class="announce-subtitle">{{ $announceDescription }}</p>
                     @endif
@@ -410,6 +415,37 @@
             </div>
         @endif
     @endif
+
+     {{-- Banner Tư Vấn --}}
+     <div class="uk-container uk-container-center uk-container-1260">
+        <div class="panel-school-advantage-banner wow fadeInUp" data-wow-delay="0.65s">
+        
+            <div class="advantage-banner-content">
+                <div class="advantage-banner-text">
+                    <div class="banner-text-line">
+                        <span class="banner-icon">🎓</span>
+                        <span>Hơn 50.000 học viên đã tốt nghiệp và thăng tiến nhờ tấm</span>
+                    </div>
+                    <div class="banner-text-line">
+                        <span>bằng Đại học từ xa</span>
+                    </div>
+                </div>
+                <div class="advantage-banner-action">
+                    <a href="#register-modal" class="btn-consultation" data-uk-modal>
+                        <i class="fa fa-headphones"></i>
+                        <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
+                    </a>
+                    <div class="banner-features">
+                        <span>Tư vấn miễn phí</span>
+                        <span class="separator">•</span>
+                        <span>Hỗ trợ 24/7</span>
+                        <span class="separator">•</span>
+                        <span>Giải đáp thắc mắc</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Khối Các Ngành Đào Tạo Từ Xa --}}
     @if(isset($school) && $school->is_show_majors == 2 && !empty($schoolMajors) && count($schoolMajors) > 0)

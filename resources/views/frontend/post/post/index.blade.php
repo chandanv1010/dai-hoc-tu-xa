@@ -68,18 +68,18 @@
                         <div class="post-contact-block">
                             <h3 class="contact-block-title">{{ $system['post_contact_title'] ?? 'LIÊN HỆ NGAY ĐỂ NHẬN TƯ VẤN NHANH NHẤT:' }}</h3>
                             <div class="contact-info-list">
-                                @if(isset($system['post_contact_website']) && $system['post_contact_website'])
+                                @if(isset($system['contact_website']) && $system['contact_website'])
                                     <div class="contact-info-item">
                                         <i class="fa fa-globe contact-icon contact-icon-website"></i>
                                         <span class="contact-label">Trang web:</span>
-                                        <a href="{{ $system['post_contact_website'] }}" target="_blank" class="contact-link">{{ $system['post_contact_website'] }}</a>
+                                        <a href="{{ $system['contact_website'] }}" target="_blank" class="contact-link">{{ $system['contact_website'] }}</a>
                                     </div>
                                 @endif
-                                @if(isset($system['post_contact_fanpage']) && $system['post_contact_fanpage'])
+                                @if(isset($system['social_facebook']) && $system['social_facebook'])
                                     <div class="contact-info-item">
                                         <i class="fa fa-facebook contact-icon contact-icon-fanpage"></i>
                                         <span class="contact-label">Fanpage:</span>
-                                        <a href="{{ $system['post_contact_fanpage'] }}" target="_blank" class="contact-link">{{ $system['post_contact_fanpage'] }}</a>
+                                        <a href="{{ $system['social_facebook'] }}" target="_blank" class="contact-link">{{ $system['social_facebook'] }}</a>
                                     </div>
                                 @endif
                                 @if(isset($system['contact_address']) && $system['contact_address'])
@@ -108,12 +108,12 @@
                                     @endif
                                 </div>
                                 <div class="center-info">
-                                    <h3 class="center-title">{{ $system['post_center_title'] ?? 'Trung Tâm luyện thi eVSTEP bậc 4/6' }}</h3>
+                                    <h3 class="center-title">{{ $system['homepage_post_center_title'] ?? 'Trung Tâm luyện thi eVSTEP bậc 4/6' }}</h3>
                                     <div class="center-description">
-                                        @if(isset($system['post_center_description']) && $system['post_center_description'])
-                                            {!! $system['post_center_description'] !!}
+                                        @if(isset($system['homepage_post_center_description']) && $system['homepage_post_center_description'])
+                                            {!! $system['homepage_post_center_description'] !!}
                                         @else
-                                            <p>eVSTEP là trung tâm luyện thi tiếng Anh với mục tiêu đào tạo <strong>HỌC THẬT – THI THẬT - KIẾN THỨC THẬT</strong>. Cam kết chất lượng đầu ra, bám sát theo khung năng lực ngoại ngữ 6 bậc dành cho Việt Nam (VSTEP).</p>
+                                            <p>Đang cập nhật</p>
                                         @endif
                                     </div>
                                 </div>

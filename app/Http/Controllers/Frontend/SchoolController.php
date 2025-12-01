@@ -40,7 +40,7 @@ class SchoolController extends FrontendController
     {
         // Lấy school theo ID và language
         $school = $this->schoolRepository->getSchoolById($id, $this->language);
-        
+
         if (!$school) {
             abort(404);
         }
@@ -54,14 +54,22 @@ class SchoolController extends FrontendController
             abort(404);
         }
 
-        // Decode album từ JSON
+        // Decode album từ JSON hoặc lấy trực tiếp nếu đã là array
         $album = [];
         if (!empty($school->album)) {
-            $decoded = json_decode($school->album, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                $album = $decoded;
+            if (is_array($school->album)) {
+                // Đã được cast thành array rồi
+                $album = $school->album;
+            } elseif (is_string($school->album)) {
+                // Nếu vẫn là string, decode
+                $decoded = json_decode($school->album, true);
+                if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                    $album = $decoded;
+                }
             }
         }
+
+        // dd($school);
 
         // Lấy SEO từ pivot
         $seo = [

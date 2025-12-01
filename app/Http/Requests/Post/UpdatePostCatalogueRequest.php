@@ -21,11 +21,10 @@ class UpdatePostCatalogueRequest extends FormRequest
      */
     public function rules(): array
     {
-
-
         return [
             'name' => 'required',
-            'canonical' => 'required|unique:routers,canonical, '.$this->id.',module_id',
+            // Không validate unique ở đây vì service sẽ xử lý việc xóa router cũ và duplicate
+            'canonical' => 'required',
         ];
     }
 

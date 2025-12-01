@@ -57,7 +57,7 @@
                                             </div>
                                             <div class="card-content">
                                                 <h3 class="card-title">{{ $postName }}</h3>
-                                                <p class="card-description">{{ $postDescription }}</p>
+                                                <p class="card-description">{!! $postDescription !!}</p>
                                                 <a href="{{ $postUrl }}" class="card-link">Tìm hiểu thêm →</a>
                                             </div>
                                         </div>
@@ -436,14 +436,14 @@
                             <div class="value-bring-media">
                                 <!-- Top Right: Graduate Image 2 -->
                                 @if($valueBringImage2Url)
-                                    <div class="value-bring-graduate-image">
+                                    <div class="value-bring-graduate-image image img-scaledown">
                                         <img src="{{ $valueBringImage2Url }}" alt="Graduate Image 2">
                                     </div>
                                 @endif
                                 
                                 <!-- Bottom Right: Graduate Image 1 -->
                                 @if($valueBringImageUrl)
-                                    <div class="value-bring-graduate-image">
+                                    <div class="value-bring-graduate-image-2 image img-cover">
                                         <img src="{{ $valueBringImageUrl }}" alt="Graduate Image">
                                     </div>
                                 @endif

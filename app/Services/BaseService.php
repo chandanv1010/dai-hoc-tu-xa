@@ -81,31 +81,25 @@ class BaseService
 
     public function updateRouter($model, $request, $controllerName, $languageId){
         $payload = $this->formatRouterPayload($model, $request, $controllerName, $languageId);
-        $condition = [
-            ['module_id','=', $model->id],
-            ['language_id','=', $languageId],
-            ['controllers','=', 'App\Http\Controllers\Frontend\\'.$controllerName],
-        ];
-        $router = $this->routerRepository->findByCondition($condition);
+        $controller = 'App\Http\Controllers\Frontend\\'.$controllerName;
         
-        // Kiểm tra xem có router khác với cùng canonical nhưng module_id khác không
-        $duplicateRouter = DB::table('routers')
+        // Bước 1: Xóa TẤT CẢ router có cùng canonical (dù module_id nào) để tránh duplicate
+        // Điều này đảm bảo canonical luôn unique và tránh conflict
+        DB::table('routers')
             ->where('canonical', $payload['canonical'])
             ->where('language_id', $languageId)
-            ->where('module_id', '!=', $model->id)
-            ->first();
+            ->delete();
         
-        if($duplicateRouter){
-            // Xóa router trùng canonical với module_id khác
-            DB::table('routers')->where('id', $duplicateRouter->id)->delete();
-        }
+        // Bước 2: Xóa router cũ với cùng module_id, language_id và controller (nếu còn tồn tại)
+        // (Để đảm bảo không còn router cũ nào của module này)
+        $this->routerRepository->forceDeleteByCondition([
+            ['module_id', '=', $model->id],
+            ['language_id', '=', $languageId],
+            ['controllers', '=', $controller],
+        ]);
         
-        if($router){
-            $res = $this->routerRepository->update($router->id, $payload);
-        } else {
-            // Nếu không tìm thấy router, tạo mới
-            $res = $this->routerRepository->create($payload);
-        }
+        // Bước 3: Tạo router mới với canonical
+        $res = $this->routerRepository->create($payload);
         return $res;
     }
 

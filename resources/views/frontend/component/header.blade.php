@@ -46,7 +46,7 @@
                     <button class="btn-search-header" type="button" title="Tìm kiếm">
                         <i class="fa fa-search"></i>
                     </button>
-                    <a href="{{ $system['homepage_homepage_download'] }}" class="btn-download-roadmap" title="Tải lộ trình học" download>
+                    <a href="#register-modal" class="btn-download-roadmap" title="Tải lộ trình học" data-uk-modal>
                         <i class="fa fa-download"></i>
                         <span>Tải lộ trình học</span>
                     </a>

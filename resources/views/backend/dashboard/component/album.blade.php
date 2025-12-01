@@ -7,8 +7,21 @@
     </div>
     <div class="ibox-content">
         @php
-            $album = (isset($model->album) && is_array($model->album)) ? $model->album : ( (!empty($model->album)) ? json_decode($model->album) : [] );
-            $gallery = (isset($album) && count($album) ) ? $album : old('album');
+            $album = [];
+            if (isset($model) && isset($model->album)) {
+                if (is_array($model->album)) {
+                    // Đã được cast thành array rồi
+                    $album = $model->album;
+                } elseif (is_string($model->album) && !empty($model->album)) {
+                    // Nếu vẫn là string, decode
+                    $decoded = json_decode($model->album, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        $album = $decoded;
+                    }
+                }
+            }
+            // Lấy từ old() nếu có (khi có validation error)
+            $gallery = (isset($album) && count($album) > 0) ? $album : (old('album') ?? []);
         @endphp
         <div class="row">
             <div class="col-lg-12">

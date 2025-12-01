@@ -330,6 +330,21 @@
                         <div class="row mb15">
                             <div class="col-lg-12">
                                 <div class="form-row">
+                                    <label for="" class="control-label text-left">Tiêu đề</label>
+                                    <input 
+                                        type="text"
+                                        name="announce_title"
+                                        value="{{ old('announce_title', ($school->announce_title ?? '') ?? '') }}"
+                                        class="form-control"
+                                        placeholder="Nhập tiêu đề"
+                                        autocomplete="off"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mb15">
+                            <div class="col-lg-12">
+                                <div class="form-row">
                                     <label for="" class="control-label text-left">Mô tả</label>
                                     <input 
                                         type="text"

@@ -18,6 +18,7 @@ class School extends Model
         'intro_image',
         'download_file',
         'announce_image',
+        'announce_title',
         'enrollment_quota',
         'short_name',
         'publish',
@@ -40,6 +41,10 @@ class School extends Model
     ];
 
     protected $table = 'schools';
+
+    protected $casts = [
+        'album' => 'array',
+    ];
 
     public function languages(){
         return $this->belongsToMany(Language::class, 'school_language', 'school_id', 'language_id')

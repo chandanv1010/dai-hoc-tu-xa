@@ -117,7 +117,9 @@ class SchoolService extends BaseService
         $payload = [];
         foreach ($this->payload() as $field) {
             if ($field === 'album') {
-                $payload[$field] = $this->formatAlbum($request);
+                // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
+                $album = $request->input('album', []);
+                $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
             } else {
                 $payload[$field] = $request->input($field);
             }
@@ -132,7 +134,9 @@ class SchoolService extends BaseService
         $payload = [];
         foreach ($this->payload() as $field) {
             if ($field === 'album') {
-                $payload[$field] = $this->formatAlbum($request);
+                // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
+                $album = $request->input('album', []);
+                $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
             } else {
                 // Luôn lấy giá trị từ request, kể cả null hoặc empty string
                 $payload[$field] = $request->input($field);
@@ -217,6 +221,7 @@ class SchoolService extends BaseService
             'intro_image',
             'download_file',
             'announce_image',
+            'announce_title',
             'enrollment_quota',
             'short_name',
             'publish',
