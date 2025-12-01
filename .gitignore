@@ -4,5 +4,5 @@
 /public/uploads
 /public/upload
 /public/image-cacherm public.zip
-/resources/views/frontend/homepage/component/head.blade.php
+# /resources/views/frontend/homepage/component/head.blade.php
 # /public/userfiles
