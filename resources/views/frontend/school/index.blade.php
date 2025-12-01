@@ -776,6 +776,20 @@
         </div>
     @endif
 
+    {{-- Khối Không Ghi Hình Thức Đào Tạo --}}
+    <div class="panel-school-degree-notice wow fadeInUp" data-wow-delay="1.1s">
+        <div class="uk-container uk-container-center uk-container-1260">
+            <div class="degree-notice-banner">
+                <div class="degree-notice-main-button">
+                    <span class="degree-notice-text">KHÔNG GHI HÌNH THỨC ĐÀO TẠO TRÊN BẰNG TỐT NGHIỆP</span>
+                    <a href="#register-modal" class="degree-notice-trial-button" data-uk-modal>
+                        Học thử miễn phí
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {{-- Khối Cảm Nhận Học Viên --}}
     @if(isset($school) && $school->is_show_feedback == 2 && isset($feedback) && !empty($feedback))
         @php
