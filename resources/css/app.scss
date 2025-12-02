@@ -160,6 +160,10 @@
             z-index: 1;
             font-size:16px;
 
+            *{
+                font-family: 'Inter' !important;
+            }
+
             .value-card-text {
                 color: #333;
                 font-size: 14px;
@@ -4685,15 +4689,7 @@
     padding: 80px 0 40px;
     margin-bottom: 50px;
 
-    .breadcrumb-overlay {
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 1;
-    }
+    
 
     .uk-container {
         position: relative;
@@ -4747,7 +4743,6 @@
         }
 
         .breadcrumb-nav {
-            margin-top: 30px;
 
             .breadcrumb-list {
                 display: flex;
@@ -12331,10 +12326,10 @@ button{
 // Override breadcrumb for intro page
 .page-breadcrumb-large {
     position: relative;
-    background: linear-gradient(135deg, #008DC2 0%, #00B9FF 50%, #008DC2 100%);
+    background: #008DC2;
     background-size: 200% 200%;
     animation: gradientShift 15s ease infinite;
-    padding: 120px 0 80px;
+    padding: 40px 0 40px;
     overflow: hidden;
 
     @media (max-width: 768px) {
@@ -12346,7 +12341,6 @@ button{
             font-size: 48px;
             font-weight: 800;
             color: #fff;
-            margin: 0 0 20px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
             letter-spacing: -0.5px;
 
@@ -12369,10 +12363,11 @@ button{
 
 // Block 1: Giá»›i thiá»‡u
 .panel-intro-block-1 {
-    padding: 100px 0;
+    padding: 35px 0;
     background: linear-gradient(to bottom, #ffffff 0%, #f8f9fa 100%);
     position: relative;
     overflow: hidden;
+    padding-top:0;
 
     @media (max-width: 768px) {
         padding: 60px 0;
@@ -13118,4 +13113,8 @@ button{
     img{
         border-radius: 10px;
     }
+}
+
+.header-main-nav.uk-active{
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }

@@ -23,7 +23,7 @@
                 <div class="value-we-bring-header">
                     <h2 class="value-we-bring-title">{{ $catalogueName }}</h2>
                     @if($catalogueDescription)
-                        <p class="value-we-bring-subtitle">{{ $catalogueDescription }}</p>
+                        <p class="value-we-bring-subtitle">{!! strip_tags($catalogueDescription) !!}</p>
                     @endif
                 </div>
 

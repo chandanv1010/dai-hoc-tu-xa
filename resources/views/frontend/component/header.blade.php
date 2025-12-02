@@ -24,7 +24,7 @@
     </div>
 
     <!-- Main Navigation -->
-    <div class="header-main-nav">
+    <div class="header-main-nav" data-uk-sticky>
         <div class="uk-container uk-container-center">
             <div class="uk-flex uk-flex-middle uk-flex-space-between">
                 <!-- Logo Section -->
