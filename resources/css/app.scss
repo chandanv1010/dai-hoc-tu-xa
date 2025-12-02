@@ -12549,21 +12549,23 @@ button{
             height: 100%;
             display: flex;
             flex-direction: column;
+            border:3px solid #008DC2;
+            // border-top:0;
 
             @media (max-width: 768px) {
                 padding: 30px 25px;
                 border-radius: 16px;
             }
 
-            &::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                right: 0;
-                height: 5px;
-                background: linear-gradient(to right, #008DC2, #00B9FF);
-            }
+            // &::before {
+            //     content: '';
+            //     position: absolute;
+            //     top: 0;
+            //     left: 0;
+            //     right: 0;
+            //     height: 5px;
+            //     background: linear-gradient(to right, #008DC2, #00B9FF);
+            // }
 
             &:hover {
                 transform: translateY(-8px);
@@ -12579,7 +12581,7 @@ button{
                 .intro-mission-badge,
                 .intro-history-badge {
                     display: inline-block;
-                    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+                    background: linear-gradient(135deg, #DC143C 0%, #DC143C 100%);
                     color: #fff;
                     font-size: 12px;
                     font-weight: 700;
@@ -12634,7 +12636,7 @@ button{
                     }
 
                     strong {
-                        color: #008DC2;
+                        color: #DC143C;
                         font-weight: 700;
                         font-size: 17px;
                         display: block;
