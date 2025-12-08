@@ -1,0 +1,328 @@
+// Course Catalogue Page - Style giống link mẫu
+.course-catalogue-page {
+    padding: 40px 0 60px;
+    background: #f8f9fa;
+    min-height: 60vh;
+
+    @media (max-width: 768px) {
+        padding: 20px 0 40px;
+    }
+
+    .course-page-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding: 0 20px;
+
+        @media (max-width: 768px) {
+            margin-bottom: 30px;
+        }
+
+        .course-page-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+            margin: 0 0 15px;
+            line-height: 1.3;
+
+            @media (max-width: 768px) {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+        }
+
+        .course-page-description {
+            font-size: 16px;
+            color: #666;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+
+            @media (max-width: 768px) {
+                font-size: 14px;
+            }
+        }
+    }
+
+    .course-list-wrapper {
+        .course-results-info {
+            margin-bottom: 30px;
+            padding: 0 20px;
+            font-size: 16px;
+            color: #666;
+
+            @media (max-width: 768px) {
+                margin-bottom: 20px;
+                font-size: 14px;
+            }
+
+            strong {
+                color: #333;
+                font-weight: 700;
+            }
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+            margin-bottom: 40px;
+
+            @media (max-width: 1200px) {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 25px;
+            }
+
+            @media (max-width: 768px) {
+                grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+                gap: 20px;
+                padding: 0 15px;
+                margin-bottom: 30px;
+            }
+
+            @media (min-width: 769px) and (max-width: 1024px) {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .course-grid-item {
+                width: 100%;
+            }
+        }
+
+        .course-pagination {
+            padding: 0 20px;
+            margin-top: 40px;
+
+            @media (max-width: 768px) {
+                margin-top: 30px;
+                padding: 0 15px;
+            }
+        }
+    }
+
+    .course-empty {
+        text-align: center;
+        padding: 60px 20px;
+        color: #666;
+        font-size: 16px;
+
+        @media (max-width: 768px) {
+            padding: 40px 15px;
+            font-size: 14px;
+        }
+    }
+
+    .course-page-content {
+        margin-top: 60px;
+        padding: 40px 20px;
+        background: #fff;
+        border-radius: 8px;
+
+        @media (max-width: 768px) {
+            margin-top: 40px;
+            padding: 30px 15px;
+        }
+    }
+}
+
+// Course Card Component
+.course-card {
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+
+    &:hover {
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+        transform: translateY(-4px);
+    }
+
+    .course-card-image {
+        width: 100%;
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+        background: #f0f0f0;
+
+        @media (max-width: 768px) {
+            height: 180px;
+        }
+
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.05);
+        }
+    }
+
+    .course-card-content {
+        padding: 20px;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+
+        @media (max-width: 768px) {
+            padding: 15px;
+        }
+
+        .course-card-title {
+            margin: 0 0 12px;
+            font-size: 18px;
+            font-weight: 600;
+            line-height: 1.4;
+            min-height: 50px;
+
+            @media (max-width: 768px) {
+                font-size: 16px;
+                min-height: auto;
+            }
+
+            a {
+                color: #333;
+                text-decoration: none;
+                transition: color 0.3s ease;
+
+                &:hover {
+                    color: #0066CC;
+                }
+            }
+        }
+
+        .course-card-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.5;
+            margin: 0 0 15px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+
+            @media (max-width: 768px) {
+                font-size: 13px;
+                margin-bottom: 12px;
+            }
+        }
+
+        .course-card-price {
+            margin-bottom: 15px;
+
+            @media (max-width: 768px) {
+                margin-bottom: 12px;
+            }
+
+            .price {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                flex-wrap: wrap;
+
+                .price-sale {
+                    font-size: 20px;
+                    font-weight: 700;
+                    color: #E31E24;
+
+                    @media (max-width: 768px) {
+                        font-size: 18px;
+                    }
+
+                    .currency {
+                        font-size: 16px;
+                        margin-left: 2px;
+                    }
+                }
+
+                .price-old {
+                    font-size: 16px;
+                    color: #999;
+                    text-decoration: line-through;
+
+                    @media (max-width: 768px) {
+                        font-size: 14px;
+                    }
+                }
+
+                .percent {
+                    .percent-value {
+                        background: #E31E24;
+                        color: #fff;
+                        padding: 2px 6px;
+                        border-radius: 4px;
+                        font-size: 12px;
+                        font-weight: 600;
+                    }
+                }
+            }
+        }
+
+        .course-card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .btn-view-detail,
+            .btn-buy-now {
+                flex: 1;
+                padding: 12px 20px;
+                border-radius: 6px;
+                font-size: 14px;
+                font-weight: 600;
+                text-align: center;
+                text-decoration: none;
+                transition: all 0.3s ease;
+                display: inline-block;
+
+                @media (max-width: 768px) {
+                    padding: 10px 16px;
+                    font-size: 13px;
+                }
+            }
+
+            .btn-view-detail {
+                background: #fff;
+                color: #0066CC;
+                border: 2px solid #0066CC;
+
+                &:hover {
+                    background: #0066CC;
+                    color: #fff;
+                }
+            }
+
+            .btn-buy-now {
+                background: #E31E24;
+                color: #fff;
+                border: 2px solid #E31E24;
+
+                &:hover {
+                    background: #c71a1f;
+                    border-color: #c71a1f;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+                }
+            }
+        }
+    }
+}
+

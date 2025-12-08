@@ -147,6 +147,17 @@ class SchoolController extends Controller
         ));
     }
 
+    public function duplicate($id)
+    {
+        $this->authorize('modules', 'school.create');
+        $duplicatedSchool = $this->schoolService->duplicate($id, $this->language);
+        
+        if ($duplicatedSchool) {
+            return redirect()->route('school.edit', $duplicatedSchool->id)->with('success', 'Nhân bản bản ghi thành công');
+        }
+        return redirect()->route('school.index')->with('error', 'Nhân bản bản ghi không thành công. Hãy thử lại');
+    }
+
     public function destroy($id)
     {
         if ($this->schoolService->destroy($id)) {

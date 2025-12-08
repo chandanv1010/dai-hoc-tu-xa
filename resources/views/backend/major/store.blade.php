@@ -441,14 +441,38 @@
                         </div>
                     </div>
                     <div class="ibox-content">
+                        <div class="form-group">
+                            <label>Tiêu đề khối "Ai phù hợp"</label>
+                            <input type="text" 
+                                   name="who[title]" 
+                                   class="form-control" 
+                                   value="{{ old('who.title', isset($who['title']) ? $who['title'] : 'Ai Phù Hợp Theo Hình Thức Đào Tạo?') }}"
+                                   placeholder="Ai Phù Hợp Theo Hình Thức Đào Tạo?">
+                            <small class="form-text text-muted">Nếu để trống sẽ dùng giá trị mặc định: "Ai Phù Hợp Theo Hình Thức Đào Tạo?"</small>
+                        </div>
                         <div id="suitableItemsContainer" class="items-container">
-                            @if(old('who'))
-                                @foreach(old('who') as $index => $item)
+                            @if(old('who.items'))
+                                @foreach(old('who.items') as $index => $item)
                                     @include('backend.major.component.suitable-item', ['index' => $index, 'item' => $item])
                                 @endforeach
+                            @elseif(old('who') && !isset(old('who')['title']))
+                                @foreach(old('who') as $index => $item)
+                                    @if(is_numeric($index))
+                                        @include('backend.major.component.suitable-item', ['index' => $index, 'item' => $item])
+                                    @endif
+                                @endforeach
                             @elseif(isset($who) && is_array($who) && count($who) > 0)
-                                @foreach($who as $index => $item)
-                                    @include('backend.major.component.suitable-item', ['index' => $index, 'item' => $item])
+                                @php
+                                    $whoItems = isset($who['items']) && is_array($who['items']) ? $who['items'] : [];
+                                    // Nếu không có 'items', có thể who là mảng trực tiếp các items
+                                    if (empty($whoItems) && isset($who[0])) {
+                                        $whoItems = $who;
+                                    }
+                                @endphp
+                                @foreach($whoItems as $index => $item)
+                                    @if(is_numeric($index))
+                                        @include('backend.major.component.suitable-item', ['index' => $index, 'item' => $item])
+                                    @endif
                                 @endforeach
                             @endif
                         </div>
@@ -474,14 +498,38 @@
                         </div>
                     </div>
                     <div class="ibox-content">
+                        <div class="form-group">
+                            <label>Tiêu đề khối "Ưu điểm"</label>
+                            <input type="text" 
+                                   name="priority[title]" 
+                                   class="form-control" 
+                                   value="{{ old('priority.title', isset($priority['title']) ? $priority['title'] : 'Ưu điểm khi học Đại học từ xa Ngành Ngôn Ngữ Anh') }}"
+                                   placeholder="Ưu điểm khi học Đại học từ xa Ngành Ngôn Ngữ Anh">
+                            <small class="form-text text-muted">Nếu để trống sẽ dùng giá trị mặc định</small>
+                        </div>
                         <div id="advantageItemsContainer" class="items-container">
-                            @if(old('priority'))
-                                @foreach(old('priority') as $index => $item)
+                            @if(old('priority.items'))
+                                @foreach(old('priority.items') as $index => $item)
                                     @include('backend.major.component.advantage-item', ['index' => $index, 'item' => $item])
                                 @endforeach
+                            @elseif(old('priority') && !isset(old('priority')['title']))
+                                @foreach(old('priority') as $index => $item)
+                                    @if(is_numeric($index))
+                                        @include('backend.major.component.advantage-item', ['index' => $index, 'item' => $item])
+                                    @endif
+                                @endforeach
                             @elseif(isset($priority) && is_array($priority) && count($priority) > 0)
-                                @foreach($priority as $index => $item)
-                                    @include('backend.major.component.advantage-item', ['index' => $index, 'item' => $item])
+                                @php
+                                    $priorityItems = isset($priority['items']) && is_array($priority['items']) ? $priority['items'] : [];
+                                    // Nếu không có 'items', có thể priority là mảng trực tiếp các items
+                                    if (empty($priorityItems) && isset($priority[0])) {
+                                        $priorityItems = $priority;
+                                    }
+                                @endphp
+                                @foreach($priorityItems as $index => $item)
+                                    @if(is_numeric($index))
+                                        @include('backend.major.component.advantage-item', ['index' => $index, 'item' => $item])
+                                    @endif
                                 @endforeach
                             @endif
                         </div>
@@ -501,6 +549,19 @@
                         </div>
                     </div>
                     <div class="ibox-content">
+                        <div class="row mb15">
+                            <div class="col-lg-12">
+                                <div class="form-row">
+                                    <label for="" class="control-label text-left">Tiêu đề</label>
+                                    <input type="text" 
+                                           name="learn[title]" 
+                                           class="form-control" 
+                                           value="{{ old('learn.title', isset($learn['title']) ? $learn['title'] : 'Bạn sẽ được học những gì?') }}"
+                                           placeholder="Bạn sẽ được học những gì?">
+                                    <small class="form-text text-muted">Nếu để trống sẽ dùng giá trị mặc định</small>
+                                </div>
+                            </div>
+                        </div>
                         <div class="row mb15">
                             <div class="col-lg-12">
                                 <div class="form-row">
@@ -920,8 +981,36 @@ document.addEventListener('DOMContentLoaded', function() {
     let admissionTargetIndex = {{ count(old('target', (isset($target) && is_array($target)) ? $target : [])) }};
     let receptionPlaceIndex = {{ count(old('address', (isset($address) && is_array($address)) ? $address : [])) }};
     let overviewItemIndex = {{ count(old('overview.items', (isset($overview) && isset($overview['items']) && is_array($overview['items'])) ? $overview['items'] : [])) }};
-    let suitableItemIndex = {{ count(old('who', (isset($who) && is_array($who)) ? $who : [])) }};
-    let advantageItemIndex = {{ count(old('priority', (isset($priority) && is_array($priority)) ? $priority : [])) }};
+    @php
+        $whoItemsCount = 0;
+        if (old('who.items')) {
+            $whoItemsCount = count(old('who.items'));
+        } elseif (old('who') && !isset(old('who')['title'])) {
+            $whoItemsCount = count(array_filter(old('who'), 'is_numeric', ARRAY_FILTER_USE_KEY));
+        } elseif (isset($who) && is_array($who)) {
+            if (isset($who['items']) && is_array($who['items'])) {
+                $whoItemsCount = count($who['items']);
+            } elseif (isset($who[0])) {
+                $whoItemsCount = count(array_filter($who, 'is_numeric', ARRAY_FILTER_USE_KEY));
+            }
+        }
+    @endphp
+    let suitableItemIndex = {{ $whoItemsCount }};
+    @php
+        $priorityItemsCount = 0;
+        if (old('priority.items')) {
+            $priorityItemsCount = count(old('priority.items'));
+        } elseif (old('priority') && !isset(old('priority')['title'])) {
+            $priorityItemsCount = count(array_filter(old('priority'), 'is_numeric', ARRAY_FILTER_USE_KEY));
+        } elseif (isset($priority) && is_array($priority)) {
+            if (isset($priority['items']) && is_array($priority['items'])) {
+                $priorityItemsCount = count($priority['items']);
+            } elseif (isset($priority[0])) {
+                $priorityItemsCount = count(array_filter($priority, 'is_numeric', ARRAY_FILTER_USE_KEY));
+            }
+        }
+    @endphp
+    let advantageItemIndex = {{ $priorityItemsCount }};
     let whatLearnCategoryIndex = {{ count(old('learn.items', (isset($learn) && isset($learn['items']) && is_array($learn['items'])) ? $learn['items'] : [])) }};
     let whatLearnItemIndexes = {}; // Object to track item indexes per category
     let careerTagIndex = {{ count(old('chance.tags', (isset($chance) && isset($chance['tags']) && is_array($chance['tags'])) ? $chance['tags'] : [])) }};
@@ -1211,7 +1300,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label class="control-label text-left">Tiêu đề</label>
                                 <input 
                                     type="text"
-                                    name="priority[${advantageItemIndex}][name]"
+                                    name="priority[items][${advantageItemIndex}][name]"
                                     class="form-control"
                                     placeholder="Nhập tiêu đề"
                                 >
@@ -1232,7 +1321,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <label class="control-label text-left">Ảnh</label>
                                 <input 
                                     type="text"
-                                    name="priority[${advantageItemIndex}][image]"
+                                    name="priority[items][${advantageItemIndex}][image]"
                                     class="form-control upload-image"
                                     placeholder="Chọn ảnh"
                                     readonly
@@ -1245,7 +1334,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <div class="form-row">
                                 <label class="control-label text-left">Nội dung</label>
                                 <textarea 
-                                    name="priority[${advantageItemIndex}][description]"
+                                    name="priority[items][${advantageItemIndex}][description]"
                                     class="form-control"
                                     rows="4"
                                     placeholder="Nhập nội dung"

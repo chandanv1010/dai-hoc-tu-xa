@@ -304,7 +304,7 @@
                     <i class="fa fa-check-circle"></i>
                     Đăng ký ngay để nhận thông tin tuyển sinh mới nhất!
                 </p>
-                <button class="register-banner-btn" data-uk-modal="{target:'#register-modal'}">
+                <button class="register-banner-btn" data-uk-modal="{target:'#school-enrollment-modal'}">
                     <i class="fa fa-paper-plane"></i>
                     <span>Đăng Ký Ngay</span>
                 </button>
@@ -424,14 +424,14 @@
                 <div class="advantage-banner-text">
                     <div class="banner-text-line">
                         <span class="banner-icon">🎓</span>
-                        <span>Hơn 50.000 học viên đã tốt nghiệp và thăng tiến nhờ tấm</span>
+                        <span>ĐĂNG KÝ TƯ VẤN ĐỢT KHAI GIẢNG MỚI NHẤT</span>
                     </div>
                     <div class="banner-text-line">
-                        <span>bằng Đại học từ xa</span>
+                        <span>Nắm lấy cơ hội sở hữu "BẰNG ĐẠI HỌC" ngay hôm nay</span>
                     </div>
                 </div>
                 <div class="advantage-banner-action">
-                    <a href="#register-modal" class="btn-consultation" data-uk-modal>
+                    <a href="#consultation-modal" class="btn-consultation" data-uk-modal>
                         <i class="fa fa-headphones"></i>
                         <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
                     </a>
@@ -596,58 +596,102 @@
                 </div>
                 <div class="enrollment-right">
                     <div class="enrollment-form-card">
-                        <h3 class="form-title">Đăng Ký Học Trực Tuyến</h3>
-                        <p class="form-subtitle">Hoàn thành thông tin để nhận tư vấn</p>
+                        @php
+                            // Lấy form_json và decode nếu cần
+                            $formJsonRaw = $school->form_json ?? null;
+                            $formJson = [];
+                            if ($formJsonRaw) {
+                                if (is_array($formJsonRaw)) {
+                                    $formJson = $formJsonRaw;
+                                } elseif (is_string($formJsonRaw)) {
+                                    $decoded = json_decode($formJsonRaw, true);
+                                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                                        $formJson = $decoded;
+                                    }
+                                }
+                            }
+                            
+                            $formTitle = $formJson['form_title'] ?? 'Đăng Ký Học Trực Tuyến';
+                            $formDescription = $formJson['form_description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
+                            $formFooter = $formJson['form_footer'] ?? '';
+                            $formScript = trim($school->form_script ?? '');
+                            
+                            // Debug: Uncomment dòng dưới để kiểm tra dữ liệu
+                            // dd(['form_script' => $formScript, 'form_json' => $formJson, 'school_id' => $school->id]);
+                        @endphp
                         
-                        <form id="enrollment-form" action="{{ route('contact.save') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="type" value="enrollment">
-                            <input type="hidden" name="school_id" value="{{ $school->id ?? '' }}">
-                            
-                            <div class="form-group">
-                                <label for="enrollment-name">Họ và tên <span class="required">*</span></label>
-                                <input type="text" name="name" id="enrollment-name" class="form-control" placeholder="Nhập họ và tên của bạn" required>
+                        @if(!empty($formTitle))
+                            <h3 class="form-title">{{ $formTitle }}</h3>
+                        @endif
+                        
+                        @if(!empty($formDescription))
+                            <p class="form-subtitle">{{ $formDescription }}</p>
+                        @endif
+                        
+                        @if(!empty($formScript))
+                            <div class="form-script">
+                                <div id="enrollment-form">
+                                    {!! $formScript !!}
+                                </div>
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="enrollment-email">Email <span class="required">*</span></label>
-                                <input type="email" name="email" id="enrollment-email" class="form-control" placeholder="example@email.com" required>
+                        @else
+                            {{-- Fallback form nếu không có script --}}
+                            <form id="enrollment-form" action="{{ route('contact.save') }}" method="POST">
+                                @csrf
+                                <input type="hidden" name="type" value="enrollment">
+                                <input type="hidden" name="school_id" value="{{ $school->id ?? '' }}">
+                                
+                                <div class="form-group">
+                                    <label for="enrollment-name">Họ và tên <span class="required">*</span></label>
+                                    <input type="text" name="name" id="enrollment-name" class="form-control" placeholder="Nhập họ và tên của bạn" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="enrollment-email">Email <span class="required">*</span></label>
+                                    <input type="email" name="email" id="enrollment-email" class="form-control" placeholder="example@email.com" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="enrollment-phone">Số điện thoại <span class="required">*</span></label>
+                                    <input type="tel" name="phone" id="enrollment-phone" class="form-control" placeholder="0123 456 789" required>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label for="enrollment-major">Chọn ngành học quan tâm <span class="required">*</span></label>
+                                    <select name="major_id" id="enrollment-major" class="form-control" required>
+                                        <option value="">Chọn ngành học</option>
+                                        @if(!empty($schoolMajors) && count($schoolMajors) > 0)
+                                            @foreach($schoolMajors as $item)
+                                                @php
+                                                    $majorPivot = $item['majorPivot'];
+                                                    $majorName = $majorPivot->name ?? '';
+                                                    $majorId = $item['major']->id ?? '';
+                                                @endphp
+                                                @if(!empty($majorName) && !empty($majorId))
+                                                    <option value="{{ $majorId }}">{{ $majorName }}</option>
+                                                @endif
+                                            @endforeach
+                                        @endif
+                                    </select>
+                                </div>
+                                
+                                <button type="submit" class="btn-submit">
+                                    <i class="fa fa-paper-plane"></i>
+                                    <span>Gửi Đăng Ký</span>
+                                </button>
+                                
+                                <div class="form-privacy">
+                                    <i class="fa fa-check-circle"></i>
+                                    <span>Thông tin của bạn được bảo mật tuyệt đối.</span>
+                                </div>
+                            </form>
+                        @endif
+                        
+                        @if(!empty($formFooter))
+                            <div class="form-footer">
+                                {!! $formFooter !!}
                             </div>
-                            
-                            <div class="form-group">
-                                <label for="enrollment-phone">Số điện thoại <span class="required">*</span></label>
-                                <input type="tel" name="phone" id="enrollment-phone" class="form-control" placeholder="0123 456 789" required>
-                            </div>
-                            
-                            <div class="form-group">
-                                <label for="enrollment-major">Chọn ngành học quan tâm <span class="required">*</span></label>
-                                <select name="major_id" id="enrollment-major" class="form-control" required>
-                                    <option value="">Chọn ngành học</option>
-                                    @if(!empty($schoolMajors) && count($schoolMajors) > 0)
-                                        @foreach($schoolMajors as $item)
-                                            @php
-                                                $majorPivot = $item['majorPivot'];
-                                                $majorName = $majorPivot->name ?? '';
-                                                $majorId = $item['major']->id ?? '';
-                                            @endphp
-                                            @if(!empty($majorName) && !empty($majorId))
-                                                <option value="{{ $majorId }}">{{ $majorName }}</option>
-                                            @endif
-                                        @endforeach
-                                    @endif
-                                </select>
-                            </div>
-                            
-                            <button type="submit" class="btn-submit">
-                                <i class="fa fa-paper-plane"></i>
-                                <span>Gửi Đăng Ký</span>
-                            </button>
-                            
-                            <div class="form-privacy">
-                                <i class="fa fa-check-circle"></i>
-                                <span>Thông tin của bạn được bảo mật tuyệt đối.</span>
-                            </div>
-                        </form>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -964,6 +1008,89 @@
         </div>
     @endif
 
+    <!-- School Enrollment Modal (from form_script) -->
+    <div id="school-enrollment-modal" class="uk-modal school-enrollment-modal">
+        <div class="uk-modal-dialog school-enrollment-modal-dialog">
+            <a class="uk-modal-close uk-close"></a>
+            @php
+                // Lấy form_json và decode nếu cần
+                $formJsonRaw = $school->form_json ?? null;
+                $formJson = [];
+                if ($formJsonRaw) {
+                    if (is_array($formJsonRaw)) {
+                        $formJson = $formJsonRaw;
+                    } elseif (is_string($formJsonRaw)) {
+                        $decoded = json_decode($formJsonRaw, true);
+                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                            $formJson = $decoded;
+                        }
+                    }
+                }
+                
+                $formTitle = $formJson['form_title'] ?? 'Đăng Ký Học Trực Tuyến';
+                $formDescription = $formJson['form_description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
+                $formFooter = $formJson['form_footer'] ?? '';
+                $formScript = trim($school->form_script ?? '');
+            @endphp
+            
+            <!-- Header với màu cam và đỏ -->
+            <div class="school-enrollment-header">
+                <div class="school-enrollment-description">{{ $formDescription }}</div>
+                <h2 class="school-enrollment-title">{{ $formTitle }}</h2>
+            </div>
+            
+            <!-- Wrapper cho script nhúng (khung màu trắng) -->
+            <div class="school-enrollment-form-wrapper">
+                @if(!empty($formScript))
+                    <div class="school-enrollment-script-wrapper">
+                        {!! $formScript !!}
+                    </div>
+                @else
+                    {{-- Fallback form nếu không có script --}}
+                    <form id="school-enrollment-form" action="{{ route('contact.save') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="type" value="enrollment">
+                        <input type="hidden" name="school_id" value="{{ $school->id ?? '' }}">
+                        
+                        <div class="form-group">
+                            <label for="enrollment-name-modal">Họ và tên <span class="required">*</span></label>
+                            <input type="text" name="name" id="enrollment-name-modal" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enrollment-email-modal">Email <span class="required">*</span></label>
+                            <input type="email" name="email" id="enrollment-email-modal" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enrollment-phone-modal">Số điện thoại <span class="required">*</span></label>
+                            <input type="tel" name="phone" id="enrollment-phone-modal" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enrollment-address-modal">Địa chỉ</label>
+                            <input type="text" name="address" id="enrollment-address-modal">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="enrollment-message-modal">Lời nhắn</label>
+                            <textarea name="message" id="enrollment-message-modal" rows="4"></textarea>
+                        </div>
+                        
+                        <button type="submit" class="btn-submit">Gửi Đăng Ký</button>
+                    </form>
+                @endif
+            </div>
+            
+            <!-- Footer -->
+            @if(!empty($formFooter))
+                <div class="school-enrollment-footer">
+                    {!! $formFooter !!}
+                </div>
+            @endif
+        </div>
+    </div>
+
     <!-- Register Modal -->
     <div id="register-modal" class="uk-modal">
         <div class="uk-modal-dialog register-modal-dialog">
@@ -1137,7 +1264,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Xử lý form đăng ký
+    // Xử lý form đăng ký (fallback form)
     const registerForm = document.getElementById('register-form');
     if (registerForm) {
         registerForm.addEventListener('submit', function(e) {
@@ -1179,6 +1306,56 @@ document.addEventListener('DOMContentLoaded', function() {
                 submitBtn.textContent = originalText;
             });
         });
+    }
+
+    // Xử lý form enrollment trong modal (fallback form)
+    const schoolEnrollmentForm = document.getElementById('school-enrollment-form');
+    if (schoolEnrollmentForm) {
+        schoolEnrollmentForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(schoolEnrollmentForm);
+            const submitBtn = schoolEnrollmentForm.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Đang gửi...';
+            
+            fetch(schoolEnrollmentForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message === 'success') {
+                    if (typeof UIkit !== 'undefined' && UIkit.modal) {
+                        UIkit.modal('#school-enrollment-modal').hide();
+                    }
+                    window.location.href = '{{ route("contact.thankyou") }}';
+                } else {
+                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('Có lỗi xảy ra. Vui lòng thử lại.');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalText;
+            });
+        });
+    }
+
+    // Highlight số trong footer của school enrollment modal (màu cam)
+    const schoolEnrollmentFooter = document.querySelector('#school-enrollment-modal .school-enrollment-footer');
+    if (schoolEnrollmentFooter) {
+        const text = schoolEnrollmentFooter.innerHTML;
+        schoolEnrollmentFooter.innerHTML = text.replace(/(\d+)/g, '<span style="color: #FF8C00; font-weight: 700;">$1</span>');
     }
 });
 </script>

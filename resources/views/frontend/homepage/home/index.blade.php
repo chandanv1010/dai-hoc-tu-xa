@@ -193,66 +193,76 @@
                         @endif
                     </div>
 
-                    <!-- Schools Grid -->
+                    <!-- Schools Swiper -->
                     @if($schoolsList->isNotEmpty())
                         <div class="schools-list-grid">
-                            <div class="uk-grid uk-grid-medium" data-uk-grid-match>
-                                @foreach($schoolsList as $school)
-                                    @php
-                                        // Lấy thông tin từ languages relationship
-                                        $schoolLanguage = $school->languages->first() ?? null;
-                                        $schoolName = '';
-                                        $schoolCanonical = '';
-                                        $majorsCount = 0;
-                                        
-                                        if ($schoolLanguage) {
-                                            $pivot = $schoolLanguage->pivot ?? null;
-                                            if ($pivot) {
-                                                $schoolName = $pivot->name ?? '';
-                                                $schoolCanonical = $pivot->canonical ?? '';
-                                                
-                                                // Đếm số ngành từ majors JSON
-                                                if (isset($pivot->majors) && is_array($pivot->majors)) {
-                                                    $majorsCount = count($pivot->majors);
-                                                } elseif (isset($pivot->majors) && is_string($pivot->majors)) {
-                                                    $majorsData = json_decode($pivot->majors, true);
-                                                    if (is_array($majorsData)) {
-                                                        $majorsCount = count($majorsData);
+                            <div class="swiper-container schools-list-swiper">
+                                <div class="swiper-wrapper">
+                                 
+                                    <div class="swiper-slide">
+                                        @foreach($schoolsList as $key => $school)
+                                            <div class="school-card">
+                                                @php
+                                                    // Lấy thông tin từ languages relationship
+                                                    $schoolLanguage = $school->languages->first() ?? null;
+                                                    $schoolName = '';
+                                                    $schoolCanonical = '';
+                                                    $majorsCount = 0;
+                                                    
+                                                    if ($schoolLanguage) {
+                                                        $pivot = $schoolLanguage->pivot ?? null;
+                                                        if ($pivot) {
+                                                            $schoolName = $pivot->name ?? '';
+                                                            $schoolCanonical = $pivot->canonical ?? '';
+                                                            
+                                                            // Đếm số ngành từ majors JSON
+                                                            if (isset($pivot->majors) && is_array($pivot->majors)) {
+                                                                $majorsCount = count($pivot->majors);
+                                                            } elseif (isset($pivot->majors) && is_string($pivot->majors)) {
+                                                                $majorsData = json_decode($pivot->majors, true);
+                                                                if (is_array($majorsData)) {
+                                                                    $majorsCount = count($majorsData);
+                                                                }
+                                                            }
+                                                        }
                                                     }
-                                                }
-                                            }
-                                        }
-                                        
-                                        // Lấy ảnh
-                                        $schoolImage = $school->image ?? '';
-                                        $schoolImageUrl = $schoolImage ? asset($schoolImage) : asset('frontend/resources/img/school-default.png');
-                                        
-                                        // Tạo URL
-                                        $schoolUrl = $schoolCanonical ? write_url($schoolCanonical) : '#';
-                                        
-                                        // Icon mặc định
-                                        $schoolIcon = $schoolImageUrl;
-                                    @endphp
-                                    <div class="uk-width-medium-1-3 uk-width-large-1-3">
-                                        <div class="school-card">
-                                            <div class="school-card-icon">
-                                                <img src="{{ $schoolIcon }}" alt="{{ $schoolName }}">
-                                            </div>
-                                            <div class="school-card-content">
-                                                <h3 class="school-card-name">{{ $schoolName }}</h3>
-                                                <div class="school-card-info">
-                                                    <div class="school-card-info-item">
-                                                        <span class="info-label">Hệ Đào Tạo Từ Xa</span>
-                                                    </div>
-                                                    <div class="school-card-info-item">
-                                                        <span class="info-label">Số ngành đào tạo: <strong>{{ $majorsCount }}</strong> ngành</span>
-                                                    </div>
+                                                    
+                                                    // Lấy ảnh
+                                                    $schoolImage = $school->image ?? '';
+                                                    $schoolImageUrl = $schoolImage ? asset($schoolImage) : asset('frontend/resources/img/school-default.png');
+                                                    
+                                                    // Tạo URL
+                                                    $schoolUrl = $schoolCanonical ? write_url($schoolCanonical) : '#';
+                                                    
+                                                    // Icon mặc định
+                                                    $schoolIcon = $schoolImageUrl;
+                                                @endphp
+                                                <div class="school-card-icon">
+                                                    <img src="{{ $schoolIcon }}" alt="{{ $schoolName }}">
                                                 </div>
-                                                <a href="{{ $schoolUrl }}" class="school-card-button">Xem chi tiết chương trình</a>
+                                                <div class="school-card-content">
+                                                    <h3 class="school-card-name">{{ $schoolName }}</h3>
+                                                    <div class="school-card-info">
+                                                        <div class="school-card-info-item">
+                                                            <span class="info-label">Hệ Đào Tạo Từ Xa</span>
+                                                        </div>
+                                                        <div class="school-card-info-item">
+                                                            <span class="info-label">Số ngành đào tạo: <strong>{{ $majorsCount }}</strong> ngành</span>
+                                                        </div>
+                                                    </div>
+                                                    <a href="{{ $schoolUrl }}" class="school-card-button">Xem chi tiết chương trình</a>
+                                                </div>
                                             </div>
-                                        </div>
+                                            @if(($key + 1) % 2 === 0 && ($key + 1) < $schoolsList->count())
+                                                </div>
+                                            <div class="swiper-slide">
+                                            @endif
+                                        @endforeach
                                     </div>
-                                @endforeach
+                                    
+                                </div>
+                                <div class="swiper-button-prev"></div>
+                                <div class="swiper-button-next"></div>
                             </div>
                         </div>
                     @endif
@@ -590,6 +600,7 @@
                 });
             });
         });
+
     </script>
     
 @endsection

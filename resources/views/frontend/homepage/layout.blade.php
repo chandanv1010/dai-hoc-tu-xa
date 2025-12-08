@@ -12,6 +12,8 @@
         @yield('content')
         @include('frontend.component.footer')
         @include('frontend.component.fixed-buttons')
+        @include('frontend.component.download-roadmap-modal')
+        @include('frontend.component.consultation-modal')
         @include('frontend.component.script')
         {!! $system['script_2'] !!}
     </body>

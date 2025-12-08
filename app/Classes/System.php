@@ -77,8 +77,30 @@ class System{
                 'intro' => ['type' => 'textarea', 'label' => 'Giới thiệu'],
             ]
         ];
-        
 
+        
+        $data['form_tai_lo_trinh'] = [
+            'label' => 'Cấu Hình Form Tải Lộ Trình Học',
+            'description' => 'Cài đặt đầy đủ thông tin ',
+            'value' => [
+                'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
+                'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
+                'description' => ['type' => 'text', 'label' => 'Mô tả'],
+                'footer' => ['type' => 'text', 'label' => 'Footer'],
+            ]
+        ];
+
+        $data['form_tu_van_mien_phi'] = [
+            'label' => 'Cấu Hình Form Tư vấn miễn phí',
+            'description' => 'Cài đặt đầy đủ thông tin ',
+            'value' => [
+                'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
+                'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
+                'description' => ['type' => 'text', 'label' => 'Mô tả'],
+                'footer' => ['type' => 'text', 'label' => 'Footer'],
+            ]
+        ];
+        
         $data['seo'] = [
             'label' => 'Cấu hình SEO dành cho trang chủ',
             'description' => 'Cài đặt đầy đủ thông tin về SEO của trang chủ website. Bao gồm tiêu đề SEO, Từ Khóa SEO, Mô Tả SEO, Meta images',

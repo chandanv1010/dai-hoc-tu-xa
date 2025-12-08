@@ -91,6 +91,90 @@ class MajorService extends BaseService
         }
     }
 
+    public function duplicate($id, $languageId)
+    {
+        DB::beginTransaction();
+        try {
+            // Lấy bản ghi gốc
+            $originalMajor = $this->majorRepository->getMajorById($id, $languageId);
+            if (!$originalMajor) {
+                DB::rollBack();
+                return false;
+            }
+
+            // Tạo payload từ bản ghi gốc
+            $payload = [];
+            foreach ($this->payload() as $field) {
+                $value = $originalMajor->$field ?? null;
+                // Xử lý các trường không được null
+                if ($field === 'is_home' && ($value === null || $value === '')) {
+                    $value = 0; // Mặc định không hiển thị trang chủ
+                } elseif ($field === 'major_catalogue_id' && ($value === null || $value === '')) {
+                    $value = 0; // Mặc định không có catalogue
+                } elseif ($field === 'publish' && ($value === null || $value === '')) {
+                    $value = 1; // Mặc định không publish
+                }
+                $payload[$field] = $value;
+            }
+            $payload['user_id'] = Auth::id();
+            $payload['publish'] = 1; // Mặc định là không publish
+            // Đảm bảo is_home có giá trị nếu vẫn null
+            if (!isset($payload['is_home']) || $payload['is_home'] === null) {
+                $payload['is_home'] = 0;
+            }
+
+            // Tạo major mới
+            $newMajor = $this->majorRepository->create($payload);
+            $languagePayload = null;
+
+            if ($newMajor->id > 0) {
+                // Copy dữ liệu language
+                $pivot = $originalMajor->languages->first()->pivot ?? null;
+                if ($pivot) {
+                    $languagePayload = [];
+                    foreach ($this->payloadLanguage() as $field) {
+                        $languagePayload[$field] = $pivot->$field ?? '';
+                    }
+                    
+                    // Thêm "- clone" vào tiêu đề
+                    $originalName = $languagePayload['name'] ?? '';
+                    $languagePayload['name'] = $originalName . ' - clone';
+                    
+                    // Xử lý canonical với timestamp
+                    $timestamp = time();
+                    $originalCanonical = $languagePayload['canonical'] ?? '';
+                    $languagePayload['canonical'] = $originalCanonical . '-' . $timestamp;
+                    
+                    // Copy các trường JSON
+                    $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+                    foreach ($jsonFields as $field) {
+                        $languagePayload[$field] = $pivot->$field ?? [];
+                    }
+                    
+                    // Tạo Request object với dữ liệu
+                    $request = \Illuminate\Http\Request::create('', 'POST', $languagePayload);
+                    $this->updateLanguageForMajor($newMajor, $request, $languageId);
+                }
+
+                // Tạo router mới với canonical mới
+                if ($languagePayload && isset($languagePayload['canonical'])) {
+                    $routerRequest = \Illuminate\Http\Request::create('', 'POST', [
+                        'canonical' => $languagePayload['canonical'],
+                    ]);
+                    $this->createRouter($newMajor, $routerRequest, $this->controllerName, $languageId);
+                }
+            }
+
+            DB::commit();
+            return $newMajor;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();
+            die();
+            return false;
+        }
+    }
+
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -171,9 +255,77 @@ class MajorService extends BaseService
         $payload['target'] = $request->input('target', []);
         $payload['address'] = $request->input('address', []);
         $payload['overview'] = $request->input('overview', []);
-        $payload['who'] = $request->input('who', []);
-        $payload['priority'] = $request->input('priority', []);
-        $payload['learn'] = $request->input('learn', []);
+        
+        // Format who data: tách title và items
+        $whoData = $request->input('who', []);
+        $whoFormatted = [];
+        if (!empty($whoData)) {
+            // Lấy title nếu có
+            if (isset($whoData['title'])) {
+                $whoFormatted['title'] = $whoData['title'];
+            }
+            // Lấy items (các key số)
+            $whoItems = [];
+            foreach ($whoData as $key => $value) {
+                if (is_numeric($key) && is_array($value)) {
+                    $whoItems[] = $value;
+                }
+            }
+            if (!empty($whoItems)) {
+                $whoFormatted['items'] = $whoItems;
+            }
+        }
+        $payload['who'] = $whoFormatted;
+        
+        // Format priority data: tách title và items
+        $priorityData = $request->input('priority', []);
+        $priorityFormatted = [];
+        if (!empty($priorityData)) {
+            // Lấy title nếu có
+            if (isset($priorityData['title'])) {
+                $priorityFormatted['title'] = $priorityData['title'];
+            }
+            // Lấy items (các key số)
+            $priorityItems = [];
+            foreach ($priorityData as $key => $value) {
+                if (is_numeric($key) && is_array($value)) {
+                    $priorityItems[] = $value;
+                }
+            }
+            if (!empty($priorityItems)) {
+                $priorityFormatted['items'] = $priorityItems;
+            }
+        }
+        $payload['priority'] = $priorityFormatted;
+        
+        // Format learn data: tách title, description và items
+        $learnData = $request->input('learn', []);
+        $learnFormatted = [];
+        if (!empty($learnData)) {
+            // Lấy title nếu có
+            if (isset($learnData['title'])) {
+                $learnFormatted['title'] = $learnData['title'];
+            }
+            // Lấy description nếu có
+            if (isset($learnData['description'])) {
+                $learnFormatted['description'] = $learnData['description'];
+            }
+            // Lấy items (các key số hoặc key 'items')
+            $learnItems = [];
+            if (isset($learnData['items']) && is_array($learnData['items'])) {
+                $learnItems = $learnData['items'];
+            } else {
+                foreach ($learnData as $key => $value) {
+                    if (is_numeric($key) && is_array($value)) {
+                        $learnItems[] = $value;
+                    }
+                }
+            }
+            if (!empty($learnItems)) {
+                $learnFormatted['items'] = $learnItems;
+            }
+        }
+        $payload['learn'] = $learnFormatted;
         $payload['chance'] = $request->input('chance', []);
         $payload['school'] = $request->input('school', []);
         $payload['value'] = $request->input('value', []);

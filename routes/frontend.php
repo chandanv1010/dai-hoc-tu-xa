@@ -22,7 +22,10 @@ Route::get('/ajax/projects', [HomeController::class, 'ajaxProject'])->name('home
 Route::get('/', [HomeController::class, 'index'])->name('home.index');
 
 Route::get('lien-he.html', [FeContactController::class, 'index'])->name('contact.index');
+Route::get('cam-on.html', [FeContactController::class, 'thankYou'])->name('contact.thankyou');
 Route::post('contact/save', [FeContactController::class, 'saveContact'])->name('contact.save');
+Route::post('contact/save-roadmap', [FeContactController::class, 'saveRoadmapContact'])->name('contact.save.roadmap');
+Route::post('contact/save-consultation', [FeContactController::class, 'saveConsultationContact'])->name('contact.save.consultation');
 
 Route::get('cac-truong-dao-tao-tu-xa.html', [App\Http\Controllers\Frontend\School\SchoolCatalogueController::class, 'index'])->name('school.catalogue.index');
 Route::get('cac-truong-dao-tao-tu-xa/trang-{page}.html', [App\Http\Controllers\Frontend\School\SchoolCatalogueController::class, 'index'])->name('school.catalogue.page')->where('page', '[0-9]+');

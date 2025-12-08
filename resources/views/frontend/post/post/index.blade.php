@@ -45,12 +45,17 @@
     </div>
 
     <!-- Post Detail Content -->
-    <div class="panel-post-detail">
-        <div class="uk-container uk-container-center">
-            <div class="uk-grid uk-grid-medium" data-uk-grid-match>
-                <!-- Left Column: Post Content -->
-                <div class="uk-width-large-3-4">
-                    <div class="post-content-wrapper">
+    <div class="panel-post-detail {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'no-sidebar' : '' }}">
+        @if($postPivot->canonical === 'lich-khai-giang-du-kien')
+            <div class="uk-container uk-container-center">
+                <div class="post-content-wrapper-full">
+        @else
+            <div class="uk-container uk-container-center">
+                <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                    <!-- Left Column: Post Content -->
+                    <div class="uk-width-large-3-4">
+                        <div class="post-content-wrapper">
+        @endif
                         <article class="post-article">
                             <div class="post-content">
                                 <h1 class="post-title">{{ $postName }}</h1>
@@ -59,43 +64,55 @@
                                         <strong>{!! $postDescription !!}</strong>
                                     </div>
                                 @endif
-                                <x-table-of-contents :content="$contentWithToc" />
-                                {!! $postContent !!}
+                                @if($postPivot->canonical !== 'lich-khai-giang-du-kien')
+                                    <x-table-of-contents :content="$contentWithToc" />
+                                @endif
+                                @if($postPivot->canonical === 'lich-khai-giang-du-kien')
+                                    <div class="table-wrapper">
+                                        {!! $postContent !!}
+                                    </div>
+                                @else
+                                    {!! $postContent !!}
+                                @endif
+                                
+                                <!-- Social Share Buttons -->
+                                @php
+                                    $postCanonical = $postPivot->canonical ?? '';
+                                    $postUrl = $postCanonical ? write_url($postCanonical) : url()->current();
+                                    $encodedUrl = urlencode($postUrl);
+                                    $encodedTitle = urlencode($postName);
+                                @endphp
+                                <div class="post-social-share">
+                                    <div class="social-share-buttons">
+                                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ $encodedUrl }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-facebook" title="Chia sẻ trên Facebook">
+                                            <i class="fa fa-facebook"></i>
+                                        </a>
+                                        <a href="https://twitter.com/intent/tweet?url={{ $encodedUrl }}&text={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-twitter" title="Chia sẻ trên Twitter">
+                                            <i class="fa fa-twitter"></i>
+                                        </a>
+                                        <a href="mailto:?subject={{ $encodedTitle }}&body={{ $encodedUrl }}" class="social-share-btn social-email" title="Chia sẻ qua Email">
+                                            <i class="fa fa-envelope"></i>
+                                        </a>
+                                        <a href="https://pinterest.com/pin/create/button/?url={{ $encodedUrl }}&description={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-pinterest" title="Chia sẻ trên Pinterest">
+                                            <i class="fa fa-pinterest"></i>
+                                        </a>
+                                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ $encodedUrl }}&title={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-linkedin" title="Chia sẻ trên LinkedIn">
+                                            <i class="fa fa-linkedin"></i>
+                                        </a>
+                                        <a href="https://www.tumblr.com/widgets/share/tool?canonicalUrl={{ $encodedUrl }}&title={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-tumblr" title="Chia sẻ trên Tumblr">
+                                            <i class="fa fa-tumblr"></i>
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
                         </article>
 
                         <!-- Contact Information Block -->
                         <div class="post-contact-block">
-                            <h3 class="contact-block-title">{{ $system['post_contact_title'] ?? 'LIÊN HỆ NGAY ĐỂ NHẬN TƯ VẤN NHANH NHẤT:' }}</h3>
-                            <div class="contact-info-list">
-                                @if(isset($system['contact_website']) && $system['contact_website'])
-                                    <div class="contact-info-item">
-                                        <i class="fa fa-globe contact-icon contact-icon-website"></i>
-                                        <span class="contact-label">Trang web:</span>
-                                        <a href="{{ $system['contact_website'] }}" target="_blank" class="contact-link">{{ $system['contact_website'] }}</a>
-                                    </div>
-                                @endif
-                                @if(isset($system['social_facebook']) && $system['social_facebook'])
-                                    <div class="contact-info-item">
-                                        <i class="fa fa-facebook contact-icon contact-icon-fanpage"></i>
-                                        <span class="contact-label">Fanpage:</span>
-                                        <a href="{{ $system['social_facebook'] }}" target="_blank" class="contact-link">{{ $system['social_facebook'] }}</a>
-                                    </div>
-                                @endif
-                                @if(isset($system['contact_address']) && $system['contact_address'])
-                                    <div class="contact-info-item">
-                                        <i class="fa fa-map-marker contact-icon contact-icon-address"></i>
-                                        <span class="contact-label">Địa chỉ:</span>
-                                        <span class="contact-text">{{ $system['contact_address'] }}</span>
-                                    </div>
-                                @endif
-                                @if(isset($system['contact_hotline']) && $system['contact_hotline'])
-                                    <div class="contact-info-item">
-                                        <i class="fa fa-phone contact-icon contact-icon-phone"></i>
-                                        <span class="contact-label">Hotline:</span>
-                                        <a href="tel:{{ $system['contact_hotline'] }}" class="contact-link">{{ $system['contact_hotline'] }}</a>
-                                    </div>
-                                @endif
+                            <div class="contact-block-content">
+                                <p class="contact-text-line-1">50.000+ Học Viên Tin Tưởng và Lựa chọn Hệ Từ Xa Để phát triển bản thân và sự nghiệp</p>
+                                <p class="contact-text-line-2">Nắm lấy cơ hội sở hữu <strong>BẰNG ĐẠI HỌC</strong> ngay hôm nay</p>
+                                <p class="contact-text-line-3">📩 Liên hệ để được tư vấn miễn phí và chọn Trường, chọn ngành học phù hợp nhất</p>
                             </div>
                         </div>
 
@@ -163,7 +180,7 @@
                 </div>
 
                 <!-- Right Column: Aside Posts -->
-                <div class="uk-width-large-1-4">
+                <div class="uk-width-large-1-4 {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'uk-hidden' : '' }}">
                     <div class="post-aside">
                         <div class="aside-posts">
                             <h3 class="aside-title">Bài viết mới</h3>
@@ -269,8 +286,11 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.message === 'success') {
-                        alert('Đăng ký thành công! Chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất.');
-                        form.reset();
+                        if (data.redirect) {
+                            window.location.href = data.redirect;
+                        } else {
+                            window.location.href = '{{ route("contact.thankyou") }}';
+                        }
                     } else {
                         alert('Có lỗi xảy ra. Vui lòng thử lại.');
                     }

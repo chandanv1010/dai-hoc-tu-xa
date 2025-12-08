@@ -778,13 +778,25 @@ class ProductService extends BaseService
     public function calculateReviewForLecturer($courses){
         $totalCourses = $courses->count();
         $reviewCount = 0;
-        $reviewAverage = null;
-        $reviewAverageLecturer = null;
+        $reviewAverage = 0;
+        $reviewAverageLecturer = 0;
+        
         foreach($courses as $item){
-            $reviewCount += $item->rate;
-            $reviewAverage += $item->reviews->avg('score');
+            // Ép kiểu rate về int, mặc định 0 nếu null hoặc không phải số
+            $rate = is_numeric($item->rate) ? (int)$item->rate : 0;
+            $reviewCount += $rate;
+            
+            // Tính trung bình điểm đánh giá, mặc định 0 nếu null
+            $avgScore = $item->reviews->avg('score');
+            $avgScore = is_numeric($avgScore) ? (float)$avgScore : 0;
+            $reviewAverage += $avgScore;
         }
-        $reviewAverageLecturer = round($reviewAverage / $totalCourses, 1);
+        
+        // Tính trung bình, tránh chia cho 0
+        if($totalCourses > 0){
+            $reviewAverageLecturer = round($reviewAverage / $totalCourses, 1);
+        }
+        
         $reviews = [
             'count' => $reviewCount,
             'average' => $reviewAverageLecturer

@@ -6,6 +6,7 @@ use App\Http\Controllers\FrontendController;
 use Illuminate\Http\Request;
 use App\Repositories\MajorRepository;
 use App\Repositories\MajorCatalogueRepository;
+use App\Repositories\SchoolRepository;
 use App\Repositories\SystemRepository;
 
 class MajorCatalogueController extends FrontendController
@@ -14,15 +15,18 @@ class MajorCatalogueController extends FrontendController
     protected $system;
     protected $majorRepository;
     protected $majorCatalogueRepository;
+    protected $schoolRepository;
     protected $systemRepository;
 
     public function __construct(
         MajorRepository $majorRepository,
         MajorCatalogueRepository $majorCatalogueRepository,
+        SchoolRepository $schoolRepository,
         SystemRepository $systemRepository,
     ) {
         $this->majorRepository = $majorRepository;
         $this->majorCatalogueRepository = $majorCatalogueRepository;
+        $this->schoolRepository = $schoolRepository;
         $this->systemRepository = $systemRepository;
         parent::__construct();
     }
@@ -45,11 +49,17 @@ class MajorCatalogueController extends FrontendController
             return $page;
         });
 
-        // Lấy danh sách majors với phân trang
+        // Lấy danh sách majors với phân trang (có filter)
         $majors = $this->majorRepository->paginate($request, $this->language, 12, 'cac-nganh-dao-tao-tu-xa.html');
         
         // Lấy danh sách major catalogues để hiển thị filter tabs
         $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
+        
+        // Lấy danh sách schools cho filter
+        $schools = $this->schoolRepository->getAllSchools($this->language, 0);
+        
+        // Lấy danh sách các giá trị duration duy nhất từ majors
+        $durations = $this->majorRepository->getDistinctDurations($this->language);
         
         // Lấy SEO từ system
         $seo = $this->getSeo($page);
@@ -65,6 +75,8 @@ class MajorCatalogueController extends FrontendController
             'system',
             'majors',
             'majorCatalogues',
+            'schools',
+            'durations',
             'page'
         ));
     }

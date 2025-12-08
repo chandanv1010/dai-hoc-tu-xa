@@ -27,30 +27,30 @@ return [
         //         ],
         //     ]
         // ],
-        // [
-        //     'title' => 'QL Sản Phẩm',
-        //     'icon' => 'fa fa-cube',
-        //     'name' => ['product','attribute'],
-        //     'subModule' => [
-        //         [
-        //             'title' => 'QL Nhóm Sản Phẩm',
-        //             'route' => 'product/catalogue/index'
-        //         ],
-        //         [
-        //             'title' => 'QL Sản phẩm',
-        //             'route' => 'product/index'
-        //         ],
-        //         [
-        //             'title' => 'QL Loại thuộc tính',
-        //             'route' => 'attribute/catalogue/index'
-        //         ],
-        //         [
-        //             'title' => 'QL thuộc tính',
-        //             'route' => 'attribute/index'
-        //         ],
-        //
-        //     ]
-        // ],
+        [
+            'title' => 'QL Khóa Học',
+            'icon' => 'fa fa-cube',
+            'name' => ['product','attribute'],
+            'subModule' => [
+                [
+                    'title' => 'QL Danh Mục Khóa Học',
+                    'route' => 'product/catalogue/index'
+                ],
+                [
+                    'title' => 'QL Khóa Học',
+                    'route' => 'product/index'
+                ],
+                [
+                    'title' => 'QL Loại thuộc tính',
+                    'route' => 'attribute/catalogue/index'
+                ],
+                [
+                    'title' => 'QL thuộc tính',
+                    'route' => 'attribute/index'
+                ],
+
+            ]
+        ],
         // [
         //     'title' => 'QL đơn hàng',
         //     'icon' => 'fa fa-shopping-bag',
@@ -178,12 +178,12 @@ return [
                 ]
             ]
         ],
-        // [
-        //     'title' => 'QL Giảng Viên',
-        //     'icon' => 'fa fa-user',
-        //     'name' => ['lecturer'],
-        //     'route' => 'lecturer/index'
-        // ],
+        [
+            'title' => 'QL Giảng Viên',
+            'icon' => 'fa fa-user',
+            'name' => ['lecturer'],
+            'route' => 'lecturer/index'
+        ],
         [
             'title' => 'Giới thiệu',
             'icon' => 'fa fa-user',

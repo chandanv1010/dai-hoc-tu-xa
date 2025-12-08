@@ -191,6 +191,41 @@
 		});
 	}
 
+	HT.schoolsListSwiper = () => {
+		var slideContainer = document.querySelector(".schools-list-swiper");
+		if (!slideContainer) return;
+		
+		var slides = slideContainer.querySelectorAll('.swiper-slide');
+		var slideCount = slides.length;
+		// Với slidesPerView tối đa là 3, cần ít nhất 6 slides để loop hoạt động tốt
+		var enableLoop = slideCount > 3;
+		
+		var swiper = new Swiper(".schools-list-swiper", {
+			loop: enableLoop,
+			navigation: {
+				nextEl: '.schools-list-swiper .swiper-button-next',
+				prevEl: '.schools-list-swiper .swiper-button-prev',
+			},
+			spaceBetween: 30,
+			slidesPerView: 1,
+			autoHeight: false,
+			breakpoints: {
+				640: {
+					slidesPerView: 1,
+					spaceBetween: 20,
+				},
+				768: {
+					slidesPerView: 2,
+					spaceBetween: 30,
+				},
+				1024: {
+					slidesPerView: 3,
+					spaceBetween: 30,
+				}
+			}
+		});
+	}
+
 	HT.service = () => {
 		var slideContainer = document.querySelector('.panel-service-1 .swiper-container');
 		if (!slideContainer) return;
@@ -1443,6 +1478,7 @@
 		HT.swiperAsideFeature()
 		HT.feedbackSwiper()
 		HT.schoolsSwiper()
+		HT.schoolsListSwiper()
 		
 		/* CORE JS */
         HT.swiper()

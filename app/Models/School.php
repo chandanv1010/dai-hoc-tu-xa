@@ -38,12 +38,15 @@ class School extends Model
         'is_show_feedback',
         'is_show_event',
         'is_show_value',
+        'form_script',
+        'form_json',
     ];
 
     protected $table = 'schools';
 
     protected $casts = [
         'album' => 'array',
+        'form_json' => 'array',
     ];
 
     public function languages(){

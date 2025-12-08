@@ -109,77 +109,78 @@
             <div class="uk-grid uk-grid-large" data-uk-grid-match>
                 {{-- Cột trái: Nội dung chính --}}
                 <div class="uk-width-large-3-4 major-detail-left">
-                    {{-- Header với ảnh và badges --}}
-                    <div class="major-detail-header wow fadeInUp" data-wow-delay="0.2s">
-                        <div class="major-detail-header-content">
-                            @if(!empty($major->image))
-                                <div class="major-detail-image">
-                                    <span class="image img-cover">
-                                        <img src="{{ image($major->image) }}" alt="{{ $name }}">
-                                    </span>
-                                </div>
-                            @endif
-                            <div class="major-detail-header-text">
-                                <h2 class="major-detail-title">{{ $name }} - Hệ Đào Tạo Từ Xa</h2>
-                                <div class="major-detail-badges">
-                                    <span class="badge-item">Bằng chính quy</span>
-                                    <span class="badge-item">Công nhận toàn quốc</span>
-                                    <span class="badge-item">Học 100% online</span>
+                    <div class="major-detail-content-wrapper">
+                        {{-- Header với ảnh và badges --}}
+                        <div class="major-detail-header wow fadeInUp" data-wow-delay="0.2s">
+                            <div class="major-detail-header-content">
+                                @if(!empty($major->image))
+                                    <div class="major-detail-image">
+                                        <span class="image img-cover">
+                                            <img src="{{ image($major->image) }}" alt="{{ $name }}">
+                                        </span>
+                                    </div>
+                                @endif
+                                <div class="major-detail-header-text">
+                                    <h2 class="major-detail-title">{{ $name }} - Hệ Đào Tạo Từ Xa</h2>
                                 </div>
                             </div>
+                            <div class="major-detail-badges">
+                                <span class="badge-item">Bằng TĐ Chính Quy</span>
+                                <span class="badge-item">Công nhận toàn quốc</span>
+                                <span class="badge-item">Học 100% online</span>
+                            </div>
                         </div>
-                    </div>
 
-                    {{-- 4 boxes thông tin --}}
-                    <div class="major-info-boxes wow fadeInUp" data-wow-delay="0.3s">
-                        <div class="uk-grid uk-grid-small">
+                        {{-- 4 boxes thông tin --}}
+                        <div class="major-info-boxes wow fadeInUp" data-wow-delay="0.3s">
+                            <div class="uk-grid uk-grid-small">
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
                                 <div class="info-box">
-                                    <div class="info-box-label">HÌNH THỨC</div>
+                                    <div class="info-box-label">Hình thức học</div>
                                     <div class="info-box-value">{{ $studyMethod ?: 'Online 100%' }}</div>
                                 </div>
                             </div>
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
                                 <div class="info-box">
-                                    <div class="info-box-label">THỜI GIAN</div>
+                                    <div class="info-box-label">Thời gian đào tạo</div>
                                     <div class="info-box-value">{{ $trainingDuration ?: '1,5 - 4,5 năm' }}</div>
                                 </div>
                             </div>
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
                                 <div class="info-box">
-                                    <div class="info-box-label">TUYỂN SINH</div>
+                                    <div class="info-box-label">Tổng số tín chỉ</div>
                                     <div class="info-box-value">{{ $admissionMethod ?: 'Xét học bạ' }}</div>
                                 </div>
                             </div>
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
                                 <div class="info-box">
-                                    <div class="info-box-label">VĂN BẰNG</div>
+                                    <div class="info-box-label">Bằng cấp</div>
                                     <div class="info-box-value">{{ $degreeType ?: 'Cử nhân' }}</div>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    {{-- Tổng quan chương trình --}}
-                    @if(!empty($overview))
-                        @php
-                            $overviewName = $overview['name'] ?? 'Tổng quan chương trình';
-                            $overviewDescription = $overview['description'] ?? '';
-                            $overviewItems = $overview['items'] ?? [];
-                        @endphp
-                        <div class="major-section major-overview wow fadeInUp" data-wow-delay="0.4s">
-                            <h3 class="section-title">{{ $overviewName }}</h3>
-                            @if(!empty($content))
-                            <div class="major-overview-content">
-                                {!! $content !!}
                             </div>
-                            @endif
                         </div>
-                    @endif
+
+                        {{-- Tổng quan chương trình --}}
+                        @if(!empty($overview))
+                            @php
+                                $overviewName = $overview['name'] ?? 'Tổng quan chương trình';
+                                $overviewDescription = $overview['description'] ?? '';
+                                $overviewItems = $overview['items'] ?? [];
+                            @endphp
+                            <div class="major-section major-overview wow fadeInUp" data-wow-delay="0.4s">
+                                <h3 class="section-title">{{ $overviewName }}</h3>
+                                @if(!empty($content))
+                                <div class="major-overview-content">
+                                    {!! $content !!}
+                                </div>
+                                @endif
+                            </div>
+                        @endif
 
 
-                    {{-- Đối tượng tuyển sinh, Các Trường Đào Tạo và Nơi tiếp nhận hồ sơ --}}
-                    <div class="major-three-columns wow fadeInUp" data-wow-delay="0.6s">
+                        {{-- Đối tượng tuyển sinh, Các Trường Đào Tạo và Nơi tiếp nhận hồ sơ --}}
+                        <div class="major-three-columns wow fadeInUp" data-wow-delay="0.6s">
                         <div class="uk-grid uk-grid-medium">
                             {{-- Đối tượng tuyển sinh --}}
                             @if(!empty($who) && is_array($who))
@@ -256,6 +257,7 @@
                                 @endif
                             @endif
                         </div>
+                    </div>
                     </div>
                 </div>
 
@@ -395,11 +397,23 @@
 
     {{-- Ai Phù Hợp Theo Hình Thức Đào Tạo? --}}
     @if(!empty($who) && is_array($who) && count($who) > 0)
+        @php
+            // Lấy title từ JSON, nếu không có thì dùng giá trị mặc định
+            $suitableTitle = isset($who['title']) && !empty($who['title']) ? $who['title'] : 'Ai Phù Hợp Theo Hình Thức Đào Tạo?';
+            // Lấy items từ who (có thể là mảng trực tiếp hoặc trong key 'items')
+            $whoItems = [];
+            if (isset($who['items']) && is_array($who['items'])) {
+                $whoItems = $who['items'];
+            } elseif (isset($who[0]) && is_array($who[0])) {
+                // Fallback: nếu không có 'items', có thể who là mảng trực tiếp các items
+                $whoItems = $who;
+            }
+        @endphp
         <div class="panel-major-suitable wow fadeInUp" data-wow-delay="0.2s">
             <div class="uk-container uk-container-center uk-container-1260">
-                <h2 class="suitable-title wow fadeInUp" data-wow-delay="0.3s">Ai Phù Hợp Theo Hình Thức Đào Tạo?</h2>
+                <h2 class="suitable-title wow fadeInUp" data-wow-delay="0.3s">{{ $suitableTitle }}</h2>
                 <div class="suitable-cards-grid">
-                    @foreach($who as $index => $item)
+                    @foreach($whoItems as $index => $item)
                         @php
                             $itemImage = is_array($item) ? ($item['image'] ?? '') : '';
                             $itemName = is_array($item) ? ($item['name'] ?? '') : '';
@@ -435,13 +449,20 @@
     {{-- Ưu điểm --}}
     @if(!empty($priority) && is_array($priority) && count($priority) > 0)
         @php
-            $priorityItems = $priority;
+            // Lấy title từ JSON, nếu không có thì dùng giá trị mặc định
+            $priorityTitle = isset($priority['title']) && !empty($priority['title']) ? $priority['title'] : 'Ưu điểm khi học Đại học từ xa Ngành Ngôn Ngữ Anh';
+            // Lấy items từ priority (có thể là mảng trực tiếp hoặc trong key 'items')
+            $priorityItems = isset($priority['items']) && is_array($priority['items']) ? $priority['items'] : [];
+            // Nếu không có 'items', có thể priority là mảng trực tiếp các items
+            if (empty($priorityItems) && isset($priority[0])) {
+                $priorityItems = $priority;
+            }
             $priorityVisible = array_slice($priorityItems, 0, 5);
             $priorityHidden = array_slice($priorityItems, 5);
         @endphp
         <div class="panel-major-advantage wow fadeInUp" data-wow-delay="0.2s">
             <div class="uk-container uk-container-center uk-container-1260">
-                <h2 class="advantage-title wow fadeInUp" data-wow-delay="0.3s">Ưu điểm khi học Đại học từ xa Ngành Ngôn Ngữ Anh</h2>
+                <h2 class="advantage-title wow fadeInUp" data-wow-delay="0.3s">{{ $priorityTitle }}</h2>
                 <div class="advantage-cards-grid">
                     @foreach($priorityVisible as $index => $item)
                         @php
@@ -510,7 +531,7 @@
                         <span class="consultation-title-highlight">hệ Đại học Từ Xa!</span>
                     </h2>
                     <div class="consultation-button-wrapper">
-                        <a href="#register-modal" class="consultation-button" data-uk-modal>
+                        <a href="#consultation-modal" class="consultation-button" data-uk-modal>
                             <i class="fa fa-headphones"></i>
                             <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
                         </a>
@@ -530,12 +551,13 @@
     {{-- Bạn sẽ học được những gì? --}}
     @if(!empty($learn) && is_array($learn) && isset($learn['items']) && is_array($learn['items']) && count($learn['items']) > 0)
         @php
+            $learnTitle = isset($learn['title']) && !empty($learn['title']) ? $learn['title'] : 'Bạn sẽ được học những gì?';
             $learnDescription = $learn['description'] ?? '';
             $learnCategories = $learn['items'] ?? [];
         @endphp
         <div class="panel-major-learn wow fadeInUp" data-wow-delay="0.2s">
             <div class="uk-container uk-container-center uk-container-1260">
-                <h2 class="learn-title wow fadeInUp" data-wow-delay="0.3s">Bạn sẽ được học những gì?</h2>
+                <h2 class="learn-title wow fadeInUp" data-wow-delay="0.3s">{{ $learnTitle }}</h2>
                 @if(!empty($learnDescription))
                     <p class="learn-subtitle wow fadeInUp" data-wow-delay="0.4s">{{ $learnDescription }}</p>
                 @endif
@@ -577,7 +599,7 @@
                                                 $itemDescription = is_array($item) ? ($item['description'] ?? '') : '';
                                             @endphp
                                             @if(!empty($itemName))
-                                                <div class="learn-card wow fadeInUp" data-wow-delay="{{ (0.6 + ($loop->index * 0.1)) }}s">
+                                                <div class="learn-card">
                                                     <div class="learn-card-header">
                                                         @if(!empty($itemImage))
                                                             <div class="learn-card-icon">
@@ -666,11 +688,6 @@
                                 @endphp
                                 @if(!empty($jobName))
                                     <div class="career-job-card wow fadeInUp" data-wow-delay="{{ (0.7 + ($loop->index * 0.1)) }}s">
-                                        @if(!empty($jobImage))
-                                            <div class="career-job-icon">
-                                                <img src="{{ image($jobImage) }}" alt="{{ $jobName }}">
-                                            </div>
-                                        @endif
                                         <h3 class="career-job-title">{{ $jobName }}</h3>
                                         @if(!empty($jobDescription))
                                             <p class="career-job-description">{{ $jobDescription }}</p>
@@ -831,6 +848,8 @@
                                     @php
                                         $schoolPivot = $schoolItem->languages->first()->pivot ?? null;
                                         $schoolName = $schoolPivot->name ?? '';
+                                        $schoolCanonical = $schoolPivot->canonical ?? '';
+                                        $schoolUrl = $schoolCanonical ? write_url($schoolCanonical) : '#';
                                         // Lấy dữ liệu từ school_language.majors (JSON) - là mảng trực tiếp
                                         $schoolMajors = is_array($schoolPivot->majors ?? null) ? $schoolPivot->majors : (is_string($schoolPivot->majors ?? null) ? json_decode($schoolPivot->majors, true) : []);
                                         // Tìm major hiện tại trong danh sách majors của school
@@ -846,7 +865,7 @@
                                     @endphp
                                     @if(!empty($schoolName) && !empty($currentMajorData))
                                         <tr>
-                                            <td><strong>{{ $schoolName }}</strong></td>
+                                            <td><strong><a href="{{ $schoolUrl }}" class="school-name-link">{{ $schoolName }}</a></strong></td>
                                             <td>{{ $currentMajorData['admission_method'] ?? '' }}</td>
                                             <td>{{ $currentMajorData['duration'] ?? '' }}</td>
                                             <td>{{ $currentMajorData['credits'] ?? '' }}</td>
@@ -1305,6 +1324,30 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     @endif
+
+    // Xử lý switcher tabs để hiển thị content ngay khi click
+    $(document).on('click', '.learn-switcher-tabs li', function() {
+        var $switcher = UIkit.switcher($(this).closest('.learn-switcher-tabs'));
+        var activeIndex = $(this).index();
+        
+        // Đợi animation fade hoàn thành rồi hiển thị content ngay
+        setTimeout(function() {
+            var $activeContent = $('#learn-switcher-content li').eq(activeIndex);
+            if ($activeContent.length) {
+                // Hiển thị ngay lập tức, không cần animation
+                $activeContent.find('.learn-card').each(function() {
+                    var $card = $(this);
+                    $card.css({
+                        'visibility': 'visible',
+                        'opacity': '1',
+                        'animation': 'none'
+                    });
+                    // Remove wow classes để không bị ảnh hưởng
+                    $card.removeClass('wow fadeInUp fadeInDown fadeInLeft fadeInRight');
+                });
+            }
+        }, 100);
+    });
 });
 </script>
 @endsection

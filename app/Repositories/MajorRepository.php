@@ -193,8 +193,45 @@ class MajorRepository extends BaseRepository
             ]
         )
         ->where('majors.publish', '=', 2)
-        ->whereNull('majors.deleted_at')
-        ->orderBy('majors.id', 'asc');
+        ->whereNull('majors.deleted_at');
+
+        // Filter theo school_id (có thể là array nếu dùng checkbox)
+        if ($request->has('school_id')) {
+            $schoolIds = is_array($request->school_id) ? $request->school_id : [$request->school_id];
+            $schoolIds = array_filter($schoolIds);
+            if (!empty($schoolIds)) {
+                $query->whereHas('schools', function($q) use ($schoolIds) {
+                    $q->whereIn('schools.id', $schoolIds);
+                });
+            }
+        }
+
+        // Filter theo training_duration (có thể là array nếu dùng checkbox)
+        if ($request->has('duration')) {
+            $durations = is_array($request->duration) ? $request->duration : [$request->duration];
+            $durations = array_filter($durations);
+            if (!empty($durations)) {
+                $query->whereHas('languages', function($q) use ($language_id, $durations) {
+                    $q->where('languages.id', $language_id);
+                    $q->where(function($subQuery) use ($durations) {
+                        foreach ($durations as $duration) {
+                            $subQuery->orWhere('major_language.training_duration', 'LIKE', '%' . $duration . '%');
+                        }
+                    });
+                });
+            }
+        }
+
+        // Filter theo major_catalogue_id (nhóm ngành)
+        if ($request->has('catalogue_id')) {
+            $catalogueIds = is_array($request->catalogue_id) ? $request->catalogue_id : [$request->catalogue_id];
+            $catalogueIds = array_filter($catalogueIds);
+            if (!empty($catalogueIds)) {
+                $query->whereIn('majors.major_catalogue_id', $catalogueIds);
+            }
+        }
+
+        $query->orderBy('majors.id', 'asc');
 
         $paginationPath = ($path === 'cac-nganh-dao-tao-tu-xa.html') 
             ? config('app.url') . '/cac-nganh-dao-tao-tu-xa.html'
@@ -246,5 +283,24 @@ class MajorRepository extends BaseRepository
             })
             ->orderBy('majors.id', 'desc')
             ->paginate($perPage)->withQueryString()->withPath(config('app.url'). 'tim-kiem');
+    }
+
+    public function getDistinctDurations($language_id = 0)
+    {
+        $durations = $this->model->select('major_language.training_duration')
+            ->join('major_language', 'major_language.major_id', '=', 'majors.id')
+            ->where('major_language.language_id', '=', $language_id)
+            ->where('majors.publish', '=', 2)
+            ->whereNull('majors.deleted_at')
+            ->whereNotNull('major_language.training_duration')
+            ->where('major_language.training_duration', '!=', '')
+            ->distinct()
+            ->pluck('training_duration')
+            ->filter()
+            ->unique()
+            ->sort()
+            ->values();
+        
+        return $durations;
     }
 }

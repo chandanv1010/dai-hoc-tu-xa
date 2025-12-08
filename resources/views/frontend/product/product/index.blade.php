@@ -1,231 +1,379 @@
 @php
-    $name = $product->name;
-    $canonical = write_url($product->canonical);
-    $image = image($product->image);
+    $productLanguage = $product->languages->first();
+    $name = $productLanguage ? $productLanguage->pivot->name : 'Khóa học';
+    $canonical = $productLanguage ? write_url($productLanguage->pivot->canonical) : '#';
+    $image = $product->image;
     $price = getPrice($product);
-    $catName = $productCatalogue->name;
-    $review = getReview($product);
-    $description = $product->description;
-    $attributeCatalogue = $product->attributeCatalogue;
-    $gallery = json_decode($product->album);
+    $description = $productLanguage ? ($productLanguage->pivot->description ?? '') : '';
+    $content = $productLanguage ? ($productLanguage->pivot->content ?? '') : '';
+    $gallery = json_decode($product->album, true) ?? [];
     $iframe = $product->iframe;
+    $qrcode = $product->qrcode;
+    $totalLesson = $product->total_lesson ?? 0;
+    $duration = $product->duration ?? 0;
+    $rate = $product->rate ?? '';
     $lessionContent = !is_null($product->lession_content) ? explode(',', $product->lession_content) : null;
     $total_time = !is_null($product->chapter) ? calculateCourses($product)['durationText'] : '';
-    $totalLessons = collect($product->chapter)
-    ->flatMap(fn ($chapter) => $chapter['content'] ?? [])
-    ->count();
+    $totalLessons = !is_null($product->chapter) ? collect($product->chapter)
+        ->flatMap(fn ($chapter) => $chapter['content'] ?? [])
+        ->count() : 0;
     $modelId = $product->id;
+    
+    // Lecturer info
+    $lecturer = $product->lecturers ?? null;
+    
+    // Format price
+    $productPrice = $product->price ?? 0;
+    $priceSale = ($price['priceSale'] > 0) ? $price['priceSale'] : $productPrice;
+    $priceFormatted = number_format($priceSale, 0, ',', '.');
+    $priceOld = ($price['priceSale'] > 0) ? $price['price'] : null;
+    $priceOldFormatted = $priceOld ? number_format($priceOld, 0, ',', '.') : null;
 @endphp
 @extends('frontend.homepage.layout')
 @section('content')
-    @php
-        $breadcrumbImage = !empty($productCatalogue->album) ? json_decode($productCatalogue->album, true)[0] : asset('userfiles/image/system/breadcrumb.png');
-    @endphp
-    <div class="product-container">
-        <div class="cources-info">
-            <div class="uk-container uk-container-center uk-container-1260">
-                <div class="panel-body">
-                    @include('frontend.product.product.component.detail', ['product' => $product, 'productCatalogue' => $productCatalogue])
-                </div>
-            </div>
-        </div>
+    {{-- Breadcrumb --}}
+    @include('frontend.component.breadcrumb', ['model' => $productCatalogue, 'breadcrumb' => $breadcrumb ?? null])
+    
+    <div class="product-detail-page page-wrapper">
         <div class="uk-container uk-container-center">
-            <div class="main-content product-main-content mt30">
-                <div class="uk-grid uk-grid-medium">
-                    <div class="uk-width-medium-3-4">
-                        <div class="tabs-content">
-                            <ul data-uk-switcher="{connect:'#my-id'}" class="nab-tavs uk-grid uk-grid-collapse uk-width-small-1-2 uk-grid-width-medium-1-4">
-                                <li  class="uk-active"><a href="">Tổng Quan</a></li>
-                                <li><a href="">Chương trình</a></li>
-                                <li><a href="">Giảng Viên</a></li>
-                                <li ><a href="">Đánh Giá</a></li>
-                            </ul>
-                            <ul id="my-id" class="uk-switcher">
-                                <li>
-                                    <div class="product-tabs-content">
-                                        {!! $product->content !!}
-                                    </div>
-                                </li>
-                                <li >
-                                    <div class="product-tabs-content">
-
-                                        <div class="uk-accordion" data-uk-accordion>
-                                            @if(!is_null($product->chapter) && count($product->chapter) && is_array($product->chapter) )
-                                            @foreach($product->chapter as $key => $chapter)
-                                            @php
-                                                $chapterName = explode(',', $chapter['title']);
-                                            @endphp
-                                            <div class="chapter uk-accordion-title">
-                                                <div class="chapter-item">
-                                                    <div class="uk-flex uk-flex-middle uk-flex-space-between">
-                                                        <div class="chapter-content">
-                                                            <div class="chapter-title">{{ $chapterName[0] }}</div>
-                                                            <div class="chapter-description">{{ $chapterName[1] ?? '-' }}</div>
+            {{-- Row 1: Gallery + Product Info --}}
+            <div class="product-detail-row-1">
+                <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                    {{-- Left: Gallery --}}
+                    <div class="uk-width-medium-1-2">
+                        @php
+                            $galleryItems = [];
+                            
+                            // Add main image first
+                            if($image) {
+                                $galleryItems[] = ['type' => 'image', 'content' => $image];
+                            }
+                            
+                            // Add gallery images
+                            if(!empty($gallery) && is_array($gallery)) {
+                                foreach($gallery as $galleryImage) {
+                                    $galleryItems[] = ['type' => 'image', 'content' => $galleryImage];
+                                }
+                            }
+                            
+                            // Add QR code last (chỉ thêm QR nếu có)
+                            if($qrcode) {
+                                $galleryItems[] = ['type' => 'qrcode', 'content' => $qrcode];
+                            }
+                        @endphp
+                        <div class="product-gallery wow fadeInLeft" data-wow-duration="0.8s" data-wow-delay="0.1s">
+                            @if($image)
+                                <div class="product-main-image">
+                                    <img src="{{ asset($image) }}" alt="{{ $name }}" style="width: 100%; height: auto; border-radius: 12px;">
+                                </div>
+                            @endif
+                        </div>
+                        {{-- Testimonials Marquee --}}
+                        @php
+                            $productReviews = $product->reviews()->where('status', 1)->get();
+                        @endphp
+                        @if($productReviews->isNotEmpty())
+                            <div class="testimonials-marquee-section">
+                                <div class="marquee-wrapper">
+                                    <div class="marquee-content">
+                                        @foreach($productReviews as $review)
+                                            <div class="testimonial-card">
+                                                <div class="quote-icon">"</div>
+                                                <div class="testimonial-header">
+                                                    @if($review->image)
+                                                        <div class="avatar">
+                                                            <img src="{{ $review->image }}" alt="{{ $review->fullname }}">
                                                         </div>
-                                                        <div class="chapter-action">
-                                                            <span class="unlock">Chi tiết</span>
+                                                    @else
+                                                        <div class="avatar avatar-placeholder">
+                                                            <span>{{ strtoupper(substr($review->fullname, 0, 1)) }}</span>
                                                         </div>
+                                                    @endif
+                                                    <div class="rating">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <= floor($review->score))
+                                                                <i class="fa fa-star"></i>
+                                                            @elseif($i - 0.5 <= $review->score)
+                                                                <i class="fa fa-star-half-o"></i>
+                                                            @else
+                                                                <i class="fa fa-star-o"></i>
+                                                            @endif
+                                                        @endfor
                                                     </div>
                                                 </div>
-                                                @if(isset($chapter['content']) && count($chapter['content']))
-                                                    <div class="uk-accordion-content">
-                                                        <div class="chapter-lession">
-                                                            @foreach($chapter['content'] as $index => $chapterContent)
-                                                            <div class="lesstion-item">
-                                                                <div class="uk-flex uk-flex-middle uk-flex-space-between">
-                                                                    <div class="lesstion-content uk-flex uk-flex-middle">
-                                                                        <div class="number">{{ $index + 1 }}</div>
-                                                                        <div>
-                                                                            <div class="title">{{ $chapterContent['title'] }}</div>
-                                                                            <div class="description">{{ $chapterContent['description'] }}</div>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="lession-info">
-                                                                        <div class="uk-flex uk-flex-middle">
-                                                                            <span class="time">{{ $chapterContent['time'] }} phút</span>
-                                                                            <span class="lession-type">{{ $chapterContent['type'] }}</span>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            @endforeach
-                                                        </div>
-                                                    </div>
-                                                @endif
+                                                <div class="testimonial-content">
+                                                    <h4 class="reviewer-name">{{ $review->fullname }}</h4>
+                                                    <p class="testimonial-text">{!! $review->description !!}</p>
+                                                </div>
                                             </div>
-                                            @endforeach
-                                            @endif
-                                        </div>
-                                        <div class="program-notice mt20">
-                                            <p>
-                                                <h3>Điều kiện cấp chứng nhận:</h3>
-                                                <p>Toàn bộ các khóa học của OM'E Việt Nam đều cấp chứng nhận tham gia khóa học và chứng nhận hoàn thành khóa học với điều kiện:</p>
-                                                <p> 1. Chứng nhận tham gia khóa học: Hoàn thành tất cả các bài giảng của khóa</p>
-                                                <p>2. Chứng nhận hoàn thành khóa học:</p>
-                                                <p> Hoàn thành tất cả các bài giảng trong khóa học</p>
-                                                <p>Trả lời đạt tối thiểu 70% số điểm của bài kiểm tra cuối khóa</p>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </li>
-                                <li >
-                                    <div class="product-tabs-content">
-                                        <div class="teacher-head uk-text-center">
-                                            <span class="image"><img src="{{ $product->lecturers->image }}" alt=""></span>
-                                            <div class="teacher-name text-bold">{{ $product->lecturers->name }}</div>
-                                            <div class="teacher-position">{{ $product->lecturers->position }}</div>
-                                        </div>
-                                        <div class="teacher-description">
-                                            {!! $product->lecturers->description !!}
-                                        </div>
-                                    </div>
-                                </li>
-                                <li>
-                                    @include('frontend.product.product.component.review', ['model' => $product, 'reviewable' => 'App\Models\Product'])
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="uk-width-medium-1-4">
-                        <div>
-                            <div class="product-price-box">
-                                <div class="price-content">
-                                    @if($price['percent'] > 0)
-                                        <div class="price-old">{{ convert_price($price['price'], true) }}đ</div>
-                                    @endif
-                                    <div class="price-new">
-                                        {{ $price['percent'] > 0 ? convert_price($price['priceSale'], true) : convert_price($price['price'], true) }}
-                                    </div>
-                                    @if($price['percent'] > 0)
-                                        <div class="price-save">Tiết kiệm: {{ convert_price($price['price'] - $price['priceSale'], true) }}đ</div>
-                                    @endif
-                                </div>
-                                <div class="cart-button">
-                                    <button class="addToCart" data-id="{{ $product->id }}">Thêm vào giỏ hàng</button>
-                                    <button class="addToCart" data-redirect="1" data-id="{{ $product->id }}">Mua ngay</button>
-                                </div>
-                                @if($price['percent'] > 0)
-                                    <div class="discount-time">⏰ Ưu đãi kết thúc sau {{ $promotionLeft }} ngày</div>
-                                @endif
-                            </div>
-                            <div class="course-content">
-                                <div class="title">Khóa học bao gồm:</div>
-                                    <ul class="uk-list uk-clearfix">
-                                        <li><span>Thời gian: {{ $total_time }}</span></li>
-                                        <li><span>Số bài học: {{ $totalLessons }} Bài Giảng</span></li>
-                                        <li><span>Cấp chứng nhận hoàn thành</span></li>
-                                        @if(!is_null($lessionContent) && is_array($lessionContent) && count($lessionContent))
-                                            @foreach($lessionContent as $key => $val)
-                                                <li><span>{{ $val }}</span></li>
-                                            @endforeach
-                                        @else
-                                    </ul>
-                                    <ul class="uk-list uk-clearfix">
-                                        
-                                    </ul>
-                                @endif
-                            </div>
-                            <div class="lecturer-bl">
-                                @php
-                                    $lec_name = $product->lecturers->name;
-                                    $lec_image = $product->lecturers->image;
-                                    $lec_position = $product->lecturers->position;
-                                    $lec_canonical = $product->lecturers->canonical;
-                                @endphp
-                                <div class="lecturer-content">
-                                    <div class="uk-flex uk-flex-middle">
-                                        <a href="" class="image img-scaledown">
-                                            <img src="{{ $lec_image }}" alt="">
-                                        </a>
-                                        <div class="info">
-                                            <h4 class="heading-3"><span>{{ $lec_name }}</span></h4>
-                                            <p class="postition">{{ $lec_position }}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="lecturer-review mb20">
-                                    <div class="review mb10">
-                                        ⭐
-                                        <p class="count" style="margin-left: 4px;">{{ $lecturer['reviews']['count'] }} đánh giá</p>
-                                    </div>
-                                    <div class="students mb10">
-                                        👥 {{ $lecturer['total_students'] }} học viên
-                                    </div>
-                                    
-                                    <div class="courses">
-                                        🏆 {{ $lecturer['total_courses'] }} khóa học
-                                    </div>
-                                </div>
-                                <div class="btn">
-                                    <a href="{{ write_url('giao-vien/' . $lec_canonical) }}" class="btn-view">Xem thông tin GV</a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="uk-container uk-container-center">
-                <div class="product-related mt30 mb30">
-                    <div class="uk-container uk-container-center">
-                        <div class="panel-product">
-                            <div class="main-heading">
-                                <div class="panel-head">
-                                    <div class="uk-flex uk-flex-middle uk-flex-space-between">
-                                        <h2 class="heading-2" style="text-transform:uppercase"><span>Khóa học tương tự</span></h2>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="panel-body list-product">
-                                @if(count($productCatalogue->products))
-                                    <div class="product-related-wrapper uk-grid uk-grid-medium">
-                                        @foreach($productCatalogue->products as $index => $product)
-                                        @if($product->id === $modelId) @continue @endif
-                                            <div class="uk-width-1-1 uk-width-small-1-1 uk-width-medium-1-2 uk-width-large-1-4">
-                                                @include('frontend.component.p-item', ['product' => $product])
+                                        @endforeach
+                                        {{-- Duplicate for seamless loop --}}
+                                        @foreach($productReviews as $review)
+                                            <div class="testimonial-card">
+                                                <div class="quote-icon">"</div>
+                                                <div class="testimonial-header">
+                                                    @if($review->image)
+                                                        <div class="avatar">
+                                                            <img src="{{ $review->image }}" alt="{{ $review->fullname }}">
+                                                        </div>
+                                                    @else
+                                                        <div class="avatar avatar-placeholder">
+                                                            <span>{{ strtoupper(substr($review->fullname, 0, 1)) }}</span>
+                                                        </div>
+                                                    @endif
+                                                    <div class="rating">
+                                                        @for($i = 1; $i <= 5; $i++)
+                                                            @if($i <= floor($review->score))
+                                                                <i class="fa fa-star"></i>
+                                                            @elseif($i - 0.5 <= $review->score)
+                                                                <i class="fa fa-star-half-o"></i>
+                                                            @else
+                                                                <i class="fa fa-star-o"></i>
+                                                            @endif
+                                                        @endfor
+                                                    </div>
+                                                </div>
+                                                <div class="testimonial-content">
+                                                    <h4 class="reviewer-name">{{ $review->fullname }}</h4>
+                                                    <p class="testimonial-text">{!! $review->description !!}</p>
+                                                </div>
                                             </div>
                                         @endforeach
                                     </div>
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    
+                    {{-- Right: Product Info --}}
+                    <div class="uk-width-medium-1-2">
+                        <div class="product-info wow fadeInRight" data-wow-duration="0.8s" data-wow-delay="0.2s">
+                            <h1 class="product-title">{{ $name }}</h1>
+                            
+                            {{-- Course Info --}}
+                            <div class="product-course-info">
+                                <ul class="info-list">
+                                    @if($totalLesson > 0)
+                                        <li>
+                                            <i class="fa fa-book"></i>
+                                            <span>{{ $totalLesson }} bài học</span>
+                                        </li>
+                                    @endif
+                                    @if($duration > 0)
+                                        <li>
+                                            <i class="fa fa-calendar"></i>
+                                            <span>{{ $duration }} tuần</span>
+                                        </li>
+                                    @endif
+                                    @if($total_time)
+                                        <li>
+                                            <i class="fa fa-clock-o"></i>
+                                            <span>Thời gian: {{ $total_time }}</span>
+                                        </li>
+                                    @endif
+                                    @if($totalLessons > 0)
+                                        <li>
+                                            <i class="fa fa-list"></i>
+                                            <span>{{ $totalLessons }} bài giảng</span>
+                                        </li>
+                                    @endif
+                                    @if($rate)
+                                        <li>
+                                            <i class="fa fa-star"></i>
+                                            <span>Trình độ: {{ $rate }}</span>
+                                        </li>
+                                    @endif
+                                    @if(!is_null($lessionContent) && is_array($lessionContent) && count($lessionContent))
+                                        @foreach($lessionContent as $contentItem)
+                                            <li>
+                                                <i class="fa fa-check"></i>
+                                                <span>{{ $contentItem }}</span>
+                                            </li>
+                                        @endforeach
+                                    @endif
+                                </ul>
+                            </div>
+                            
+                            @if($description)
+                                <div class="product-description">
+                                    {!! $description !!}
+                                </div>
+                            @endif
+                            
+                            <div class="product-price-section">
+                                @if($priceOldFormatted && $priceOld > $priceSale)
+                                    <div class="price-old">{{ $priceOldFormatted }}₫</div>
+                                    <div class="price-new">{{ $priceFormatted }}₫</div>
+                                    @if($price['percent'] > 0)
+                                        <div class="price-save">Tiết kiệm: {{ number_format($priceOld - $priceSale, 0, ',', '.') }}₫</div>
+                                    @endif
+                                @else
+                                    <div class="price-new">{{ $priceFormatted }}₫</div>
                                 @endif
+                            </div>
+                            
+                            {{-- Quantity --}}
+                            <div class="product-quantity">
+                                <label class="quantity-label">Số lượng:</label>
+                                <div class="quantity-controls">
+                                    <button type="button" class="btn-qty minus">-</button>
+                                    <input type="number" class="quantity-text input-qty" value="1" min="1">
+                                    <button type="button" class="btn-qty plus">+</button>
+                                </div>
+                            </div>
+                            
+                            {{-- Action Buttons --}}
+                            <div class="product-detail-actions">
+                                <button type="button" class="btn btn-consult btn-register-red open-register-popup">
+                                    <i class="fa fa-phone"></i>
+                                    Nhận tư vấn
+                                </button>
+                                <button type="button" class="btn btn-add-cart addToCart" data-id="{{ $product->id }}">
+                                    <i class="fa fa-shopping-cart"></i>
+                                    Mua ngay
+                                </button>
+                            </div>
+                            
+                            @if($price['percent'] > 0 && isset($promotionLeft))
+                                <div class="promotion-notice">
+                                    ⏰ Ưu đãi kết thúc sau {{ $promotionLeft }} ngày
+                                </div>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {{-- Row 2: Content (3/4) + Sidebar (1/4) --}}
+            <div class="product-detail-row-2" id="product-detail-container">
+                <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                    {{-- Left: Content 3/4 --}}
+                    <div class="uk-width-medium-3-4">
+                        {{-- Content --}}
+                        @if($content)
+                            <div class="product-content wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.3s">
+                                <h2 class="content-title">Nội dung khóa học</h2>
+                                <div class="content-body">
+                                    {!! $content !!}
+                                </div>
+                            </div>
+                        @endif
+                        {{-- Lecturer Section --}}
+                        @if($lecturer)
+                            <div class="product-lecturer wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.35s">
+                                <h2 class="lecturer-section-title">Giáo viên khóa học</h2>
+                                <div class="lecturer-info-box">
+                                    <div class="lecturer-text">
+                                        <h3 class="lecturer-name-title">{{ $lecturer->name }}</h3>
+                                        @if(!empty($lecturer->experience))
+                                            <div class="lecturer-experience">
+                                                {!! $lecturer->experience !!}
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="lecturer-image-box">
+                                        @if(!empty($lecturer->image))
+                                            <img src="{{ $lecturer->image }}" alt="{{ $lecturer->name }}" class="lecturer-photo">
+                                        @else
+                                            <div class="lecturer-photo-placeholder">
+                                                <span>{{ strtoupper(substr($lecturer->name, 0, 1)) }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+                        
+                        {{-- Related Products --}}
+                        @if(isset($productRelated) && $productRelated->isNotEmpty())
+                            <div class="product-related wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.4s">
+                                <h2 class="related-title">Khóa học liên quan</h2>
+                                <div class="related-grid">
+                                    @foreach($productRelated as $relatedProduct)
+                                        @php
+                                            $relatedLanguage = $relatedProduct->languages->first();
+                                            $relatedName = $relatedLanguage->pivot->name ?? '';
+                                            $relatedDescription = $relatedLanguage->pivot->description ?? '';
+                                            $relatedCanonical = write_url($relatedLanguage->pivot->canonical ?? '');
+                                            $relatedPrice = number_format($relatedProduct->price ?? 0, 0, ',', '.');
+                                            $relatedImage = $relatedProduct->image ?? '';
+                                        @endphp
+                                        <div class="related-card wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="{{ ($loop->index * 0.1) + 0.5 }}s">
+                                            <a href="{{ $relatedCanonical }}" class="related-link">
+                                                <div class="related-image">
+                                                    @if($relatedImage)
+                                                        <img src="{{ asset($relatedImage) }}" alt="{{ $relatedName }}">
+                                                    @else
+                                                        <div class="image-placeholder">
+                                                            <div class="vstep-logo">VSTEP</div>
+                                                        </div>
+                                                    @endif
+                                                </div>
+                                                <div class="related-content">
+                                                    <h3 class="related-name">{{ $relatedName }}</h3>
+                                                    @if($relatedDescription)
+                                                        <p class="related-description">{{ \Illuminate\Support\Str::limit(strip_tags($relatedDescription), 80) }}</p>
+                                                    @endif
+                                                    <div class="related-price">{{ $relatedPrice }}₫</div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                    {{-- Right: Sidebar 1/4 --}}
+                    <div class="uk-width-medium-1-4">
+                        <div class="product-sidebar" data-uk-sticky="{boundary: true,top:20}" style="height:100%;">
+                            {{-- CTA Box --}}
+                            <div class="sidebar-cta-box wow fadeInRight" data-wow-duration="0.8s" data-wow-delay="0.3s">
+                                {{-- CTA Button --}}
+                                <a href="{{ $system['product_cta_cta_button_link'] ?? '#' }}" class="cta-button" target="_blank">
+                                    <i class="fa fa-comment"></i>
+                                    {{ $system['product_cta_cta_button_text'] ?? 'Nhận cho Chúng tôi ngay' }}
+                                </a>
+                                {{-- Overview Box --}}
+                                <div class="overview-box">
+                                    <h3 class="overview-title">{{ $system['product_cta_overview_title'] ?? 'Tổng quan khóa Xây dựng nền tảng' }}</h3>
+                                    
+                                    <ul class="overview-list">
+                                        {{-- Item 1 --}}
+                                        <li class="overview-item">
+                                            <i class="fa fa-graduation-cap"></i>
+                                            <span>{{ $system['product_cta_overview_item_1'] ?? 'Đầu ra: Lấy lại gốc ngữ pháp tiếng Anh cơ bản;' }}</span>
+                                        </li>
+                                        
+                                        {{-- Item 2 --}}
+                                        <li class="overview-item">
+                                            <i class="fa fa-calendar"></i>
+                                            <span>{{ $system['product_cta_overview_item_2'] ?? 'Học online bất cứ khi nào có thiết bị kết nối internet;' }}</span>
+                                        </li>
+                                        
+                                        {{-- Item 3 --}}
+                                        <li class="overview-item">
+                                            <i class="fa fa-gift"></i>
+                                            <span>{{ $system['product_cta_overview_item_3'] ?? 'Nội dung khoa học được thu sẵn và chia thành 12 video chủ đề;' }}</span>
+                                        </li>
+                                        
+                                        {{-- Price --}}
+                                        <li class="overview-item">
+                                            <i class="fa fa-star"></i>
+                                            <span><strong>Học phí:</strong> {{ $priceFormatted }}₫</span>
+                                        </li>
+                                    </ul>
+                                    
+                                    {{-- Special Note --}}
+                                    @if(!empty($system['product_cta_overview_item_4']))
+                                        <div class="special-note">
+                                            <strong>Đặc biệt:</strong> {!! $system['product_cta_overview_item_4'] !!}
+                                        </div>
+                                    @else
+                                        <div class="special-note">
+                                            <strong>Đặc biệt:</strong> Tặng miễn phí khóa Xây dựng nền tảng cho những học viên đăng ký khóa Chinh phục B1 và Bứt phá B2;
+                                        </div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -233,4 +381,44 @@
             </div>
         </div>
     </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Quantity Controls
+        const minusBtn = document.querySelector('.btn-qty.minus');
+        const plusBtn = document.querySelector('.btn-qty.plus');
+        const qtyInput = document.querySelector('.input-qty');
+        
+        if (minusBtn && plusBtn && qtyInput) {
+            minusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(qtyInput.value) || 1;
+                if (currentValue > 1) {
+                    qtyInput.value = currentValue - 1;
+                }
+            });
+            
+            plusBtn.addEventListener('click', function() {
+                let currentValue = parseInt(qtyInput.value) || 1;
+                qtyInput.value = currentValue + 1;
+            });
+        }
+        
+        // Open register popup
+        const registerBtn = document.querySelector('.open-register-popup');
+        if (registerBtn) {
+            registerBtn.addEventListener('click', function() {
+                const modal = document.querySelector('#modal-register');
+                if (modal) {
+                    UIkit.modal(modal).show();
+                } else {
+                    // Fallback to consultation modal
+                    const consultationModal = document.querySelector('#consultation-modal');
+                    if (consultationModal) {
+                        UIkit.modal(consultationModal).show();
+                    }
+                }
+            });
+        }
+    });
+    </script>
 @endsection

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\FrontendController;
 use Illuminate\Http\Request;
 use App\Repositories\PostCatalogueRepository;
+use App\Repositories\SchoolRepository;
 use App\Services\PostCatalogueService;
 use App\Services\PostService;
 use App\Services\WidgetService;
@@ -23,6 +24,7 @@ class PostCatalogueController extends FrontendController
     protected $postService;
     protected $widgetService;
     protected $slideService;
+    protected $schoolRepository;
 
     public function __construct(
         PostCatalogueRepository $postCatalogueRepository,
@@ -30,12 +32,14 @@ class PostCatalogueController extends FrontendController
         PostService $postService,
         WidgetService $widgetService,
         SlideService $slideService,
+        SchoolRepository $schoolRepository,
     ) {
         $this->postCatalogueRepository = $postCatalogueRepository;
         $this->postCatalogueService = $postCatalogueService;
         $this->postService = $postService;
         $this->widgetService = $widgetService;
         $this->slideService = $slideService;
+        $this->schoolRepository = $schoolRepository;
         parent::__construct();
     }
 
@@ -90,6 +94,9 @@ class PostCatalogueController extends FrontendController
             $template = 'frontend.post.catalogue.index';
         }
 
+        // Lấy danh sách schools cho sidebar
+        $schools = $this->schoolRepository->getAllSchools($this->language, 0);
+        
         $config = $this->config();
         $system = $this->system;
         $seo = seo($postCatalogue, $page);
@@ -105,7 +112,8 @@ class PostCatalogueController extends FrontendController
             'widgets',
             'schema',
             'slides',
-            'introduce'
+            'introduce',
+            'schools'
         ));
     }
 

@@ -93,6 +93,95 @@ class SchoolService extends BaseService
         }
     }
 
+    public function duplicate($id, $languageId)
+    {
+        DB::beginTransaction();
+        try {
+            // Lấy bản ghi gốc
+            $originalSchool = $this->schoolRepository->getSchoolById($id, $languageId);
+            if (!$originalSchool) {
+                DB::rollBack();
+                return false;
+            }
+
+            // Tạo payload từ bản ghi gốc
+            $payload = [];
+            foreach ($this->payload() as $field) {
+                $payload[$field] = $originalSchool->$field;
+            }
+            $payload['user_id'] = Auth::id();
+            $payload['publish'] = 1; // Mặc định là không publish
+
+            // Tạo school mới
+            $newSchool = $this->schoolRepository->create($payload);
+            $languagePayload = null;
+
+            if ($newSchool->id > 0) {
+                // Copy dữ liệu language
+                $pivot = $originalSchool->languages->first()->pivot ?? null;
+                if ($pivot) {
+                    $languagePayload = [];
+                    foreach ($this->payloadLanguage() as $field) {
+                        $languagePayload[$field] = $pivot->$field ?? '';
+                    }
+                    
+                    // Thêm "- clone" vào tiêu đề
+                    $originalName = $languagePayload['name'] ?? '';
+                    $languagePayload['name'] = $originalName . ' - clone';
+                    
+                    // Xử lý canonical với timestamp
+                    $timestamp = time();
+                    $originalCanonical = $languagePayload['canonical'] ?? '';
+                    $languagePayload['canonical'] = $originalCanonical . '-' . $timestamp;
+                    
+                    // Copy các trường JSON
+                    $jsonFields = ['intro', 'announce', 'advantage', 'suitable', 'majors', 'study_method', 'feedback', 'event', 'value'];
+                    foreach ($jsonFields as $field) {
+                        $languagePayload[$field] = $pivot->$field ?? [];
+                    }
+                    
+                    // Tạo Request object với dữ liệu
+                    $request = \Illuminate\Http\Request::create('', 'POST', $languagePayload);
+                    $this->updateLanguageForSchool($newSchool, $request, $languageId);
+                }
+
+                // Copy quan hệ school_major
+                $originalMajors = DB::table('school_major')
+                    ->where('school_id', $id)
+                    ->get();
+                
+                if ($originalMajors->count() > 0) {
+                    $insertData = [];
+                    foreach ($originalMajors as $major) {
+                        $insertData[] = [
+                            'school_id' => $newSchool->id,
+                            'major_id' => $major->major_id,
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+                    DB::table('school_major')->insert($insertData);
+                }
+
+                // Tạo router mới với canonical mới
+                if ($languagePayload && isset($languagePayload['canonical'])) {
+                    $routerRequest = \Illuminate\Http\Request::create('', 'POST', [
+                        'canonical' => $languagePayload['canonical'],
+                    ]);
+                    $this->createRouter($newSchool, $routerRequest, $this->controllerName, $languageId);
+                }
+            }
+
+            DB::commit();
+            return $newSchool;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            echo $e->getMessage();
+            die();
+            return false;
+        }
+    }
+
     public function destroy($id)
     {
         DB::beginTransaction();
@@ -120,6 +209,21 @@ class SchoolService extends BaseService
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
                 $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
+            } elseif ($field === 'form_json') {
+                // Xử lý form_json như một array
+                // Laravel tự động parse form_json[form_title] thành array
+                $formJson = $request->input('form_json', []);
+                // Kiểm tra xem có dữ liệu không (ít nhất 1 trường có giá trị)
+                $hasData = false;
+                if (is_array($formJson) && !empty($formJson)) {
+                    foreach ($formJson as $key => $value) {
+                        if (!empty(trim($value))) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                }
+                $payload[$field] = $hasData ? $formJson : null;
             } else {
                 $payload[$field] = $request->input($field);
             }
@@ -137,6 +241,21 @@ class SchoolService extends BaseService
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
                 $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
+            } elseif ($field === 'form_json') {
+                // Xử lý form_json như một array
+                // Laravel tự động parse form_json[form_title] thành array
+                $formJson = $request->input('form_json', []);
+                // Kiểm tra xem có dữ liệu không (ít nhất 1 trường có giá trị)
+                $hasData = false;
+                if (is_array($formJson) && !empty($formJson)) {
+                    foreach ($formJson as $key => $value) {
+                        if (!empty(trim($value))) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                }
+                $payload[$field] = $hasData ? $formJson : null;
             } else {
                 // Luôn lấy giá trị từ request, kể cả null hoặc empty string
                 $payload[$field] = $request->input($field);
@@ -240,6 +359,8 @@ class SchoolService extends BaseService
             'is_show_feedback',
             'is_show_event',
             'is_show_value',
+            'form_script',
+            'form_json',
         ];
     }
 

@@ -46,7 +46,13 @@
                     <button class="btn-search-header" type="button" title="Tìm kiếm">
                         <i class="fa fa-search"></i>
                     </button>
-                    <a href="#register-modal" class="btn-download-roadmap" title="Tải lộ trình học" data-uk-modal>
+                    <a href="{{ route('cart.checkout') }}" class="btn-cart-header" title="Giỏ hàng">
+                        <i class="fa fa-shopping-cart"></i>
+                        @if(isset($cartShare) && $cartShare && isset($cartShare['cartTotalItems']) && $cartShare['cartTotalItems'] > 0)
+                            <span class="cart-count">{{ $cartShare['cartTotalItems'] }}</span>
+                        @endif
+                    </a>
+                    <a href="#download-roadmap-modal" class="btn-download-roadmap" title="Tải lộ trình học" data-uk-modal>
                         <i class="fa fa-download"></i>
                         <span>Tải lộ trình học</span>
                     </a>

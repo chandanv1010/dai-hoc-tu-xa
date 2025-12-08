@@ -148,6 +148,17 @@ class MajorController extends Controller
         ));
     }
 
+    public function duplicate($id)
+    {
+        $this->authorize('modules', 'major.create');
+        $duplicatedMajor = $this->majorService->duplicate($id, $this->language);
+        
+        if ($duplicatedMajor) {
+            return redirect()->route('major.edit', $duplicatedMajor->id)->with('success', 'Nhân bản bản ghi thành công');
+        }
+        return redirect()->route('major.index')->with('error', 'Nhân bản bản ghi không thành công. Hãy thử lại');
+    }
+
     public function destroy($id)
     {
         if ($this->majorService->destroy($id)) {

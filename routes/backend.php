@@ -161,6 +161,7 @@ Route::group(['middleware' => ['admin','locale','backend_default_locale']], func
         Route::post('store', [MajorController::class, 'store'])->name('major.store');
         Route::get('{id}/edit', [MajorController::class, 'edit'])->where(['id' => '[0-9]+'])->name('major.edit');
         Route::post('{id}/update', [MajorController::class, 'update'])->where(['id' => '[0-9]+'])->name('major.update');
+        Route::get('{id}/duplicate', [MajorController::class, 'duplicate'])->where(['id' => '[0-9]+'])->name('major.duplicate');
         Route::get('{id}/delete', [MajorController::class, 'delete'])->where(['id' => '[0-9]+'])->name('major.delete');
         Route::delete('{id}/destroy', [MajorController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('major.destroy');
     });
@@ -182,6 +183,7 @@ Route::group(['middleware' => ['admin','locale','backend_default_locale']], func
         Route::post('store', [SchoolController::class, 'store'])->name('school.store');
         Route::get('{id}/edit', [SchoolController::class, 'edit'])->where(['id' => '[0-9]+'])->name('school.edit');
         Route::post('{id}/update', [SchoolController::class, 'update'])->where(['id' => '[0-9]+'])->name('school.update');
+        Route::get('{id}/duplicate', [SchoolController::class, 'duplicate'])->where(['id' => '[0-9]+'])->name('school.duplicate');
         Route::get('{id}/delete', [SchoolController::class, 'delete'])->where(['id' => '[0-9]+'])->name('school.delete');
         Route::delete('{id}/destroy', [SchoolController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('school.destroy');
     });

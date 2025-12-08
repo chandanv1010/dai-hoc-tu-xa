@@ -44,6 +44,8 @@ class SchoolRepository extends BaseRepository
                 'schools.is_show_feedback',
                 'schools.is_show_event',
                 'schools.is_show_value',
+                'schools.form_script',
+                'schools.form_json',
                 'schools.created_at',
             ]
         )
