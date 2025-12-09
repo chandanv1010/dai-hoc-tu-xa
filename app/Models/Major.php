@@ -33,9 +33,18 @@ class Major extends Model
         'is_show_event',
         'admission_subject',
         'exam_location',
+        'form_tai_lo_trinh_json',
+        'form_tu_van_mien_phi_json',
+        'form_hoc_thu_json',
     ];
 
     protected $table = 'majors';
+
+    protected $casts = [
+        'form_tai_lo_trinh_json' => 'array',
+        'form_tu_van_mien_phi_json' => 'array',
+        'form_hoc_thu_json' => 'array',
+    ];
 
     public function languages(){
         return $this->belongsToMany(Language::class, 'major_language', 'major_id', 'language_id')

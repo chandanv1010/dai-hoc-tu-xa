@@ -30,6 +30,20 @@
         $school = ($pivot && isset($pivot->school)) ? (is_array($pivot->school) ? $pivot->school : json_decode($pivot->school, true)) : [];
         $address = ($pivot && isset($pivot->address)) ? (is_array($pivot->address) ? $pivot->address : json_decode($pivot->address, true)) : [];
         $value = ($pivot && isset($pivot->value)) ? (is_array($pivot->value) ? $pivot->value : json_decode($pivot->value, true)) : [];
+        
+        // Lấy dữ liệu form từ major (chỉ dùng cho modal riêng của major, không override system)
+        $formTaiLoTrinh = $major->form_tai_lo_trinh_json ?? null;
+        $formTuVan = $major->form_tu_van_mien_phi_json ?? null;
+        $formHocThu = $major->form_hoc_thu_json ?? null;
+        
+        // KHÔNG override system data cho form_tai_lo_trinh vì nút trên header cần dùng dữ liệu từ systems
+        // Chỉ override cho form_tu_van_mien_phi vì nó dùng chung modal consultation-modal
+        if ($formTuVan && !empty($formTuVan['script'])) {
+            $system['form_tu_van_mien_phi_title'] = $formTuVan['title'] ?? $system['form_tu_van_mien_phi_title'] ?? '';
+            $system['form_tu_van_mien_phi_description'] = $formTuVan['description'] ?? $system['form_tu_van_mien_phi_description'] ?? '';
+            $system['form_tu_van_mien_phi_script'] = $formTuVan['script'] ?? $system['form_tu_van_mien_phi_script'] ?? '';
+            $system['form_tu_van_mien_phi_footer'] = $formTuVan['footer'] ?? $system['form_tu_van_mien_phi_footer'] ?? '';
+        }
     @endphp
 
     {{-- Khối Banner Hero --}}
@@ -92,12 +106,6 @@
                         </div>
                     @endif
 
-                    {{-- Button Đăng ký tư vấn --}}
-                    <div class="major-hero-button wow fadeInUp" data-wow-delay="0.8s">
-                        <a href="#register-modal" class="btn-register-consultation" data-uk-modal>
-                            ĐĂNG KÝ TƯ VẤN NGAY
-                        </a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -316,10 +324,21 @@
                                 </div>
                                 <div class="sidebar-content">
                                     <p class="roadmap-description">Tải lộ trình chi tiết ngành Khung chương trình, tiến độ đào tạo, số tín chỉ, học phí...</p>
-                                    <a href="{{ asset($major->study_path_file) }}" class="btn-download-roadmap" download>
-                                        <i class="fa fa-file-pdf"></i>
-                                        <span>Tải xuống lộ trình học</span>
-                                    </a>
+                                    @php
+                                        $formTaiLoTrinh = $major->form_tai_lo_trinh_json ?? null;
+                                        $hasFormTaiLoTrinh = $formTaiLoTrinh && !empty($formTaiLoTrinh['script']);
+                                    @endphp
+                                    @if($hasFormTaiLoTrinh)
+                                        <a href="#major-download-roadmap-modal" class="btn-download-roadmap" data-uk-modal>
+                                            <i class="fa fa-file-pdf"></i>
+                                            <span>Tải xuống lộ trình học</span>
+                                        </a>
+                                    @elseif(!empty($major->study_path_file))
+                                        <a href="{{ asset($major->study_path_file) }}" class="btn-download-roadmap" download>
+                                            <i class="fa fa-file-pdf"></i>
+                                            <span>Tải xuống lộ trình học</span>
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @endif
@@ -530,12 +549,25 @@
                         Hơn 50.000 học viên đã thay đổi tương lai - Sẵn sàng bứt phá cùng
                         <span class="consultation-title-highlight">hệ Đại học Từ Xa!</span>
                     </h2>
-                    <div class="consultation-button-wrapper">
-                        <a href="#consultation-modal" class="consultation-button" data-uk-modal>
-                            <i class="fa fa-headphones"></i>
-                            <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
-                        </a>
-                    </div>
+                    @php
+                        $formTuVan = $major->form_tu_van_mien_phi_json ?? null;
+                        $hasFormTuVan = $formTuVan && !empty($formTuVan['script']);
+                    @endphp
+                    @if($hasFormTuVan)
+                        <div class="consultation-button-wrapper">
+                            <a href="#consultation-modal" class="consultation-button" data-uk-modal>
+                                <i class="fa fa-headphones"></i>
+                                <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
+                            </a>
+                        </div>
+                    @else
+                        <div class="consultation-button-wrapper">
+                            <a href="#consultation-modal" class="consultation-button" data-uk-modal>
+                                <i class="fa fa-headphones"></i>
+                                <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
+                            </a>
+                        </div>
+                    @endif
                     <div class="consultation-features">
                         <span class="feature-item">Tư vấn miễn phí</span>
                         <span class="feature-separator">•</span>
@@ -946,9 +978,19 @@
         <div class="uk-container uk-container-center">
             <div class="trial-banner-content">
                 <h2 class="trial-banner-title">KHÔNG GHI HÌNH THỨC ĐÀO TẠO TRÊN BẰNG TỐT NGHIỆP</h2>
-                <button type="button" class="trial-banner-button" onclick="UIkit.modal('#register-modal').show();">
-                    Học thử miễn phí
-                </button>
+                @php
+                    $formHocThu = $major->form_hoc_thu_json ?? null;
+                    $hasFormHocThu = $formHocThu && !empty($formHocThu['script']);
+                @endphp
+                @if($hasFormHocThu)
+                    <button type="button" class="trial-banner-button" onclick="UIkit.modal('#major-form-hoc-thu-modal').show();">
+                        Học thử miễn phí
+                    </button>
+                @else
+                    <button type="button" class="trial-banner-button" onclick="UIkit.modal('#register-modal').show();">
+                        Học thử miễn phí
+                    </button>
+                @endif
             </div>
         </div>
     </div>
@@ -1187,6 +1229,66 @@
             </div>
         </div>
     </div>
+
+    {{-- Modal riêng cho Major: Tải Lộ Trình Học (dùng dữ liệu từ major) --}}
+    @if($formTaiLoTrinh && !empty($formTaiLoTrinh['script']))
+        @php
+            $formTaiLoTrinhTitle = $formTaiLoTrinh['title'] ?? 'Tải Lộ Trình Học';
+            $formTaiLoTrinhDescription = $formTaiLoTrinh['description'] ?? '';
+            $formTaiLoTrinhScript = $formTaiLoTrinh['script'] ?? '';
+            $formTaiLoTrinhFooter = $formTaiLoTrinh['footer'] ?? '';
+        @endphp
+        <x-form-modal
+            :title="$formTaiLoTrinhTitle"
+            :description="$formTaiLoTrinhDescription"
+            :script="$formTaiLoTrinhScript"
+            :footer="$formTaiLoTrinhFooter"
+            modal-id="major-download-roadmap-modal"
+            modal-class="download-roadmap-modal"
+        />
+    @endif
+    
+    {{-- Override modal consultation-modal với dữ liệu từ major (chỉ khi có dữ liệu từ major) --}}
+    @if($formTuVan && !empty($formTuVan['script']))
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Override modal consultation-modal với dữ liệu từ major
+            const consultationModal = document.getElementById('consultation-modal');
+            if (consultationModal) {
+                const titleEl = consultationModal.querySelector('.download-roadmap-title');
+                const descEl = consultationModal.querySelector('.download-roadmap-description');
+                const scriptEl = consultationModal.querySelector('.download-roadmap-script-wrapper');
+                const footerEl = consultationModal.querySelector('.download-roadmap-footer');
+                
+                if (titleEl) titleEl.textContent = {!! json_encode($formTuVan['title'] ?? '') !!};
+                if (descEl) descEl.textContent = {!! json_encode($formTuVan['description'] ?? '') !!};
+                if (scriptEl) scriptEl.innerHTML = {!! json_encode($formTuVan['script'] ?? '') !!};
+                if (footerEl) footerEl.innerHTML = {!! json_encode($formTuVan['footer'] ?? '') !!};
+            }
+        });
+        </script>
+    @endif
+    
+    {{-- Component mới cho Học Thử Miễn Phí (chỉ tạo khi có dữ liệu từ major) - dùng cùng style với các popup khác --}}
+    @php
+        $formHocThu = $major->form_hoc_thu_json ?? null;
+    @endphp
+    @if($formHocThu && !empty($formHocThu['script']))
+        @php
+            $formHocThuTitle = $formHocThu['title'] ?? 'Học Thử Miễn Phí';
+            $formHocThuDescription = $formHocThu['description'] ?? '';
+            $formHocThuScript = $formHocThu['script'] ?? '';
+            $formHocThuFooter = $formHocThu['footer'] ?? '';
+        @endphp
+        <x-form-modal
+            :title="$formHocThuTitle"
+            :description="$formHocThuDescription"
+            :script="$formHocThuScript"
+            :footer="$formHocThuFooter"
+            modal-id="major-form-hoc-thu-modal"
+            modal-class="download-roadmap-modal"
+        />
+    @endif
 
 @endsection
 

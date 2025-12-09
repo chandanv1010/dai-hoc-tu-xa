@@ -6836,7 +6836,8 @@
             }
         }
 
-        .major-hero-button {
+        .major-hero-button,
+        .major-hero-buttons {
             margin-top: 30px;
 
             @media (max-width: 480px) {
@@ -6863,6 +6864,76 @@
                     transform: translateY(-2px);
                     color: #fff;
                     text-decoration: none;
+                }
+            }
+            
+            .btn-major-form {
+                display: block;
+                width: 100%;
+                padding: 14px 20px;
+                background: #008DC2;
+                color: #fff;
+                font-size: 15px;
+                font-weight: 700;
+                text-transform: uppercase;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+                transition: all 0.3s ease;
+                text-decoration: none;
+                text-align: center;
+                font-family: var(--second-font, inherit);
+                
+                i {
+                    margin-right: 8px;
+                    font-size: 16px;
+                }
+
+                &:hover {
+                    background: #0070A3;
+                    box-shadow: 0 6px 16px rgba(0, 141, 194, 0.4);
+                    transform: translateY(-2px);
+                    color: #fff;
+                    text-decoration: none;
+                }
+                
+                &.btn-form-tai-lo-trinh {
+                    background: #E31E24;
+                    box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+                    
+                    &:hover {
+                        background: #C91A20;
+                        box-shadow: 0 6px 16px rgba(227, 30, 36, 0.4);
+                    }
+                }
+                
+                &.btn-form-tu-van {
+                    background: #008DC2;
+                    box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+                    
+                    &:hover {
+                        background: #0070A3;
+                        box-shadow: 0 6px 16px rgba(0, 141, 194, 0.4);
+                    }
+                }
+                
+                &.btn-form-hoc-thu {
+                    background: #10B981;
+                    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+                    
+                    &:hover {
+                        background: #059669;
+                        box-shadow: 0 6px 16px rgba(16, 185, 129, 0.4);
+                    }
+                }
+                
+                @media (max-width: 768px) {
+                    padding: 12px 16px;
+                    font-size: 13px;
+                    
+                    i {
+                        font-size: 14px;
+                        margin-right: 6px;
+                    }
                 }
 
                 @media (max-width: 768px) {
@@ -14453,6 +14524,290 @@ button{
     }
 }
 
+// Major Download Roadmap Modal - Style giống hệt Download Roadmap Modal
+#major-download-roadmap-modal {
+    .download-roadmap-modal-dialog {
+        width: 480px;
+        max-width: 90vw;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: #008DC2;
+        padding: 10px;
+    }
+
+    .uk-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        z-index: 10;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+            background: #fff;
+            transform: rotate(90deg);
+        }
+    }
+
+    .download-roadmap-header {
+        background: #fff;
+        padding: 25px 30px 20px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+
+        .download-roadmap-title {
+            color: #008DC2;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
+        }
+    }
+
+    .download-roadmap-form-wrapper {
+        padding: 20px;
+        margin: 0;
+        border-radius: 0;
+        background: #fff;
+
+        .download-roadmap-script-wrapper {
+            width: 100%;
+
+            // Style cho Form.io container
+            .formio_form_iframe_container {
+                width: 100%;
+                min-height: 400px;
+            }
+
+            // Style cho iframe được render từ Form.io
+            iframe {
+                width: 100%;
+                border: none;
+                min-height: 400px;
+            }
+
+            // Style cho các input fields
+            input[type="text"],
+            input[type="tel"],
+            input[type="email"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                margin-bottom: 15px;
+                transition: border-color 0.3s ease;
+
+                &:focus {
+                    outline: none;
+                    border-color: #008DC2;
+                }
+            }
+
+            // Style cho button submit
+            button[type="submit"],
+            input[type="submit"] {
+                width: 100%;
+                padding: 14px 20px;
+                background: #008DC2;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.3s ease;
+
+                &:hover {
+                    background: #0070A3;
+                }
+            }
+        }
+    }
+
+    .download-roadmap-footer {
+        padding: 15px 30px 25px;
+        text-align: center;
+        background: #fff;
+        color: #333;
+        font-size: 14px;
+        line-height: 1.5;
+
+        // Highlight số trong footer (màu cam)
+        strong,
+        span[style*="color"],
+        .cl {
+            color: #FF6B35;
+            font-weight: 700;
+        }
+    }
+}
+
+// Major Form Hoc Thu Modal - Style giống hệt Download Roadmap Modal
+#major-form-hoc-thu-modal {
+    .download-roadmap-modal-dialog {
+        width: 480px;
+        max-width: 90vw;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: #008DC2;
+        padding: 10px;
+    }
+
+    .uk-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        z-index: 10;
+        width: 32px;
+        height: 32px;
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+        font-size: 18px;
+        transition: all 0.3s ease;
+        cursor: pointer;
+
+        &:hover {
+            background: #fff;
+            transform: rotate(90deg);
+        }
+    }
+
+    .download-roadmap-header {
+        background: #fff;
+        padding: 25px 30px 20px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+
+        .download-roadmap-title {
+            color: #008DC2;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
+        }
+    }
+
+    .download-roadmap-form-wrapper {
+        padding: 20px;
+        margin: 0;
+        border-radius: 0;
+        background: #fff;
+
+        .download-roadmap-script-wrapper {
+            width: 100%;
+
+            // Style cho Form.io container
+            .formio_form_iframe_container {
+                width: 100%;
+                min-height: 400px;
+            }
+
+            // Style cho iframe được render từ Form.io
+            iframe {
+                width: 100%;
+                border: none;
+                min-height: 400px;
+            }
+
+            // Style cho các input fields
+            input[type="text"],
+            input[type="tel"],
+            input[type="email"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                width: 100%;
+                padding: 12px 15px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                margin-bottom: 15px;
+                transition: border-color 0.3s ease;
+
+                &:focus {
+                    outline: none;
+                    border-color: #008DC2;
+                }
+            }
+
+            // Style cho button submit
+            button[type="submit"],
+            input[type="submit"] {
+                width: 100%;
+                padding: 14px 20px;
+                background: #008DC2;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: background 0.3s ease;
+
+                &:hover {
+                    background: #0070A3;
+                }
+            }
+        }
+    }
+
+    .download-roadmap-footer {
+        padding: 15px 30px 25px;
+        text-align: center;
+        background: #fff;
+        color: #333;
+        font-size: 14px;
+        line-height: 1.5;
+
+        // Highlight số trong footer (màu cam)
+        strong,
+        span[style*="color"],
+        .cl {
+            color: #FF6B35;
+            font-weight: 700;
+        }
+    }
+}
+
 // Consultation Modal - Style giống hệt Download Roadmap Modal
 #consultation-modal {
     .download-roadmap-modal-dialog {
@@ -14719,6 +15074,125 @@ button{
                 .formio-submit-button {
                     padding: 12px 18px;
                     font-size: 15px;
+                }
+            }
+        }
+
+        .download-roadmap-footer {
+            padding: 12px 20px 20px;
+            font-size: 13px;
+        }
+    }
+}
+
+// Responsive cho Major Download Roadmap Modal và Major Form Hoc Thu Modal
+@media (max-width: 768px) {
+    #major-download-roadmap-modal {
+        .download-roadmap-modal-dialog {
+            margin: 15px;
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+        }
+
+        .uk-close {
+            right: 10px;
+            top: 10px;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+        }
+
+        .download-roadmap-header {
+            padding: 20px 20px 15px;
+
+            .download-roadmap-title {
+                font-size: 18px;
+            }
+
+            .download-roadmap-description {
+                font-size: 13px;
+            }
+        }
+
+        .download-roadmap-form-wrapper {
+            padding: 15px;
+            margin: 0;
+
+            .download-roadmap-script-wrapper {
+                input[type="text"],
+                input[type="tel"],
+                input[type="email"],
+                input[type="number"],
+                input[type="date"],
+                select,
+                textarea {
+                    padding: 9px 12px;
+                    font-size: 13px;
+                    margin-bottom: 12px;
+                }
+
+                button[type="submit"],
+                input[type="submit"] {
+                    padding: 12px 18px;
+                    font-size: 14px;
+                }
+            }
+        }
+
+        .download-roadmap-footer {
+            padding: 12px 20px 20px;
+            font-size: 13px;
+        }
+    }
+
+    #major-form-hoc-thu-modal {
+        .download-roadmap-modal-dialog {
+            margin: 15px;
+            width: calc(100% - 30px);
+            max-width: calc(100% - 30px);
+        }
+
+        .uk-close {
+            right: 10px;
+            top: 10px;
+            width: 28px;
+            height: 28px;
+            font-size: 16px;
+        }
+
+        .download-roadmap-header {
+            padding: 20px 20px 15px;
+
+            .download-roadmap-title {
+                font-size: 18px;
+            }
+
+            .download-roadmap-description {
+                font-size: 13px;
+            }
+        }
+
+        .download-roadmap-form-wrapper {
+            padding: 15px;
+            margin: 0;
+
+            .download-roadmap-script-wrapper {
+                input[type="text"],
+                input[type="tel"],
+                input[type="email"],
+                input[type="number"],
+                input[type="date"],
+                select,
+                textarea {
+                    padding: 9px 12px;
+                    font-size: 13px;
+                    margin-bottom: 12px;
+                }
+
+                button[type="submit"],
+                input[type="submit"] {
+                    padding: 12px 18px;
+                    font-size: 14px;
                 }
             }
         }
@@ -17422,7 +17896,7 @@ button{
     .filter-actions {
         margin-top: 20px;
         padding-top: 18px;
-        border-top: 1px solid #f3f4f6;
+        // border-top: 1px solid #f3f4f6; // Bỏ border-top
 
         .btn {
             border-radius: 8px;

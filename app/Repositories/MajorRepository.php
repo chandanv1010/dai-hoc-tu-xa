@@ -39,6 +39,9 @@ class MajorRepository extends BaseRepository
                 'majors.is_show_event',
                 'majors.admission_subject',
                 'majors.exam_location',
+                'majors.form_tai_lo_trinh_json',
+                'majors.form_tu_van_mien_phi_json',
+                'majors.form_hoc_thu_json',
                 'majors.created_at',
             ]
         )

@@ -202,6 +202,19 @@ class MajorService extends BaseService
                 // Xử lý các field filter là string
                 $fieldData = $request->input($field, '');
                 $payload[$field] = !empty(trim($fieldData)) ? trim($fieldData) : null;
+            } elseif (in_array($field, ['form_tai_lo_trinh_json', 'form_tu_van_mien_phi_json', 'form_hoc_thu_json'])) {
+                // Xử lý các field form JSON
+                $formJson = $request->input($field, []);
+                $hasData = false;
+                if (is_array($formJson) && !empty($formJson)) {
+                    foreach ($formJson as $key => $value) {
+                        if (!empty(trim($value))) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                }
+                $payload[$field] = $hasData ? $formJson : null;
             } else {
                 $payload[$field] = $request->input($field);
             }
@@ -219,6 +232,19 @@ class MajorService extends BaseService
                 // Xử lý các field filter là string
                 $fieldData = $request->input($field, '');
                 $payload[$field] = !empty(trim($fieldData)) ? trim($fieldData) : null;
+            } elseif (in_array($field, ['form_tai_lo_trinh_json', 'form_tu_van_mien_phi_json', 'form_hoc_thu_json'])) {
+                // Xử lý các field form JSON
+                $formJson = $request->input($field, []);
+                $hasData = false;
+                if (is_array($formJson) && !empty($formJson)) {
+                    foreach ($formJson as $key => $value) {
+                        if (!empty(trim($value))) {
+                            $hasData = true;
+                            break;
+                        }
+                    }
+                }
+                $payload[$field] = $hasData ? $formJson : null;
             } else {
                 $payload[$field] = $request->input($field);
             }
@@ -392,6 +418,9 @@ class MajorService extends BaseService
             'is_show_event',
             'admission_subject',
             'exam_location',
+            'form_tai_lo_trinh_json',
+            'form_tu_van_mien_phi_json',
+            'form_hoc_thu_json',
         ];
     }
 
