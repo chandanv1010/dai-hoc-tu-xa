@@ -24,6 +24,7 @@ class System{
                     ]
                 ],
                 'homepage_download' => ['type' => 'images', 'label' => 'File tải lộ trình học', 'title' => 'Click vào ô phía dưới để tải file'],
+                'enrollment_text' => ['type' => 'text', 'label' => 'Text thông báo tuyển sinh (Header)'],
                 'value-bring_name' => ['type' => 'text', 'label' => 'Giá trị bằng đại học - Tiêu đề'],
                 'value-bring_description' => ['type' => 'editor', 'label' => 'Giá trị bằng đại học - Mô tả'],
                 'value-bring_video' => ['type' => 'textarea', 'label' => 'Giá trị bằng đại học - Video (URL hoặc embed code)'],
@@ -86,7 +87,7 @@ class System{
                 'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
                 'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
                 'description' => ['type' => 'text', 'label' => 'Mô tả'],
-                'footer' => ['type' => 'text', 'label' => 'Footer'],
+                'footer' => ['type' => 'textarea', 'label' => 'Footer (có thể dùng HTML, ví dụ: Còn <span class="cl">10</span> chỉ tiêu tuyển sinh năm 2025)'],
             ]
         ];
 
@@ -97,7 +98,18 @@ class System{
                 'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
                 'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
                 'description' => ['type' => 'text', 'label' => 'Mô tả'],
-                'footer' => ['type' => 'text', 'label' => 'Footer'],
+                'footer' => ['type' => 'textarea', 'label' => 'Footer (có thể dùng HTML, ví dụ: Còn <span class="cl">10</span> chỉ tiêu tuyển sinh năm 2025)'],
+            ]
+        ];
+
+        $data['form_hoc_thu'] = [
+            'label' => 'Cấu Hình Form Học Thử Miễn Phí',
+            'description' => 'Cài đặt đầy đủ thông tin ',
+            'value' => [
+                'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
+                'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
+                'description' => ['type' => 'text', 'label' => 'Mô tả'],
+                'footer' => ['type' => 'textarea', 'label' => 'Footer (có thể dùng HTML, ví dụ: Còn <span class="cl">10</span> suất học thử miễn phí)'],
             ]
         ];
         

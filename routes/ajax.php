@@ -16,6 +16,7 @@ use App\Http\Controllers\Ajax\ExcelController as AjaxExcelController;
 use App\Http\Controllers\Ajax\CustomerController as AjaxCustomerController;
 use App\Http\Controllers\Ajax\ContactController as AjaxContactController;
 use App\Http\Controllers\Ajax\MajorController as AjaxMajorController;
+use App\Http\Controllers\Ajax\SchoolController as AjaxSchoolController;
 
 /*
 |--------------------------------------------------------------------------
@@ -25,6 +26,8 @@ use App\Http\Controllers\Ajax\MajorController as AjaxMajorController;
 
 /* FRONTEND AJAX ROUTE */
 Route::get('ajax/major/getMajorsByCatalogue', [AjaxMajorController::class, 'getMajorsByCatalogue'])->name('ajax.major.getMajorsByCatalogue');
+Route::get('ajax/major/filter', [AjaxMajorController::class, 'filter'])->name('ajax.major.filter');
+Route::get('ajax/school/filter', [AjaxSchoolController::class, 'filter'])->name('ajax.school.filter');
 Route::post('ajax/contact/saveContact', [AjaxContactController::class, 'save'])->name('ajax.contact.save');
 
 Route::post('ajax/contact/quickConsult', [AjaxContactController::class, 'quickConsult'])->name('fe.contact.quickConsult');

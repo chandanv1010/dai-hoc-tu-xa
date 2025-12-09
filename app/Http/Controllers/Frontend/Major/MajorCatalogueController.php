@@ -61,6 +61,18 @@ class MajorCatalogueController extends FrontendController
         // Lấy danh sách các giá trị duration duy nhất từ majors
         $durations = $this->majorRepository->getDistinctDurations($this->language);
         
+        // Lấy filter options để hiển thị trong sidebar
+        $filterOptions = $this->majorRepository->getFilterOptions();
+        
+        // Lấy các filter đã chọn từ request
+        $selectedFilters = [
+            'catalogue_id' => $request->input('catalogue_id', []),
+            'school_id' => $request->input('school_id', []),
+            'admission_subject' => $request->input('admission_subject', []),
+            'exam_location' => $request->input('exam_location', []),
+            'duration' => $request->input('duration', []),
+        ];
+        
         // Lấy SEO từ system
         $seo = $this->getSeo($page);
         
@@ -77,6 +89,8 @@ class MajorCatalogueController extends FrontendController
             'majorCatalogues',
             'schools',
             'durations',
+            'filterOptions',
+            'selectedFilters',
             'page'
         ));
     }

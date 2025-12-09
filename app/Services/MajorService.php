@@ -196,7 +196,16 @@ class MajorService extends BaseService
 
     private function createMajor($request)
     {
-        $payload = $request->only($this->payload());
+        $payload = [];
+        foreach ($this->payload() as $field) {
+            if (in_array($field, ['admission_subject', 'exam_location'])) {
+                // Xử lý các field filter là string
+                $fieldData = $request->input($field, '');
+                $payload[$field] = !empty(trim($fieldData)) ? trim($fieldData) : null;
+            } else {
+                $payload[$field] = $request->input($field);
+            }
+        }
         $payload['user_id'] = Auth::id();
         $major = $this->majorRepository->create($payload);
         return $major;
@@ -204,7 +213,16 @@ class MajorService extends BaseService
 
     private function updateMajor($major, $request)
     {
-        $payload = $request->only($this->payload());
+        $payload = [];
+        foreach ($this->payload() as $field) {
+            if (in_array($field, ['admission_subject', 'exam_location'])) {
+                // Xử lý các field filter là string
+                $fieldData = $request->input($field, '');
+                $payload[$field] = !empty(trim($fieldData)) ? trim($fieldData) : null;
+            } else {
+                $payload[$field] = $request->input($field);
+            }
+        }
         $flag = $this->majorRepository->update($major->id, $payload);
         return $flag;
     }
@@ -343,6 +361,8 @@ class MajorService extends BaseService
             'majors.subtitle',
             'majors.image',
             'majors.publish',
+            'majors.admission_subject',
+            'majors.exam_location',
             'majors.created_at',
             'tb2.name',
             'tb2.canonical',
@@ -370,6 +390,8 @@ class MajorService extends BaseService
             'is_show_value',
             'is_show_feedback',
             'is_show_event',
+            'admission_subject',
+            'exam_location',
         ];
     }
 

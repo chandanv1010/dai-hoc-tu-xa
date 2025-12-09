@@ -31,6 +31,8 @@ class Major extends Model
         'is_show_value',
         'is_show_feedback',
         'is_show_event',
+        'admission_subject',
+        'exam_location',
     ];
 
     protected $table = 'majors';

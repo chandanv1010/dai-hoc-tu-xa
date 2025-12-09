@@ -4,7 +4,7 @@
         <div class="uk-container uk-container-center">
             <div class="uk-flex uk-flex-middle uk-flex-space-between">
                 <div class="header-top-left">
-                    <span class="enrollment-text">Tuyển Sinh 2025 Đã Bắt Đầu – Đăng Ký Ngay!</span>
+                    <span class="enrollment-text">{{ $system['homepage_slogan'] ?? 'Tuyển Sinh 2025 Đã Bắt Đầu – Đăng Ký Ngay!' }}</span>
                 </div>
                 <div class="header-top-right">
                     <div class="contact-info">

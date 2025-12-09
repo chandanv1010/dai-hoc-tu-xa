@@ -6,9 +6,10 @@
         </th>
         <th>Tên chuyên ngành</th>
         @include('backend.dashboard.component.languageTh')
+        <th style="width:150px;">Đối Tượng Tuyển Sinh</th>
+        <th style="width:150px;">Địa Điểm Thi</th>
         <th class="text-center" style="width:100px;">{{ __('messages.tableStatus') }} </th>
-        <th class="text-center" style="width:100px;">Trang chủ</th>
-        <th class="text-center" style="width:100px;">{{ __('messages.tableAction') }} </th>
+        <th class="text-center" style="width:150px;">{{ __('messages.tableAction') }} </th>
     </tr>
     </thead>
     <tbody>
@@ -23,11 +24,14 @@
                     {{ $major->name }}
                 </td>
                 @include('backend.dashboard.component.languageTd', ['model' => $major, 'modeling' => 'Major'])
+                <td>
+                    {{ $major->admission_subject ?? '-' }}
+                </td>
+                <td>
+                    {{ $major->exam_location ?? '-' }}
+                </td>
                 <td class="text-center js-switch-{{ $major->id }}"> 
                     <input type="checkbox" value="{{ $major->publish }}" class="js-switch status " data-field="publish" data-model="Major" {{ ($major->publish == 2) ? 'checked' : '' }} data-modelId="{{ $major->id }}" />
-                </td>
-                <td class="text-center js-switch-home-{{ $major->id }}"> 
-                    <input type="checkbox" value="{{ $major->is_home ?? 0 }}" class="js-switch status " data-field="is_home" data-model="Major" {{ (($major->is_home ?? 0) == 2) ? 'checked' : '' }} data-modelId="{{ $major->id }}" />
                 </td>
                 <td class="text-center"> 
                     <a href="{{ route('major.edit', $major->id) }}" class="btn btn-success"><i class="fa fa-edit"></i></a>

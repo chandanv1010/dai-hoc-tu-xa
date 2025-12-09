@@ -4,9 +4,21 @@
     var _token = $('meta[name="csrf-token"]').attr('content');
 
     HT.switchery = () => {
+        // Chỉ khởi tạo switchery cho các input không phải select và chưa được khởi tạo
         $('.js-switch').each(function(){
-            // let _this = $(this)
-            var switchery = new Switchery(this, { color: '#1AB394', size: 'small'});
+            // Bỏ qua nếu là select (select2 sẽ xử lý)
+            if ($(this).is('select')) {
+                return;
+            }
+            // Bỏ qua nếu đã có switchery instance
+            if ($(this).next('.switchery').length > 0) {
+                return;
+            }
+            try {
+                var switchery = new Switchery(this, { color: '#1AB394', size: 'small'});
+            } catch(e) {
+                console.warn('Switchery init error:', e);
+            }
         })
     }
 
@@ -349,8 +361,12 @@
         HT.exportExcel()
         HT.changeOrder()
         HT.approve()
-        HT.switchery()
+        // Khởi tạo select2 trước
         HT.select2()
+        // Sau đó khởi tạo switchery với delay nhỏ để tránh conflict
+        setTimeout(function() {
+            HT.switchery()
+        }, 100)
         HT.changeStatus()
         HT.checkAll()
         HT.checkBoxItem()

@@ -10,10 +10,10 @@
                         <i class="fa fa-phone"></i>
                         <span>Gọi ngay: 1900 1234</span>
                     </a>
-                    <button class="consultation-btn consultation-btn-register" data-uk-modal="{target:'#register-modal'}">
+                    <a href="#consultation-modal" class="consultation-btn consultation-btn-register" data-uk-modal>
                         <i class="fa fa-envelope"></i>
                         <span>Đăng ký tư vấn</span>
-                    </button>
+                    </a>
                 </div>
             </div>
         </div>

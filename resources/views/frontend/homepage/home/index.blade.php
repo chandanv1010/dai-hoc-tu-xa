@@ -337,13 +337,97 @@
                         </div>
                     @endif
 
-                    <!-- Majors Grid -->
+                    <!-- Majors Grid/Swiper -->
                     <div class="majors-list-grid">
                         @if($majorsList->isNotEmpty())
-                            <div class="uk-grid uk-grid-medium" data-uk-grid-match>
-                                @foreach($majorsList as $major)
-                                    @include('frontend.component.major-item', ['major' => $major])
-                                @endforeach
+                            <!-- Swiper cho tab "Tất cả ngành" -->
+                            <div class="majors-list-swiper-wrapper" id="majors-swiper-wrapper" style="display: none;">
+                                <div class="swiper-container majors-list-swiper">
+                                    <div class="swiper-wrapper">
+                                        @foreach($majorsList as $major)
+                                            <div class="swiper-slide">
+                                                <div class="major-card-wrapper">
+                                                    @php
+                                                        $majorLanguage = $major->languages->first() ?? null;
+                                                        $majorName = '';
+                                                        $majorCanonical = '';
+                                                        $trainingDuration = '';
+                                                        $schoolsList = [];
+                                                        
+                                                        if ($majorLanguage) {
+                                                            $pivot = $majorLanguage->pivot ?? null;
+                                                            if ($pivot) {
+                                                                $majorName = $pivot->name ?? '';
+                                                                $majorCanonical = $pivot->canonical ?? '';
+                                                                $trainingDuration = $pivot->training_duration ?? '';
+                                                            }
+                                                        }
+                                                        
+                                                        if ($major->schools && $major->schools->count() > 0) {
+                                                            foreach ($major->schools as $school) {
+                                                                $shortName = $school->short_name ?? '';
+                                                                if (empty($shortName)) {
+                                                                    $schoolLanguage = $school->languages->first() ?? null;
+                                                                    if ($schoolLanguage && $schoolLanguage->pivot) {
+                                                                        $shortName = $schoolLanguage->pivot->name ?? '';
+                                                                    }
+                                                                }
+                                                                if (!empty($shortName)) {
+                                                                    $schoolsList[] = $shortName;
+                                                                }
+                                                            }
+                                                        }
+                                                        
+                                                        $majorImage = $major->image ?? '';
+                                                        $majorImageUrl = $majorImage ? asset($majorImage) : asset('frontend/resources/img/major-default.png');
+                                                        $majorUrl = $majorCanonical ? write_url($majorCanonical) : '#';
+                                                        $schoolsText = !empty($schoolsList) ? implode(', ', $schoolsList) : '';
+                                                    @endphp
+                                                    <div class="major-card">
+                                                        <div class="major-card-image">
+                                                            <img src="{{ $majorImageUrl }}" alt="{{ $majorName }}">
+                                                        </div>
+                                                        <div class="major-card-content">
+                                                            <h3 class="major-card-name">{{ $majorName }}</h3>
+                                                            <div class="major-card-info">
+                                                                @if($schoolsText)
+                                                                    <div class="major-card-info-item">
+                                                                        <i class="fa fa-graduation-cap"></i>
+                                                                        <div class="info-content">
+                                                                            <span class="info-label">Trường Đào Tạo:</span>
+                                                                            <strong class="info-value">{{ $schoolsText }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                                @if($trainingDuration)
+                                                                    <div class="major-card-info-item">
+                                                                        <i class="fa fa-clock-o"></i>
+                                                                        <div class="info-content">
+                                                                            <span class="info-label">Thời Gian Đào Tạo:</span>
+                                                                            <strong class="info-value">{{ $trainingDuration }}</strong>
+                                                                        </div>
+                                                                    </div>
+                                                                @endif
+                                                            </div>
+                                                            <a href="{{ $majorUrl }}" class="major-card-button">Xem chi tiết chương trình</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                    <div class="swiper-button-prev"></div>
+                                    <div class="swiper-button-next"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Grid cho các tab khác -->
+                            <div class="majors-list-grid-wrapper" id="majors-grid-wrapper">
+                                <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                                    @foreach($majorsList as $major)
+                                        @include('frontend.component.major-item', ['major' => $major])
+                                    @endforeach
+                                </div>
                             </div>
                         @endif
                         
@@ -501,11 +585,10 @@
                         }
                         // Lấy các attributes khác
                         let width = $iframe.attr('width') || '100%';
-                        let height = $iframe.attr('height') || '527';
                         let allow = $iframe.attr('allow') || 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
                         let allowfullscreen = $iframe.attr('allowfullscreen') !== undefined;
                         
-                        iframeHtml = '<iframe src="' + ($iframe.attr('src') || src) + '" width="' + width + '" height="' + height + '" frameborder="0" allow="' + allow + '"' + (allowfullscreen ? ' allowfullscreen' : '') + ' style="width: 100%; height: 527px; border-radius: 12px;"></iframe>';
+                        iframeHtml = '<iframe src="' + ($iframe.attr('src') || src) + '" width="' + width + '" frameborder="0" allow="' + allow + '"' + (allowfullscreen ? ' allowfullscreen' : '') + ' style="width: 100%; height: 100%; border-radius: 12px;"></iframe>';
                     } else {
                         iframeHtml = videoEmbed;
                     }
@@ -533,16 +616,37 @@
                     let separator = src.includes('?') ? '&' : '?';
                     src = src + separator + 'autoplay=1&mute=0';
                     
-                    iframeHtml = '<iframe src="' + src + '" width="100%" height="527" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 527px; border-radius: 12px;"></iframe>';
+                    iframeHtml = '<iframe src="' + src + '" width="100%" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; height: 100%; border-radius: 12px;"></iframe>';
                 }
                 
-                // Thay thế thumbnail bằng iframe
+                // Thay thế thumbnail bằng iframe và thêm class has-video
+                $wrapper.addClass('has-video');
                 $wrapper.html(iframeHtml);
             });
         });
 
         // AJAX filter cho major catalogues
+        var majorsSwiper = null;
+        
         $(document).ready(function() {
+            // Kiểm tra tab active khi trang load
+            var $activeTab = $('.major-catalogue-filter .filter-tab.active');
+            var isAllMajorsOnLoad = $activeTab.length > 0 && ($activeTab.data('catalogue-id') === '' || $activeTab.data('catalogue-id') === undefined);
+            
+            if (isAllMajorsOnLoad) {
+                // Tab "Tất cả ngành" đang active - hiển thị swiper
+                $('#majors-swiper-wrapper').show();
+                $('#majors-grid-wrapper').hide();
+                // Khởi tạo swiper sau khi DOM ready và swiper đã được show
+                setTimeout(function() {
+                    initMajorsSwiper();
+                }, 200);
+            } else {
+                // Tab khác active - hiển thị grid
+                $('#majors-swiper-wrapper').hide();
+                $('#majors-grid-wrapper').show();
+            }
+            
             $('.major-catalogue-filter .filter-tab').on('click', function(e) {
                 e.preventDefault();
                 
@@ -555,18 +659,33 @@
                 // Lấy catalogue_id và canonical
                 var catalogueId = $(this).data('catalogue-id') || '';
                 var canonical = $(this).data('canonical') || '';
+                var isAllMajors = catalogueId === '';
                 
                 // Hiển thị loading
-                var $grid = $('.majors-list-grid');
-                var $gridContent = $grid.find('.uk-grid');
+                var $swiperWrapper = $('#majors-swiper-wrapper');
+                var $gridWrapper = $('#majors-grid-wrapper');
+                var $gridContent = $gridWrapper.find('.uk-grid');
+                var $swiperContainer = $swiperWrapper.find('.majors-list-swiper');
+                var $swiperWrapperInner = $swiperContainer.find('.swiper-wrapper');
+                
+                // Ẩn cả 2 wrapper trước
+                $swiperWrapper.hide();
+                $gridWrapper.hide();
                 
                 // Nếu không có grid container, tạo mới
                 if ($gridContent.length === 0) {
-                    $grid.prepend('<div class="uk-grid uk-grid-medium" data-uk-grid-match></div>');
-                    $gridContent = $grid.find('.uk-grid');
+                    $gridWrapper.prepend('<div class="uk-grid uk-grid-medium" data-uk-grid-match></div>');
+                    $gridContent = $gridWrapper.find('.uk-grid');
                 }
                 
-                $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                // Hiển thị loading
+                if (isAllMajors) {
+                    $swiperWrapperInner.html('<div class="swiper-slide" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                    $swiperWrapper.show();
+                } else {
+                    $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                    $gridWrapper.show();
+                }
                 
                 // Gọi AJAX
                 $.ajax({
@@ -574,31 +693,122 @@
                     type: 'GET',
                     data: {
                         catalogue_id: catalogueId,
-                        limit: 6
+                        limit: isAllMajors ? 0 : 6 // 0 = không giới hạn cho tab "Tất cả ngành"
                     },
                     success: function(response) {
                         if (response.success && response.html) {
-                            // Cập nhật HTML majors (chỉ các grid items, không có grid container)
-                            $gridContent.html(response.html);
+                            if (isAllMajors) {
+                                // Tab "Tất cả ngành" - dùng swiper
+                                // Parse HTML và wrap mỗi major-item trong swiper-slide
+                                var wrappedHtml = '';
+                                var $tempDiv = $('<div>').html(response.html);
+                                
+                                // Tìm tất cả các major-item (có class uk-width-medium-1-3)
+                                $tempDiv.find('.uk-width-medium-1-3').each(function() {
+                                    var $item = $(this);
+                                    // Lấy HTML của major-card bên trong
+                                    var itemHtml = $item.html();
+                                    wrappedHtml += '<div class="swiper-slide"><div class="major-card-wrapper">' + itemHtml + '</div></div>';
+                                });
+                                
+                                // Nếu không tìm thấy bằng cách trên, thử tìm trực tiếp major-card
+                                if (!wrappedHtml) {
+                                    $tempDiv.find('.major-card').each(function() {
+                                        var $card = $(this);
+                                        wrappedHtml += '<div class="swiper-slide"><div class="major-card-wrapper">' + $card.parent().html() + '</div></div>';
+                                    });
+                                }
+                                
+                                $swiperWrapperInner.html(wrappedHtml);
+                                $swiperWrapper.show();
+                                $gridWrapper.hide();
+                                
+                                // Khởi tạo hoặc update swiper
+                                if (majorsSwiper) {
+                                    majorsSwiper.update();
+                                } else {
+                                    setTimeout(function() {
+                                        initMajorsSwiper();
+                                    }, 100);
+                                }
+                            } else {
+                                // Các tab khác - dùng grid
+                                $gridContent.html(response.html);
+                                $swiperWrapper.hide();
+                                $gridWrapper.show();
+                                
+                                // Destroy swiper nếu có
+                                if (majorsSwiper) {
+                                    majorsSwiper.destroy(true, true);
+                                    majorsSwiper = null;
+                                }
+                                
+                                // Re-init UIkit grid match
+                                if (typeof UIkit !== 'undefined' && UIkit.gridMatch) {
+                                    UIkit.gridMatch($gridContent);
+                                }
+                            }
                             
                             // Cập nhật link button
                             if (response.canonical) {
                                 $('#majors-list-cta-button').attr('href', response.canonical);
                             }
-                            
-                            // Re-init UIkit grid match nếu cần
-                            if (typeof UIkit !== 'undefined' && UIkit.gridMatch) {
-                                UIkit.gridMatch($gridContent);
-                            }
                         } else {
-                            $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Không có dữ liệu</p></div>');
+                            if (isAllMajors) {
+                                $swiperWrapperInner.html('<div class="swiper-slide" style="text-align: center; padding: 40px;"><p>Không có dữ liệu</p></div>');
+                                $swiperWrapper.show();
+                            } else {
+                                $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Không có dữ liệu</p></div>');
+                                $gridWrapper.show();
+                            }
                         }
                     },
                     error: function() {
-                        $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Có lỗi xảy ra. Vui lòng thử lại.</p></div>');
+                        if (isAllMajors) {
+                            $swiperWrapperInner.html('<div class="swiper-slide" style="text-align: center; padding: 40px;"><p>Có lỗi xảy ra. Vui lòng thử lại.</p></div>');
+                            $swiperWrapper.show();
+                        } else {
+                            $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><p>Có lỗi xảy ra. Vui lòng thử lại.</p></div>');
+                            $gridWrapper.show();
+                        }
                     }
                 });
             });
+            
+            // Khởi tạo swiper cho tab "Tất cả ngành"
+            function initMajorsSwiper() {
+                var $swiperContainer = $('.majors-list-swiper');
+                if (typeof Swiper !== 'undefined' && $swiperContainer.length > 0 && !majorsSwiper) {
+                    // Destroy swiper cũ nếu có
+                    if (majorsSwiper) {
+                        majorsSwiper.destroy(true, true);
+                        majorsSwiper = null;
+                    }
+                    
+                    majorsSwiper = new Swiper('.majors-list-swiper', {
+                        slidesPerView: 3,
+                        spaceBetween: 30,
+                        navigation: {
+                            nextEl: '.majors-list-swiper .swiper-button-next',
+                            prevEl: '.majors-list-swiper .swiper-button-prev',
+                        },
+                        breakpoints: {
+                            100: {
+                                slidesPerView: 1,
+                                spaceBetween: 15,
+                            },
+                            768: {
+                                slidesPerView: 2,
+                                spaceBetween: 20,
+                            },
+                            1024: {
+                                slidesPerView: 3,
+                                spaceBetween: 30,
+                            }
+                        }
+                    });
+                }
+            }
         });
 
     </script>

@@ -37,6 +37,8 @@ class MajorRepository extends BaseRepository
                 'majors.is_show_value',
                 'majors.is_show_feedback',
                 'majors.is_show_event',
+                'majors.admission_subject',
+                'majors.exam_location',
                 'majors.created_at',
             ]
         )
@@ -146,7 +148,12 @@ class MajorRepository extends BaseRepository
             $query->orderBy('majors.id', 'asc');
         }
 
-        $majors = $query->limit($limit)->get();
+        // Nếu limit = 0 thì lấy tất cả, không giới hạn
+        if ($limit > 0) {
+            $majors = $query->limit($limit)->get();
+        } else {
+            $majors = $query->get();
+        }
 
         // Load languages relationship cho từng major
         foreach ($majors as $major) {
@@ -189,6 +196,8 @@ class MajorRepository extends BaseRepository
                 'majors.id',
                 'majors.image',
                 'majors.publish',
+                'majors.admission_subject',
+                'majors.exam_location',
                 'majors.created_at',
             ]
         )
@@ -228,6 +237,34 @@ class MajorRepository extends BaseRepository
             $catalogueIds = array_filter($catalogueIds);
             if (!empty($catalogueIds)) {
                 $query->whereIn('majors.major_catalogue_id', $catalogueIds);
+            }
+        }
+        
+        // Filter theo Đối Tượng Tuyển Sinh (admission_subject)
+        if ($request->has('admission_subject')) {
+            $admissionSubjects = $request->input('admission_subject');
+            if (is_array($admissionSubjects) && count($admissionSubjects) > 0) {
+                $query->where(function($q) use ($admissionSubjects) {
+                    foreach ($admissionSubjects as $subject) {
+                        $q->orWhere('majors.admission_subject', '=', trim($subject));
+                    }
+                });
+            } elseif (is_string($admissionSubjects) && !empty(trim($admissionSubjects))) {
+                $query->where('majors.admission_subject', '=', trim($admissionSubjects));
+            }
+        }
+        
+        // Filter theo Địa Điểm Thi (exam_location)
+        if ($request->has('exam_location')) {
+            $examLocations = $request->input('exam_location');
+            if (is_array($examLocations) && count($examLocations) > 0) {
+                $query->where(function($q) use ($examLocations) {
+                    foreach ($examLocations as $location) {
+                        $q->orWhere('majors.exam_location', '=', trim($location));
+                    }
+                });
+            } elseif (is_string($examLocations) && !empty(trim($examLocations))) {
+                $query->where('majors.exam_location', '=', trim($examLocations));
             }
         }
 
@@ -302,5 +339,33 @@ class MajorRepository extends BaseRepository
             ->values();
         
         return $durations;
+    }
+
+    public function getFilterOptions()
+    {
+        $majors = $this->model->select('admission_subject', 'exam_location')
+            ->where('publish', '=', 2)
+            ->whereNull('deleted_at')
+            ->get();
+        
+        $admissionSubjects = [];
+        $examLocations = [];
+        
+        foreach ($majors as $major) {
+            // Xử lý admission_subject (TEXT field)
+            if ($major->admission_subject && !empty(trim($major->admission_subject))) {
+                $admissionSubjects[] = trim($major->admission_subject);
+            }
+            
+            // Xử lý exam_location (TEXT field)
+            if ($major->exam_location && !empty(trim($major->exam_location))) {
+                $examLocations[] = trim($major->exam_location);
+            }
+        }
+        
+        return [
+            'admission_subject' => array_values(array_unique(array_filter($admissionSubjects))),
+            'exam_location' => array_values(array_unique(array_filter($examLocations))),
+        ];
     }
 }

@@ -224,6 +224,11 @@ class SchoolService extends BaseService
                     }
                 }
                 $payload[$field] = $hasData ? $formJson : null;
+            } elseif (in_array($field, ['graduation_system', 'training_majors', 'exam_location'])) {
+                // Xử lý các field - lưu như một giá trị string đơn giản (không phải array)
+                $fieldData = $request->input($field, '');
+                $fieldData = trim($fieldData);
+                $payload[$field] = !empty($fieldData) ? $fieldData : null;
             } else {
                 $payload[$field] = $request->input($field);
             }
@@ -256,6 +261,11 @@ class SchoolService extends BaseService
                     }
                 }
                 $payload[$field] = $hasData ? $formJson : null;
+            } elseif (in_array($field, ['graduation_system', 'training_majors', 'exam_location'])) {
+                // Xử lý các field - lưu như một giá trị string đơn giản (không phải array)
+                $fieldData = $request->input($field, '');
+                $fieldData = trim($fieldData);
+                $payload[$field] = !empty($fieldData) ? $fieldData : null;
             } else {
                 // Luôn lấy giá trị từ request, kể cả null hoặc empty string
                 $payload[$field] = $request->input($field);
@@ -325,6 +335,8 @@ class SchoolService extends BaseService
             'schools.id',
             'schools.image',
             'schools.publish',
+            'schools.graduation_system',
+            'schools.exam_location',
             'schools.created_at',
             'tb2.name',
             'tb2.canonical',
@@ -361,6 +373,9 @@ class SchoolService extends BaseService
             'is_show_value',
             'form_script',
             'form_json',
+            'graduation_system',
+            'training_majors',
+            'exam_location',
         ];
     }
 

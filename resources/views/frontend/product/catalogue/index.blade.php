@@ -1,11 +1,46 @@
 @extends('frontend.homepage.layout')
 @section('content')
     @php
-    $breadcrumbImage = !empty($productCatalogue->album) ? json_decode($productCatalogue->album, true)[0] : asset('userfiles/image/system/breadcrumb.png');
+        // Lấy thông tin catalogue
+        $catalogueName = $productCatalogue->languages->first()->pivot->name ?? '';
+        $catalogueDescription = $productCatalogue->languages->first()->pivot->description ?? '';
     @endphp
-    
-    <!-- Breadcrumb -->
-    @include('frontend.component.breadcrumb', ['model' => $productCatalogue, 'breadcrumb' => $breadcrumb ?? null])
+
+    <!-- Breadcrumb Section -->
+    <div class="page-breadcrumb-large">
+        <div class="breadcrumb-overlay"></div>
+        <div class="uk-container uk-container-center">
+            <div class="breadcrumb-content">
+                <h1 class="breadcrumb-title">{{ $catalogueName }}</h1>
+                @if($catalogueDescription)
+                    <div class="breadcrumb-description">
+                        {!! $catalogueDescription !!}
+                    </div>
+                @endif
+                <nav class="breadcrumb-nav">
+                    <ul class="breadcrumb-list">
+                        <li><a href="{{ config('app.url') }}">Trang chủ</a></li>
+                        @if(!is_null($breadcrumb) && $breadcrumb->count() > 0)
+                            @foreach($breadcrumb as $key => $val)
+                                @php
+                                    $breadcrumbLanguage = $val->languages->first();
+                                    $breadcrumbName = ($breadcrumbLanguage && $breadcrumbLanguage->pivot) ? ($breadcrumbLanguage->pivot->name ?? '') : '';
+                                    $breadcrumbCanonical = ($breadcrumbLanguage && $breadcrumbLanguage->pivot) ? ($breadcrumbLanguage->pivot->canonical ?? '') : '';
+                                    $breadcrumbUrl = $breadcrumbCanonical ? write_url($breadcrumbCanonical) : '#';
+                                @endphp
+                                @if(!empty($breadcrumbName))
+                                    <li>
+                                        <span class="breadcrumb-separator">/</span>
+                                        <a href="{{ $breadcrumbUrl }}">{{ $breadcrumbName }}</a>
+                                    </li>
+                                @endif
+                            @endforeach
+                        @endif
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
     
     <div class="course-catalogue-page">
         <div class="uk-container uk-container-center">

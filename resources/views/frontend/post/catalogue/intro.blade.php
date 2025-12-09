@@ -230,6 +230,76 @@
         @endforeach
     @endif
 
+    {{-- Khối: Các trường đại học đang hợp tác tuyển sinh --}}
+    @php
+        // Debug: Kiểm tra dữ liệu schools
+        $schoolsList = $schools ?? collect();
+    @endphp
+    
+    @if($schoolsList->count() > 0)
+        <div class="panel-intro-schools wow fadeInUp" data-wow-delay="0.7s">
+            <div class="uk-container uk-container-center uk-container-1260">
+                <div class="intro-schools-header">
+                    <h2 class="intro-schools-title">Các Trường Đại Học Đang Hợp Tác Tuyển Sinh</h2>
+                </div>
+                
+                <div class="intro-schools-grid">
+                    <div class="uk-grid uk-grid-small uk-grid-match" data-uk-grid-match>
+                        @foreach($schoolsList as $school)
+                            @php
+                                $schoolLanguage = $school->languages->first() ?? null;
+                                $schoolName = '';
+                                $schoolShortName = $school->short_name ?? '';
+                                $schoolImage = $school->image ?? '';
+                                $schoolCanonical = '';
+                                $schoolLogoUrl = $schoolImage ? asset($schoolImage) : asset('frontend/resources/img/school-default.png');
+                                
+                                if ($schoolLanguage) {
+                                    $pivot = $schoolLanguage->pivot ?? null;
+                                    if ($pivot) {
+                                        $schoolName = $pivot->name ?? '';
+                                        $schoolCanonical = $pivot->canonical ?? '';
+                                        // Nếu không có short_name, dùng name
+                                        if (empty($schoolShortName)) {
+                                            $schoolShortName = $schoolName;
+                                        }
+                                    }
+                                }
+                                
+                                $schoolUrl = $schoolCanonical ? write_url($schoolCanonical) : '#';
+                            @endphp
+                            <div class="uk-width-small-1-2 uk-width-medium-1-2 uk-width-large-1-4">
+                                <a href="{{ $schoolUrl }}" class="intro-school-link">
+                                    <div class="intro-school-item">
+                                        <div class="intro-school-logo">
+                                            <img src="{{ $schoolLogoUrl }}" alt="{{ $schoolName }}">
+                                        </div>
+                                        <div class="intro-school-info">
+                                            <h3 class="intro-school-name">{{ $schoolName }}</h3>
+                                            @if(!empty($schoolShortName) && $schoolShortName !== $schoolName)
+                                                <p class="intro-school-short-name">{{ $schoolShortName }}</p>
+                                            @endif
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+        </div>
+    @else
+        {{-- Debug: Hiển thị thông báo nếu không có dữ liệu --}}
+        <div class="panel-intro-schools wow fadeInUp" data-wow-delay="0.7s">
+            <div class="uk-container uk-container-center uk-container-1260">
+                <div class="intro-schools-header">
+                    <h2 class="intro-schools-title">Các Trường Đại Học Đang Hợp Tác Tuyển Sinh</h2>
+                </div>
+                <p style="text-align: center; color: #999;">Chưa có dữ liệu trường học</p>
+            </div>
+        </div>
+    @endif
+
 @endsection
 
 @push('scripts')

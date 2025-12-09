@@ -56,11 +56,11 @@
         const openFormBtn = document.getElementById('open-consultation-form');
         if (openFormBtn) {
             openFormBtn.addEventListener('click', function() {
-                // Trigger modal form từ register-banner (UIKit modal)
+                // Trigger consultation modal (form tư vấn miễn phí)
                 if (typeof UIkit !== 'undefined') {
-                    UIkit.modal('#register-modal').show();
+                    UIkit.modal('#consultation-modal').show();
                 } else if (typeof $ !== 'undefined') {
-                    $('#register-modal').modal('show');
+                    $('#consultation-modal').modal('show');
                 } else {
                     // Fallback: scroll to form
                     const formSection = document.querySelector('#panel-contact, .register-banner-form');

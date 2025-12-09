@@ -9,7 +9,9 @@
             <div class="swiper-wrapper">
                 @foreach($slides[App\Enums\SlideEnum::MAIN]['item'] as $key => $val )
                     <div class="swiper-slide">
-                        <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                        <a href="#consultation-modal" class="slide-link" data-uk-modal>
+                            <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                        </a>
                     </div>
                 @endforeach
             </div>
@@ -28,7 +30,9 @@
             <div class="swiper-wrapper">
                 @foreach($slides['mobile-slide']['item'] as $key => $val )
                     <div class="swiper-slide">
-                        <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                        <a href="#consultation-modal" class="slide-link" data-uk-modal>
+                            <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                        </a>
                     </div>
                 @endforeach
             </div>

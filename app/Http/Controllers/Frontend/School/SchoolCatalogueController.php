@@ -6,6 +6,7 @@ use App\Http\Controllers\FrontendController;
 use Illuminate\Http\Request;
 use App\Repositories\SchoolRepository;
 use App\Repositories\SystemRepository;
+use App\Repositories\MajorRepository;
 
 class SchoolCatalogueController extends FrontendController
 {
@@ -13,13 +14,16 @@ class SchoolCatalogueController extends FrontendController
     protected $system;
     protected $schoolRepository;
     protected $systemRepository;
+    protected $majorRepository;
 
     public function __construct(
         SchoolRepository $schoolRepository,
         SystemRepository $systemRepository,
+        MajorRepository $majorRepository,
     ) {
         $this->schoolRepository = $schoolRepository;
         $this->systemRepository = $systemRepository;
+        $this->majorRepository = $majorRepository;
         parent::__construct();
     }
 
@@ -41,8 +45,22 @@ class SchoolCatalogueController extends FrontendController
             return $page;
         });
 
-        // Lấy danh sách schools với phân trang
+        // Lấy danh sách schools với phân trang (có filter)
         $schools = $this->schoolRepository->paginate($request, $this->language, 12, 'cac-truong-dao-tao-tu-xa.html');
+        
+        // Lấy filter options để hiển thị trong sidebar
+        $filterOptions = $this->schoolRepository->getFilterOptions();
+        
+        // Lấy danh sách majors để hiển thị trong filter
+        $majors = $this->majorRepository->getAllByLanguage($this->language);
+        $filterOptions['majors'] = $majors;
+        
+        // Lấy các filter đã chọn từ request
+        $selectedFilters = [
+            'graduation_system' => $request->input('graduation_system', []),
+            'major_id' => $request->input('major_id', []),
+            'exam_location' => $request->input('exam_location', []),
+        ];
         
         // Lấy SEO từ system
         $seo = $this->getSeo($page);
@@ -57,7 +75,10 @@ class SchoolCatalogueController extends FrontendController
             'seo',
             'system',
             'schools',
-            'page'
+            'page',
+            'filterOptions',
+            'selectedFilters',
+            'majors'
         ));
     }
 

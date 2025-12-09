@@ -52,7 +52,7 @@ class ProductRepository extends BaseRepository
             ]
         )
         ->join('product_language as tb2', 'tb2.product_id', '=','products.id')
-        ->join('lecturers as tb3', 'tb3.id', '=','products.lecturer_id')
+        ->leftJoin('lecturers as tb3', 'tb3.id', '=','products.lecturer_id')
         ->with([
             'product_catalogues',
             'product_variants' => function ($query) use ($language_id) {
@@ -66,7 +66,11 @@ class ProductRepository extends BaseRepository
         ])
         ->where('tb2.language_id', '=', $language_id)
         ->where('products.publish', '=', 2)
-        ->where('tb2.name', 'LIKE', '%'.$keyword.'%')
+        ->where(function($query) use ($keyword) {
+            $query->where('tb2.name', 'LIKE', '%'.$keyword.'%')
+                  ->orWhere('tb2.description', 'LIKE', '%'.$keyword.'%');
+        })
+        ->orderBy('products.id', 'desc')
         ->paginate(21)->withQueryString()->withPath(config('app.url'). 'tim-kiem');
     }
 

@@ -60,5 +60,59 @@ class MajorController extends Controller
             'count' => $majors->count()
         ]);
     }
+
+    public function filter(Request $request)
+    {
+        // Lấy danh sách majors với filter
+        $majors = $this->majorRepository->paginate($request, $this->language, 12, 'cac-nganh-dao-tao-tu-xa.html');
+        
+        // Render HTML cho majors
+        $html = $this->renderFilterMajors($majors);
+        
+        // Render pagination HTML
+        $paginationHtml = $this->renderPagination($majors);
+        
+        return response()->json([
+            'data' => $html,
+            'countMajor' => $majors->total(),
+            'pagination' => $paginationHtml
+        ]);
+    }
+
+    private function renderFilterMajors($majors)
+    {
+        $html = '';
+        
+        if ($majors && $majors->count() > 0) {
+            $html .= '<div class="uk-grid uk-grid-medium" data-uk-grid-match>';
+            
+            foreach ($majors as $major) {
+                $html .= view('frontend.component.major-item', ['major' => $major])->render();
+            }
+            
+            $html .= '</div>';
+        } else {
+            $html .= '<div class="no-majors-message" style="text-align: center; padding: 60px 20px;">';
+            $html .= '<p style="font-size: 18px; color: #666;">Không tìm thấy ngành học nào phù hợp với bộ lọc.</p>';
+            $html .= '</div>';
+        }
+        
+        return $html;
+    }
+
+    private function renderPagination($majors)
+    {
+        if (!$majors->hasPages()) {
+            return '';
+        }
+        
+        $paginationView = view('pagination::bootstrap-4', ['paginator' => $majors])->render();
+        
+        $html = '<div class="major-catalogue-pagination" style="margin-top: 40px; text-align: center;">';
+        $html .= $paginationView;
+        $html .= '</div>';
+        
+        return $html;
+    }
 }
 

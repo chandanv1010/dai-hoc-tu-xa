@@ -25,9 +25,12 @@
     <!-- Schools Catalogue Content -->
     <div class="panel-schools-catalogue">
         <div class="uk-container uk-container-center">
-            @if($schools && $schools->count() > 0)
-                <div class="schools-catalogue-grid">
-                    <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+            <div class="uk-grid uk-grid-medium" data-uk-grid-match>
+                {{-- Main Content - 3/4 --}}
+                <div class="uk-width-medium-3-4" id="schools-content-wrapper">
+                    @if($schools && $schools->count() > 0)
+                        <div class="schools-catalogue-grid">
+                            <div class="uk-grid uk-grid-medium" data-uk-grid-match>
                         @foreach($schools as $school)
                             @php
                                 // Lấy thông tin từ languages relationship
@@ -84,52 +87,72 @@
                                 </div>
                             </div>
                         @endforeach
-                    </div>
+                            </div>
+                        </div>
+
+                        <!-- Pagination -->
+                        @if($schools->hasPages())
+                            <div class="schools-pagination">
+                                <ul class="pagination">
+                                    {{-- Previous Page Link --}}
+                                    @php
+                                        $prevPageUrl = ($schools->currentPage() > 1) ? str_replace('?page=', '/trang-', $schools->previousPageUrl()).config('apps.general.suffix') : null;
+                                        if ($prevPageUrl && $schools->currentPage() == 2) {
+                                            $prevPageUrl = str_replace('/trang-1', '', $prevPageUrl);
+                                        }
+                                    @endphp
+                                    @if ($prevPageUrl)
+                                        <li class="page-item"><a class="page-link" href="{{ $prevPageUrl }}">‹ Trước</a></li>
+                                    @else
+                                        <li class="page-item disabled"><span class="page-link">‹ Trước</span></li>
+                                    @endif
+
+                                    {{-- Pagination Links --}}
+                                    @foreach ($schools->getUrlRange(max(1, $schools->currentPage() - 2), min($schools->lastPage(), $schools->currentPage() + 2)) as $page => $url)
+                                        @php
+                                            $paginationUrl = str_replace('?page=', '/trang-', $url).config('apps.general.suffix');
+                                            $paginationUrl = ($page == 1) ? str_replace('/trang-'.$page, '', $paginationUrl) : $paginationUrl;
+                                        @endphp
+                                        <li class="page-item {{ ($page == $schools->currentPage()) ? 'active' : '' }}"><a class="page-link" href="{{ $paginationUrl }}">{{ $page }}</a></li>
+                                    @endforeach
+
+                                    {{-- Next Page Link --}}
+                                    @php
+                                        $nextPageUrl = ($schools->hasMorePages()) ? str_replace('?page=', '/trang-', $schools->nextPageUrl()).config('apps.general.suffix') : null;
+                                    @endphp
+                                    @if ($nextPageUrl)
+                                        <li class="page-item"><a class="page-link" href="{{ $nextPageUrl }}">Sau ›</a></li>
+                                    @else
+                                        <li class="page-item disabled"><span class="page-link">Sau ›</span></li>
+                                    @endif
+                                </ul>
+                            </div>
+                        @endif
+                    @else
+                        <div class="schools-empty">
+                            <p>Hiện tại chưa có trường đào tạo từ xa nào.</p>
+                        </div>
+                    @endif
                 </div>
-
-                <!-- Pagination -->
-                @if($schools->hasPages())
-                    <div class="schools-pagination">
-                        <ul class="pagination">
-                            {{-- Previous Page Link --}}
-                            @php
-                                $prevPageUrl = ($schools->currentPage() > 1) ? str_replace('?page=', '/trang-', $schools->previousPageUrl()).config('apps.general.suffix') : null;
-                                if ($prevPageUrl && $schools->currentPage() == 2) {
-                                    $prevPageUrl = str_replace('/trang-1', '', $prevPageUrl);
-                                }
-                            @endphp
-                            @if ($prevPageUrl)
-                                <li class="page-item"><a class="page-link" href="{{ $prevPageUrl }}">‹ Trước</a></li>
-                            @else
-                                <li class="page-item disabled"><span class="page-link">‹ Trước</span></li>
-                            @endif
-
-                            {{-- Pagination Links --}}
-                            @foreach ($schools->getUrlRange(max(1, $schools->currentPage() - 2), min($schools->lastPage(), $schools->currentPage() + 2)) as $page => $url)
-                                @php
-                                    $paginationUrl = str_replace('?page=', '/trang-', $url).config('apps.general.suffix');
-                                    $paginationUrl = ($page == 1) ? str_replace('/trang-'.$page, '', $paginationUrl) : $paginationUrl;
-                                @endphp
-                                <li class="page-item {{ ($page == $schools->currentPage()) ? 'active' : '' }}"><a class="page-link" href="{{ $paginationUrl }}">{{ $page }}</a></li>
-                            @endforeach
-
-                            {{-- Next Page Link --}}
-                            @php
-                                $nextPageUrl = ($schools->hasMorePages()) ? str_replace('?page=', '/trang-', $schools->nextPageUrl()).config('apps.general.suffix') : null;
-                            @endphp
-                            @if ($nextPageUrl)
-                                <li class="page-item"><a class="page-link" href="{{ $nextPageUrl }}">Sau ›</a></li>
-                            @else
-                                <li class="page-item disabled"><span class="page-link">Sau ›</span></li>
-                            @endif
-                        </ul>
-                    </div>
-                @endif
-            @else
-                <div class="schools-empty">
-                    <p>Hiện tại chưa có trường đào tạo từ xa nào.</p>
+                
+                {{-- Sidebar Filter - 1/4 --}}
+                <div class="uk-width-medium-1-4">
+                    @include('frontend.school.catalogue.filter-sidebar')
                 </div>
-            @endif
+            </div>
+        </div>
+    </div>
+
+    {{-- CTA Section: Nhận tư vấn miễn phí --}}
+    <div class="panel-schools-cta wow fadeInUp" data-wow-delay="0.3s">
+        <div class="uk-container uk-container-center">
+            <div class="schools-cta-content">
+                <h2 class="schools-cta-title">Bạn vẫn còn băn khoăn và có nhiều thắc mắc?</h2>
+                <p class="schools-cta-description">Hơn 50,000+ học viên đã lựa chọn Đại Học Từ Xa thay đổi cuộc sống</p>
+                <a href="#consultation-modal" class="schools-cta-button" data-uk-modal>
+                    NHẬN TƯ VẤN MIỄN PHÍ
+                </a>
+            </div>
         </div>
     </div>
 @endsection

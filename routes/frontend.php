@@ -40,9 +40,9 @@ Route::get('crawler', [CrawlerController::class, 'index'])->name('crawler.index'
 Route::get('/thumb', [App\Http\Controllers\ImageResizerController::class, 'resize'])
     ->name('thumb');
 
-Route::get('tim-kiem', [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search');
+Route::get('tim-kiem'.config('apps.general.suffix'), [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search');
 
-Route::get('tim-kiem/trang-{page}', [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search')->where('page', '[0-9]+');
+Route::get('tim-kiem/trang-{page}'.config('apps.general.suffix'), [FeProductCatalogueController::class, 'search'])->name('product.catalogue.search.page')->where('page', '[0-9]+');
 
 /* CUSTOMER  */
 Route::get('customer/login'.config('apps.general.suffix'), [FeAuthController::class, 'index'])->name('fe.auth.login'); 

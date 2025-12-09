@@ -3,10 +3,10 @@
         <div class="register-banner-content">
             <h2 class="register-banner-title">Bắt Đầu Hành Trình Thay Đổi Cuộc Đời</h2>
             <p class="register-banner-subtitle">Đừng để thời gian trôi qua, hãy đầu tư cho tương lai của chính bạn ngay hôm nay!</p>
-            <button class="register-banner-btn" data-uk-modal="{target:'#register-modal'}">
+            <a href="#consultation-modal" class="register-banner-btn" data-uk-modal>
                 <i class="fa fa-rocket"></i>
                 <span>Đăng Ký Ngay</span>
-            </button>
+            </a>
         </div>
     </div>
 </div>

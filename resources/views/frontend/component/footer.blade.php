@@ -104,9 +104,9 @@
                                     @endphp
                                     
                                     <div class="footer-menu-item">
-                                        <a href="{{ write_url($itemCanonical) }}" class="footer-menu-link">
+                                        <div class="footer-menu-link">
                                             {{ $itemName }}
-                                        </a>
+                                        </div>
                                         
                                         @if(!empty($itemChildren))
                                             <ul class="footer-submenu">

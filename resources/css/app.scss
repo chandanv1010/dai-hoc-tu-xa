@@ -81,10 +81,13 @@
 
         .uk-grid {
             margin: 0 -15px;
+            display: flex;
+            flex-wrap: wrap;
         }
 
         .uk-width-medium-1-5 {
             padding: 0 15px;
+            display: flex;
         }
     }
 
@@ -99,7 +102,10 @@
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         overflow: visible;
-        min-height: 385px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
 
         &::after {
             content: '';
@@ -159,6 +165,9 @@
             position: relative;
             z-index: 1;
             font-size:16px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
 
             *{
                 font-family: 'Inter' !important;
@@ -700,7 +709,19 @@
         position: relative;
     }
 
+    .slide-link {
+        display: block;
+        width: 100%;
+        height: 100%;
+        text-decoration: none;
+        cursor: pointer;
+        position: relative;
+    }
+
     .image.img-cover {
+        display: block;
+        width: 100%;
+        height: 100%;
 
         @media (max-width: 768px) {
             height: auto;
@@ -2142,6 +2163,7 @@
         transition: all 0.3s ease;
         box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
         font-family: var(--second-font);
+        text-decoration: none;
 
         i {
             font-size: 20px;
@@ -2164,6 +2186,95 @@
             i {
                 font-size: 18px;
             }
+        }
+    }
+}
+
+// Panel Schools CTA - Khối CTA cho trang các trường đào tạo
+.panel-schools-cta {
+    padding: 0 0 60px 0;
+    position: relative;
+
+    @media (max-width: 768px) {
+        padding: 0 0 40px 0;
+    }
+
+    .uk-container {
+        background: #008DC2;
+        border: 3px solid #008DC2;
+        border-radius: 16px;
+        padding: 40px 30px;
+
+        @media (max-width: 768px) {
+            padding: 30px 20px;
+            border-radius: 12px;
+        }
+    }
+
+    .schools-cta-content {
+        text-align: center;
+        position: relative;
+        z-index: 1;
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .schools-cta-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #fff;
+        margin: 0 0 12px 0;
+        line-height: 1.3;
+
+        @media (max-width: 768px) {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+    }
+
+    .schools-cta-description {
+        font-size: 16px;
+        color: #fff;
+        margin: 0 0 25px 0;
+        line-height: 1.5;
+
+        @media (max-width: 768px) {
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+    }
+
+    .schools-cta-button {
+        display: inline-block;
+        background: #DC2626;
+        color: #fff;
+        border: none;
+        padding: 12px 35px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+        text-decoration: none;
+        letter-spacing: 1px;
+
+        &:hover {
+            background: #B91C1C;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
+            text-decoration: none;
+            color: #fff;
+        }
+
+        &:active {
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 768px) {
+            padding: 10px 28px;
+            font-size: 14px;
         }
     }
 }
@@ -2464,7 +2575,7 @@
 
         .schools-list-swiper {
             position: relative;
-            padding: 0 50px;
+            padding: 0 70px;
 
             .swiper-wrapper {
                 display: flex;
@@ -2487,23 +2598,25 @@
 
             .swiper-button-prev,
             .swiper-button-next {
-                width: 40px;
-                height: 40px;
-                background: #fff;
+                width: 50px;
+                height: 50px;
+                background: #008DC2 !important;
                 border-radius: 50%;
-                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
-                color: #008DC2;
+                box-shadow: 0 2px 8px rgba(0, 141, 194, 0.3);
+                color: #fff !important;
                 transition: all 0.3s ease;
+                z-index: 10;
 
                 &:after {
-                    font-size: 18px;
+                    font-size: 20px;
                     font-weight: 700;
                 }
 
                 &:hover {
-                    background: #008DC2;
-                    color: #fff;
-                    box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+                    background: #0070A3 !important;
+                    color: #fff !important;
+                    box-shadow: 0 4px 12px rgba(0, 141, 194, 0.4);
+                    transform: scale(1.1);
                 }
 
                 &.swiper-button-disabled {
@@ -2513,11 +2626,11 @@
             }
 
             .swiper-button-prev {
-                left: 0;
+                left: -60px;
             }
 
             .swiper-button-next {
-                right: 0;
+                right: -60px;
             }
         }
 
@@ -2680,16 +2793,31 @@
 
         .schools-list-grid {
             .schools-list-swiper {
-                padding: 0 40px;
+                padding: 0 60px;
 
                 .swiper-button-prev,
                 .swiper-button-next {
-                    width: 35px;
-                    height: 35px;
+                    width: 40px;
+                    height: 40px;
+                    background: #008DC2 !important;
+                    color: #fff !important;
 
                     &:after {
-                        font-size: 16px;
+                        font-size: 18px;
                     }
+
+                    &:hover {
+                        background: #0070A3 !important;
+                        color: #fff !important;
+                    }
+                }
+
+                .swiper-button-prev {
+                    left: -50px;
+                }
+
+                .swiper-button-next {
+                    right: -50px;
                 }
             }
 
@@ -2742,16 +2870,31 @@
 
         .schools-list-grid {
             .schools-list-swiper {
-                padding: 0 35px;
+                padding: 0 50px;
 
                 .swiper-button-prev,
                 .swiper-button-next {
-                    width: 30px;
-                    height: 30px;
+                    width: 35px;
+                    height: 35px;
+                    background: #008DC2 !important;
+                    color: #fff !important;
 
                     &:after {
-                        font-size: 14px;
+                        font-size: 16px;
                     }
+
+                    &:hover {
+                        background: #0070A3 !important;
+                        color: #fff !important;
+                    }
+                }
+
+                .swiper-button-prev {
+                    left: -40px;
+                }
+
+                .swiper-button-next {
+                    right: -40px;
                 }
             }
 
@@ -2961,7 +3104,7 @@
         margin-bottom: 30px;
 
         .majors-list-title {
-            font-size: 36px;
+            font-size: 36px; 
             font-weight: 700;
             color: #008DC2; 
             margin: 0 0 20px 0;
@@ -3045,6 +3188,7 @@
 
     .majors-list-grid {
         margin-bottom: 40px;
+        position: relative;
 
         .uk-grid {
             margin-left: -15px;
@@ -3057,6 +3201,115 @@
             }
         }
 
+        // Swiper wrapper cho tab "Tất cả ngành"
+        .majors-list-swiper-wrapper {
+            position: relative;
+            padding: 0 100px; // Tăng padding để tạo không gian cho mũi tên
+
+            @media (max-width: 960px) {
+                padding: 0 90px;
+            }
+
+            @media (max-width: 768px) {
+                padding: 0 80px;
+            }
+
+            .majors-list-swiper {
+                overflow: visible; // Để mũi tên hiển thị bên ngoài
+                position: relative;
+
+                .swiper-button-prev,
+                .swiper-button-next {
+                    width: 50px;
+                    height: 50px;
+                    background: #008DC2 !important;
+                    border-radius: 50%;
+                    box-shadow: 0 2px 8px rgba(0, 141, 194, 0.3);
+                    color: #fff !important;
+                    transition: background-color 0.3s ease, box-shadow 0.3s ease; // Chỉ transition các thuộc tính cần thiết
+                    z-index: 10;
+                    margin-top: 0;
+                    top: 50%;
+                    transform: translateY(-50%);
+                    position: absolute;
+                    transform-origin: center center; // Đảm bảo transform origin ở giữa
+
+                    &:after {
+                        font-size: 20px;
+                        font-weight: 700;
+                    }
+
+                    &:hover {
+                        background: #0070A3 !important;
+                        color: #fff !important;
+                        box-shadow: 0 4px 12px rgba(0, 141, 194, 0.4);
+                        transform: translateY(-50%); // Giữ nguyên vị trí, không scale
+                    }
+
+                    &.swiper-button-disabled {
+                        opacity: 0.3;
+                        cursor: not-allowed;
+                    }
+                }
+
+                .swiper-button-prev {
+                    left: -100px !important; // Đẩy ra xa hơn nữa
+
+                    @media (max-width: 960px) {
+                        left: -90px !important;
+                        width: 40px;
+                        height: 40px;
+                        &:after {
+                            font-size: 18px;
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                        left: -80px !important;
+                        width: 35px;
+                        height: 35px;
+                        &:after {
+                            font-size: 16px;
+                        }
+                    }
+                }
+
+                .swiper-button-next {
+                    right: -100px !important; // Đẩy ra xa hơn nữa
+
+                    @media (max-width: 960px) {
+                        right: -90px !important;
+                        width: 40px;
+                        height: 40px;
+                        &:after {
+                            font-size: 18px;
+                        }
+                    }
+
+                    @media (max-width: 768px) {
+                        right: -80px !important;
+                        width: 35px;
+                        height: 35px;
+                        &:after {
+                            font-size: 16px;
+                        }
+                    }
+                }
+
+                .swiper-slide {
+                    height: auto; // Để slide có chiều cao tự động
+                    
+                    .major-card-wrapper {
+                        height: 100%;
+                        
+                        .major-card {
+                            height: 100%;
+                        }
+                    }
+                }
+            }
+        }
+
         .major-card {
             background: #fff;
             border-radius: 12px;
@@ -3066,13 +3319,13 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            border: 1px solid #f0f0f0;
+            border: 2px solid #008DC2;
             overflow: hidden;
 
             &:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-                border-color: #008DC2;
+                border-color: #0070A3;
             }
 
             .major-card-image {
@@ -3314,6 +3567,7 @@
     padding: 25px 0;
     background: linear-gradient(180deg, #E6F7FF 0%, #F0F9FF 100%);
     position: relative;
+    min-height: 580px; // Tăng độ cao lên 580px
 
     .uk-container {
         max-width: 1240px;
@@ -3429,7 +3683,8 @@
                 cursor: pointer;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 transition: transform 0.3s ease;
-                height: 330px;
+                height: 500px; // Cao bằng ảnh bên phải
+                min-height: 500px;
                 width: 100%;
 
                 &:hover {
@@ -3486,11 +3741,24 @@
                     white-space: nowrap;
                 }
 
-                iframe {
-                    width: 100%;
-                    height: 527px;
-                    border-radius: 12px;
-                    border: none;
+                // Responsive video wrapper khi có video - giữ nguyên height 500px
+                &.has-video {
+                    height: 500px !important; // Giữ nguyên height bằng ảnh
+                    min-height: 500px;
+                    padding-bottom: 0; // Không dùng padding-bottom nữa
+                    position: relative;
+                    cursor: default;
+                    
+                    iframe {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        border-radius: 12px;
+                        border: none;
+                        object-fit: contain; // Đảm bảo video hiển thị đầy đủ trong khung
+                    }
                 }
             }
         }
@@ -12063,11 +12331,11 @@ button{
 }
 
 .panel-schools-catalogue {
-    padding: 50px 0;
+    padding: 0 0 50px 0;
     background: transparent;
 
     @media (max-width: 768px) {
-        padding: 30px 0;
+        padding: 0 0 30px 0;
     }
 
     .uk-container {
@@ -13721,16 +13989,188 @@ button{
     }
 }
 
+// Panel Intro Schools - Các trường đại học đang hợp tác tuyển sinh
+.panel-intro-schools {
+    padding: 60px 0;
+    background: linear-gradient(to bottom, #f8f9fa 0%, #ffffff 100%);
+    position: relative;
+
+    @media (max-width: 768px) {
+        padding: 40px 0;
+    }
+
+    .intro-schools-header {
+        text-align: center;
+        margin-bottom: 50px;
+
+        @media (max-width: 768px) {
+            margin-bottom: 35px;
+        }
+
+        .intro-schools-title {
+            font-size: 36px;
+            font-weight: 700;
+            color: #008DC2;
+            margin: 0;
+            line-height: 1.3;
+            position: relative;
+            display: inline-block;
+
+            @media (max-width: 768px) {
+                font-size: 28px;
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -15px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80px;
+                height: 4px;
+                background: linear-gradient(to right, #008DC2, #00B9FF);
+                border-radius: 2px;
+
+                @media (max-width: 768px) {
+                    width: 60px;
+                    height: 3px;
+                    bottom: -12px;
+                }
+            }
+        }
+    }
+
+    .intro-schools-grid {
+        .uk-grid {
+            margin-left: -15px;
+            margin-right: -15px;
+
+            > * {
+                padding-left: 15px;
+                padding-right: 15px;
+                margin-bottom: 30px;
+            }
+        }
+
+        .intro-school-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+            height: 100%;
+            
+            &:hover {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+
+        .intro-school-item {
+            background: #fff;
+            border-radius: 16px;
+            padding: 25px 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border: 2px solid transparent;
+
+            @media (max-width: 768px) {
+                padding: 20px 15px;
+                border-radius: 12px;
+            }
+
+            &:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 8px 25px rgba(0, 141, 194, 0.15);
+                border-color: #008DC2;
+            }
+
+            .intro-school-logo {
+                width: 120px;
+                height: 120px;
+                margin-bottom: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background: #f8f9fa;
+                border-radius: 12px;
+                padding: 15px;
+                overflow: hidden;
+
+                @media (max-width: 768px) {
+                    width: 100px;
+                    height: 100px;
+                    margin-bottom: 15px;
+                    padding: 10px;
+                }
+
+                img {
+                    width: 100%;
+                    height: 100%;
+                    object-fit: contain;
+                    border-radius: 8px;
+                }
+            }
+
+            .intro-school-info {
+                flex: 1;
+                width: 100%;
+
+                .intro-school-name {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #1F2937;
+                    margin: 0 0 8px 0;
+                    line-height: 1.4;
+                    min-height: 50px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+
+                    @media (max-width: 768px) {
+                        font-size: 16px;
+                        min-height: 45px;
+                    }
+                }
+
+                .intro-school-short-name {
+                    font-size: 14px;
+                    color: #008DC2;
+                    font-weight: 600;
+                    margin: 0;
+                    line-height: 1.4;
+
+                    @media (max-width: 768px) {
+                        font-size: 13px;
+                    }
+                }
+            }
+        }
+    }
+}
+
 .footer-description{
     margin-bottom: 25px;
 }
 
 .value-bring-graduate-image-2{
-    height: 330px;
+    height: 500px;
+    min-height: 500px;
     margin-top:20px;
     border-radius:10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    
     img{
         border-radius: 10px;
+        width: 100%;
+        height: 100%;
+        object-fit: contain; // Hiển thị đầy đủ ảnh, tự căn chỉnh
     }
 }
 
@@ -13780,21 +14220,21 @@ button{
         text-align: center;
         border-bottom: 1px solid #f0f0f0;
 
-        .download-roadmap-description {
-            color: #FF8C00;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
         .download-roadmap-title {
-            color: #DC143C;
+            color: #008DC2;
             font-size: 22px;
             font-weight: 700;
-            margin: 0;
+            margin: 0 0 10px 0;
             line-height: 1.3;
             text-transform: uppercase;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
         }
     }
 
@@ -13965,13 +14405,12 @@ button{
         .download-roadmap-header {
             padding: 20px 20px 15px;
 
-            .download-roadmap-description {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-
             .download-roadmap-title {
                 font-size: 18px;
+            }
+
+            .download-roadmap-description {
+                font-size: 13px;
             }
         }
 
@@ -14056,21 +14495,21 @@ button{
         text-align: center;
         border-bottom: 1px solid #f0f0f0;
 
-        .download-roadmap-description {
-            color: #FF8C00;
-            font-size: 16px;
-            font-weight: 500;
-            margin-bottom: 10px;
-            line-height: 1.4;
-        }
-
         .download-roadmap-title {
-            color: #DC143C;
+            color: #008DC2;
             font-size: 22px;
             font-weight: 700;
-            margin: 0;
+            margin: 0 0 10px 0;
             line-height: 1.3;
             text-transform: uppercase;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
         }
     }
 
@@ -14242,13 +14681,12 @@ button{
         .download-roadmap-header {
             padding: 20px 20px 15px;
 
-            .download-roadmap-description {
-                font-size: 14px;
-                margin-bottom: 8px;
-            }
-
             .download-roadmap-title {
                 font-size: 18px;
+            }
+
+            .download-roadmap-description {
+                font-size: 13px;
             }
         }
 
@@ -16552,6 +16990,486 @@ button{
 
             i {
                 font-size: 18px;
+            }
+        }
+    }
+}
+
+// ============================================
+// Search Results Page Styles
+// ============================================
+.search-results {
+    // Tất cả các khối panel trong trang search có padding-bottom: 0
+    .panel-post-catalogue,
+    .panel-schools-catalogue,
+    .panel-majors-list,
+    .course-catalogue-page {
+        padding-bottom: 0 !important;
+    }
+
+    // Panel schools catalogue có padding: 0
+    .panel-schools-catalogue {
+        padding: 0 !important;
+    }
+
+    // Panel majors list có padding-top và padding-bottom: 0
+    .panel-majors-list {
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    // Course catalogue page có padding-bottom: 0
+    .course-catalogue-page {
+        padding-bottom: 0 !important;
+    }
+
+    // Style cho phần tin tức trong search
+    .panel-post-catalogue {
+        padding: 0 !important;
+        margin-bottom: 40px;
+
+        .post-catalogue-grid {
+            margin-bottom: 0;
+
+            .uk-grid {
+                margin-left: -15px;
+                margin-right: -15px;
+                margin-bottom: -40px;
+                
+                > * {
+                    padding-left: 15px;
+                    padding-right: 15px;
+                    margin-bottom: 40px;
+                }
+            }
+
+            .news-item {
+                background: #fff;
+                border-radius: 12px;
+                overflow: hidden;
+                box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                margin-bottom: 0;
+
+                &:hover {
+                    transform: translateY(-5px);
+                    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+                }
+
+                .news-image {
+                    width: 100%;
+                    height: 200px;
+                    display: block;
+                    overflow: hidden;
+                    position: relative;
+                    background: linear-gradient(135deg, #E0F2FE 0%, #B3E5FC 100%);
+
+                    &.no-image {
+                        background: linear-gradient(135deg, #E0F2FE 0%, #B3E5FC 100%);
+                    }
+
+                    img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: cover;
+                        transition: transform 0.3s ease;
+                    }
+
+                    &:hover img {
+                        transform: scale(1.05);
+                    }
+
+                    @media (max-width: 768px) {
+                        height: 180px;
+                    }
+                }
+
+                .news-content {
+                    padding: 20px;
+                    flex: 1;
+                    display: flex;
+                    flex-direction: column;
+
+                    .news-title {
+                        margin: 0 0 10px 0;
+                        font-size: 18px;
+                        font-weight: 600;
+                        line-height: 1.4;
+
+                        @media (max-width: 768px) {
+                            font-size: 16px;
+                        }
+
+                        a {
+                            color: #1F2937;
+                            text-decoration: none;
+                            transition: color 0.3s ease;
+
+                            &:hover {
+                                color: #008DC2;
+                            }
+                        }
+                    }
+
+                    .news-description {
+                        font-size: 14px;
+                        color: #6B7280;
+                        line-height: 1.6;
+                        margin: 0 0 15px 0;
+                        flex: 1;
+
+                        @media (max-width: 768px) {
+                            font-size: 13px;
+                            margin-bottom: 12px;
+                        }
+                    }
+
+                    .news-meta {
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                        margin-top: auto;
+                        padding-top: 15px;
+                        border-top: 1px solid #E5E7EB;
+
+                        .news-date {
+                            font-size: 13px;
+                            color: #9CA3AF;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+
+                            i {
+                                font-size: 14px;
+                            }
+
+                            @media (max-width: 768px) {
+                                font-size: 12px;
+                            }
+                        }
+
+                        .news-detail-button {
+                            background: #008DC2;
+                            color: #fff;
+                            font-size: 13px;
+                            font-weight: 600;
+                            text-decoration: none;
+                            padding: 6px 16px;
+                            border-radius: 6px;
+                            transition: all 0.3s ease;
+                            box-shadow: 0 2px 4px rgba(0, 141, 194, 0.2);
+
+                            &:hover {
+                                background: #0070A3;
+                                box-shadow: 0 4px 8px rgba(0, 141, 194, 0.3);
+                                transform: translateY(-1px);
+                                color: #fff;
+                            }
+
+                            @media (max-width: 768px) {
+                                font-size: 12px;
+                                padding: 5px 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .post-catalogue-pagination {
+            margin-top: 40px;
+            text-align: center;
+
+            @media (max-width: 768px) {
+                margin-top: 30px;
+            }
+        }
+    }
+
+    @media (max-width: 768px) {
+        .panel-post-catalogue {
+            .post-catalogue-grid {
+                .uk-grid {
+                    margin-left: -10px;
+                    margin-right: -10px;
+                    
+                    > * {
+                        padding-left: 10px;
+                        padding-right: 10px;
+                    }
+                }
+
+                .news-item {
+                    .news-content {
+                        padding: 18px;
+                    }
+                }
+            }
+        }
+    }
+}
+
+// Schools Filter Sidebar - Style thanh mảnh
+.schools-filter-sidebar {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    position: sticky;
+    top: 20px;
+    margin-bottom: 30px;
+    border: 1px solid #e5e7eb;
+
+    @media (max-width: 960px) {
+        position: relative;
+        top: 0;
+        margin-bottom: 30px;
+        padding: 18px 15px;
+    }
+
+    @media (max-width: 768px) {
+        padding: 15px 12px;
+        border-radius: 10px;
+    }
+
+    .filter-group {
+        margin-bottom: 18px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #f3f4f6;
+
+        &:last-of-type {
+            border-bottom: none;
+            margin-bottom: 15px;
+            padding-bottom: 0;
+        }
+
+        .filter-heading {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1F2937;
+            margin: 0 0 12px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #008DC2;
+
+            @media (max-width: 768px) {
+                font-size: 14px;
+                margin-bottom: 10px;
+                padding-bottom: 6px;
+            }
+
+            &::after {
+                content: '';
+                position: absolute;
+                bottom: -1px;
+                left: 0;
+                width: 40px;
+                height: 2px;
+                background: #008DC2;
+            }
+        }
+
+        .filter-body {
+            .filter-choose {
+                font-size: 14px;
+                font-weight: 500;
+                margin-bottom: 8px;
+                display: flex;
+                align-items: center;
+                padding: 6px 8px;
+                border-radius: 6px;
+                transition: all 0.2s ease;
+                cursor: pointer;
+
+                @media (max-width: 768px) {
+                    font-size: 13px;
+                    margin-bottom: 6px;
+                    padding: 5px 6px;
+                }
+
+                &:hover {
+                    background: #f8f9fa;
+                    transform: translateX(3px);
+                }
+
+                &:last-child {
+                    margin-bottom: 0;
+                }
+
+                label {
+                    cursor: pointer;
+                    margin-left: 10px;
+                    color: #4B5563;
+                    transition: all 0.2s ease;
+                    user-select: none;
+                    flex: 1;
+                    line-height: 1.4;
+
+                    @media (max-width: 768px) {
+                        margin-left: 8px;
+                    }
+
+                    &:hover {
+                        color: #008DC2;
+                    }
+                }
+
+                .input-checkbox {
+                    background-color: #fff;
+                    border: 2px solid #D1D5DB;
+                    border-radius: 3px;
+                    box-sizing: border-box;
+                    cursor: pointer;
+                    height: 18px;
+                    width: 18px;
+                    min-height: 18px;
+                    min-width: 18px;
+                    margin: 0;
+                    position: relative;
+                    vertical-align: middle;
+                    transition: all 0.2s ease;
+                    flex-shrink: 0;
+                    appearance: none;
+                    -webkit-appearance: none;
+                    -moz-appearance: none;
+
+                    @media (max-width: 768px) {
+                        height: 16px;
+                        width: 16px;
+                        min-height: 16px;
+                        min-width: 16px;
+                    }
+
+                    &:checked {
+                        background-color: #008DC2;
+                        border-color: #008DC2;
+                        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23fff' d='M10 3L4.5 8.5 2 6' stroke='%23fff' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+                        background-repeat: no-repeat;
+                        background-position: center;
+                        background-size: 12px;
+
+                        + label {
+                            color: #008DC2;
+                            font-weight: 600;
+                        }
+                    }
+
+                    &:hover {
+                        border-color: #008DC2;
+                        box-shadow: 0 0 0 2px rgba(0, 141, 194, 0.1);
+                    }
+
+                    &:focus {
+                        outline: none;
+                        border-color: #008DC2;
+                        box-shadow: 0 0 0 2px rgba(0, 141, 194, 0.2);
+                    }
+                }
+            }
+
+            .filter-items-hidden {
+                margin-top: 6px;
+                padding-top: 6px;
+                border-top: 1px solid #f3f4f6;
+            }
+
+            .filter-toggle {
+                margin-top: 10px;
+                text-align: center;
+                padding-top: 10px;
+                border-top: 1px solid #f3f4f6;
+
+                .filter-toggle-link {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 6px;
+                    color: #008DC2;
+                    font-size: 13px;
+                    font-weight: 600;
+                    text-decoration: none;
+                    transition: all 0.2s ease;
+                    padding: 6px 14px;
+                    border-radius: 6px;
+                    background: #f0f9ff;
+                    border: 1px solid #bae6fd;
+
+                    &:hover {
+                        background: #e0f2fe;
+                        color: #0070A3;
+                        text-decoration: none;
+                        transform: translateY(-1px);
+                        box-shadow: 0 2px 8px rgba(0, 141, 194, 0.15);
+                    }
+
+                    i {
+                        font-size: 11px;
+                        transition: transform 0.2s ease;
+                    }
+
+                    &.expanded i {
+                        transform: rotate(180deg);
+                    }
+                }
+            }
+        }
+    }
+
+    .filter-actions {
+        margin-top: 20px;
+        padding-top: 18px;
+        border-top: 1px solid #f3f4f6;
+
+        .btn {
+            border-radius: 8px;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            border: none;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+
+            @media (max-width: 768px) {
+                padding: 8px 16px;
+                font-size: 13px;
+            }
+
+            &.btn-primary {
+                background: #008DC2;
+                color: #fff;
+                margin-bottom: 8px;
+
+                &:hover {
+                    background: #0070A3;
+                    transform: translateY(-1px);
+                    box-shadow: 0 3px 10px rgba(0, 141, 194, 0.25);
+                    color: #fff;
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+            }
+
+            &.btn-default {
+                background: #fff;
+                border: 1px solid #e5e7eb;
+                color: #6B7280;
+
+                &:hover {
+                    background: #f9fafb;
+                    border-color: #008DC2;
+                    color: #008DC2;
+                    text-decoration: none;
+                    transform: translateY(-1px);
+                    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+                }
             }
         }
     }

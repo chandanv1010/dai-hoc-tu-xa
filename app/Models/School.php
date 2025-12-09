@@ -40,6 +40,9 @@ class School extends Model
         'is_show_value',
         'form_script',
         'form_json',
+        'graduation_system',
+        'training_majors',
+        'exam_location',
     ];
 
     protected $table = 'schools';

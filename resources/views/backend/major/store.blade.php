@@ -884,7 +884,8 @@
                     </div>
                 </div>
 
-                <!-- Events Section -->
+                {{-- Tắt phần Sự kiện (Events) --}}
+                {{-- <!-- Events Section -->
                 <div class="ibox">
                     <div class="ibox-title">
                         <h5>Sự kiện</h5>
@@ -923,9 +924,10 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
-                @php
+                {{-- Tắt phần cấu hình nâng cao (SEO) --}}
+                {{-- @php
                     // Tạo object để truyền vào SEO component với dữ liệu từ pivot
                     $seoModel = isset($major) ? (object) [
                         'meta_title' => $metaTitle,
@@ -934,7 +936,7 @@
                         'canonical' => $canonical,
                     ] : null;
                 @endphp
-                @include('backend.dashboard.component.seo', ['model' => $seoModel])
+                @include('backend.dashboard.component.seo', ['model' => $seoModel]) --}}
             </div>
             <div class="col-lg-3">
                 <div class="text-right mb15 fixed-bottom">
@@ -1772,15 +1774,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Initialize Select2 for event posts - wait for Select2 to be loaded
-    setTimeout(function() {
-        if (typeof $.fn.select2 !== 'undefined' && $('.select2').length) {
-            $('.select2').select2({
-                placeholder: 'Chọn các bài viết',
-                allowClear: true
-            });
-        }
-    }, 500);
+    // Tắt phần Select2 cho event posts (đã tắt phần Events)
+    // setTimeout(function() {
+    //     if (typeof $.fn.select2 !== 'undefined' && $('.select2').length) {
+    //         $('.select2').select2({
+    //             placeholder: 'Chọn các bài viết',
+    //             allowClear: true
+    //         });
+    //     }
+    // }, 500);
 
     // Switchery đã được khởi tạo bởi library.js
     // Chỉ cần thêm event handler để cập nhật hidden input

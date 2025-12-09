@@ -46,6 +46,9 @@ class SchoolRepository extends BaseRepository
                 'schools.is_show_value',
                 'schools.form_script',
                 'schools.form_json',
+                'schools.graduation_system',
+                'schools.training_majors',
+                'schools.exam_location',
                 'schools.created_at',
             ]
         )
@@ -88,6 +91,7 @@ class SchoolRepository extends BaseRepository
         $query = $this->model->select([
                 'schools.id',
                 'schools.image',
+                'schools.short_name',
                 'schools.publish',
                 'schools.statistics_majors',
             ]
@@ -133,12 +137,59 @@ class SchoolRepository extends BaseRepository
                 'schools.image',
                 'schools.publish',
                 'schools.statistics_majors',
+                'schools.graduation_system',
+                'schools.training_majors',
+                'schools.exam_location',
                 'schools.created_at',
             ]
         )
         ->where('schools.publish', '=', 2)
-        ->whereNull('schools.deleted_at')
-        ->orderBy('schools.id', 'asc');
+        ->whereNull('schools.deleted_at');
+        
+        // Filter theo Hệ Tốt Nghiệp
+        if ($request->has('graduation_system')) {
+            $graduationSystem = $request->input('graduation_system');
+            if (is_array($graduationSystem) && count($graduationSystem) > 0) {
+                $query->where(function($q) use ($graduationSystem) {
+                    foreach ($graduationSystem as $system) {
+                        $q->orWhere('schools.graduation_system', '=', trim($system));
+                    }
+                });
+            } elseif (is_string($graduationSystem) && !empty(trim($graduationSystem))) {
+                $query->where('schools.graduation_system', '=', trim($graduationSystem));
+            }
+        }
+        
+        // Filter theo Ngành Đào Tạo (major_id)
+        if ($request->has('major_id')) {
+            $majorIds = $request->input('major_id');
+            if (is_array($majorIds) && count($majorIds) > 0) {
+                $majorIds = array_map('intval', $majorIds);
+                $query->whereHas('majors', function($q) use ($majorIds) {
+                    $q->whereIn('majors.id', $majorIds);
+                });
+            } elseif (is_numeric($majorIds)) {
+                $query->whereHas('majors', function($q) use ($majorIds) {
+                    $q->where('majors.id', '=', (int)$majorIds);
+                });
+            }
+        }
+        
+        // Filter theo Địa Điểm Thi
+        if ($request->has('exam_location')) {
+            $examLocation = $request->input('exam_location');
+            if (is_array($examLocation) && count($examLocation) > 0) {
+                $query->where(function($q) use ($examLocation) {
+                    foreach ($examLocation as $location) {
+                        $q->orWhere('schools.exam_location', '=', trim($location));
+                    }
+                });
+            } elseif (is_string($examLocation) && !empty(trim($examLocation))) {
+                $query->where('schools.exam_location', '=', trim($examLocation));
+            }
+        }
+        
+        $query->orderBy('schools.id', 'asc');
 
         $paginationPath = ($path === 'cac-truong-dao-tao-tu-xa.html') 
             ? config('app.url') . '/cac-truong-dao-tao-tu-xa.html'
@@ -190,6 +241,37 @@ class SchoolRepository extends BaseRepository
             })
             ->orderBy('schools.id', 'desc')
             ->paginate($perPage)->withQueryString()->withPath(config('app.url'). 'tim-kiem');
+    }
+    
+    /**
+     * Lấy tất cả các giá trị filter options từ database
+     */
+    public function getFilterOptions()
+    {
+        $schools = $this->model->select('graduation_system', 'exam_location')
+            ->where('publish', '=', 2)
+            ->whereNull('deleted_at')
+            ->get();
+        
+        $graduationSystems = [];
+        $examLocations = [];
+        
+        foreach ($schools as $school) {
+            // Xử lý graduation_system (TEXT field)
+            if ($school->graduation_system && !empty(trim($school->graduation_system))) {
+                $graduationSystems[] = trim($school->graduation_system);
+            }
+            
+            // Xử lý exam_location (TEXT field)
+            if ($school->exam_location && !empty(trim($school->exam_location))) {
+                $examLocations[] = trim($school->exam_location);
+            }
+        }
+        
+        return [
+            'graduation_system' => array_values(array_unique(array_filter($graduationSystems))),
+            'exam_location' => array_values(array_unique(array_filter($examLocations))),
+        ];
     }
 }
 

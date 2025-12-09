@@ -157,10 +157,16 @@ class ProductCatalogueController extends FrontendController
     {
         $keyword = $request->input('keyword', '');
         
-        // Tìm kiếm trong posts, schools và majors
+        // Tìm kiếm trong posts (tin tuc), products (khoa hoc), schools (truong) và majors (nganh hoc)
         $posts = $this->postRepository->search($keyword, $this->language, 10);
+        $products = $this->productRepository->search($keyword, $this->language);
         $schools = $this->schoolRepository->search($keyword, $this->language, 10);
         $majors = $this->majorRepository->search($keyword, $this->language, 10);
+
+        // Combine product values for products
+        if ($products && $products->count() > 0) {
+            $products = $this->combineProductValues($products);
+        }
 
         $config = $this->config();
 
@@ -190,6 +196,7 @@ class ProductCatalogueController extends FrontendController
             'seo',
             'system',
             'posts',
+            'products',
             'schools',
             'majors',
             'keyword',
