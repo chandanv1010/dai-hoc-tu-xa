@@ -209,11 +209,9 @@ class SchoolService extends BaseService
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
                 $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
-            } elseif ($field === 'form_json') {
-                // Xử lý form_json như một array
-                // Laravel tự động parse form_json[form_title] thành array
-                $formJson = $request->input('form_json', []);
-                // Kiểm tra xem có dữ liệu không (ít nhất 1 trường có giá trị)
+            } elseif (in_array($field, ['form_tai_lo_trinh_hoc', 'form_tu_van_mien_phi', 'form_hoc_thu'])) {
+                // Xử lý các field form JSON
+                $formJson = $request->input($field, []);
                 $hasData = false;
                 if (is_array($formJson) && !empty($formJson)) {
                     foreach ($formJson as $key => $value) {
@@ -246,11 +244,9 @@ class SchoolService extends BaseService
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
                 $payload[$field] = (!empty($album) && is_array($album)) ? $album : [];
-            } elseif ($field === 'form_json') {
-                // Xử lý form_json như một array
-                // Laravel tự động parse form_json[form_title] thành array
-                $formJson = $request->input('form_json', []);
-                // Kiểm tra xem có dữ liệu không (ít nhất 1 trường có giá trị)
+            } elseif (in_array($field, ['form_tai_lo_trinh_hoc', 'form_tu_van_mien_phi', 'form_hoc_thu'])) {
+                // Xử lý các field form JSON
+                $formJson = $request->input($field, []);
                 $hasData = false;
                 if (is_array($formJson) && !empty($formJson)) {
                     foreach ($formJson as $key => $value) {
@@ -372,7 +368,9 @@ class SchoolService extends BaseService
             'is_show_event',
             'is_show_value',
             'form_script',
-            'form_json',
+            'form_tai_lo_trinh_hoc',
+            'form_tu_van_mien_phi',
+            'form_hoc_thu',
             'graduation_system',
             'training_majors',
             'exam_location',

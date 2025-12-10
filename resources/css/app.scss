@@ -4626,6 +4626,35 @@
                 box-shadow: 0 6px 16px rgba(255, 107, 53, 0.3);
             }
         }
+
+        &.fixed-btn-scroll-top {
+            background: #7f888b;
+            color: #fff;
+            opacity: 0;
+            visibility: hidden;
+
+            &.show {
+                opacity: 1;
+                visibility: visible;
+            }
+
+            &:hover {
+                background: #0070A3;
+                transform: translateX(5px);
+                box-shadow: 0 6px 16px rgba(0, 141, 194, 0.3);
+            }
+
+            @media (max-width: 768px) {
+                display: flex;
+            }
+        }
+    }
+
+    // Ẩn nút scroll-top mobile trên desktop
+    @media (min-width: 769px) {
+        .scroll-top-btn-mobile {
+            display: none !important;
+        }
     }
 }
 
@@ -4665,16 +4694,9 @@
         height: 24px;
     }
 
+    // Ẩn nút scroll-top desktop trên mobile
     @media (max-width: 768px) {
-        right: 15px;
-        bottom: 20px;
-        width: 45px;
-        height: 45px;
-
-        svg {
-            width: 20px;
-            height: 20px;
-        }
+        display: none !important;
     }
 }
 
@@ -5632,7 +5654,8 @@
     padding: 40px 0;
 
     @media (max-width: 768px) {
-        margin-bottom: 0;
+        margin-bottom: 30px;
+        padding: 30px 0;
     }
 
     .uk-container {
@@ -6048,298 +6071,20 @@
                         font-weight: 600;
                         color: #1F2937;
                     }
-                }
-            }
-        }
-
-        .post-related {
-            background: #fff;
-            border-radius: 12px;
-            padding: 40px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-
-            @media (max-width: 768px) {
-                padding: 25px 20px;
-            }
-
-            .related-title {
-                font-size: 28px;
-                font-weight: 700;
-                color: #008DC2;
-                margin: 0 0 30px 0;
-                line-height: 1.3;
-
-                @media (max-width: 768px) {
-                    font-size: 24px;
-                    margin-bottom: 20px;
-                }
-            }
-
-            .related-posts-grid {
-                .uk-grid {
-                    margin-left: -15px;
-                    margin-right: -15px;
-                    margin-bottom: -20px;
-
-                    > * {
-                        padding-left: 15px;
-                        padding-right: 15px;
-                        margin-bottom: 20px;
-                    }
-                }
-
-                .related-post-item {
-                    display: flex;
-                    gap: 15px;
-                    transition: transform 0.3s ease;
-
-                    &:hover {
-                        transform: translateY(-3px);
-                    }
-
-                    .related-post-image {
-                        flex-shrink: 0;
-                        width: 150px;
-                        height: 100px;
-                        display: block;
-                        overflow: hidden;
-                        border-radius: 8px;
-
-                        @media (max-width: 768px) {
-                            width: 120px;
-                            height: 80px;
-                        }
-
-                        img {
-                            width: 100%;
-                            height: 100%;
-                            object-fit: cover;
-                            transition: transform 0.3s ease;
-                        }
-
-                        &:hover img {
-                            transform: scale(1.05);
-                        }
-                    }
-
-                    .related-post-content {
-                        flex: 1;
-                        display: flex;
-                        flex-direction: column;
-                        justify-content: space-between;
-
-                        .related-post-title {
-                            margin: 0 0 8px 0;
-                            font-size: 16px;
-                            font-weight: 600;
-                            line-height: 1.4;
-
-                            @media (max-width: 768px) {
-                                font-size: 14px;
-                            }
-
-                            a {
-                                color: #1F2937;
-                                text-decoration: none;
-                                transition: color 0.3s ease;
-
-                                &:hover {
-                                    color: #008DC2;
-                                }
-                            }
-                        }
-
-                        .related-post-date {
-                            font-size: 13px;
-                            color: #9CA3AF;
-                            display: flex;
-                            align-items: center;
-                            gap: 6px;
-
-                            @media (max-width: 768px) {
-                                font-size: 12px;
-                            }
-
-                            i {
-                                font-size: 12px;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // Contact Information Block
-        .post-contact-block {
-            background: #fff;
-            border-radius: 12px;
-            padding: 35px 30px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            margin-top: 30px;
-            border: 1px solid #F3F4F6;
-
-            @media (max-width: 768px) {
-                padding: 25px 20px;
-                margin-top: 25px;
-            }
-
-            .contact-block-content {
-                text-align: center;
-
-                .contact-text-line-1 {
-                    font-size: 18px;
-                    font-weight: 600;
-                    color: #1F2937;
-                    margin: 0 0 15px 0;
-                    line-height: 1.6;
-
-                    @media (max-width: 768px) {
-                        font-size: 16px;
-                        margin-bottom: 12px;
-                    }
-                }
-
-                .contact-text-line-2 {
-                    font-size: 20px;
-                    font-weight: 700;
-                    color: #008DC2;
-                    margin: 0 0 20px 0;
-                    line-height: 1.5;
-
-                    strong {
-                        color: #DC2626;
-                        font-weight: 700;
-                    }
-
-                    @media (max-width: 768px) {
-                        font-size: 18px;
-                        margin-bottom: 18px;
-                    }
-                }
-
-                .contact-text-line-3 {
-                    font-size: 16px;
-                    color: #4B5563;
-                    margin: 0;
-                    line-height: 1.7;
-
-                    @media (max-width: 768px) {
-                        font-size: 15px;
-                    }
-                }
-            }
-        }
-
-        // Center Introduction Block
-        .post-center-block {
-            background: #E0F2FE;
-            border-radius: 12px;
-            padding: 35px 30px;
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-            margin-top: 30px;
-            border: 1px solid #008DC2;
-
-            @media (max-width: 768px) {
-                padding: 25px 20px;
-                margin-top: 25px;
-            }
-
-            .center-block-content {
-                display: flex;
-                align-items: center;
-                gap: 25px;
-
-                @media (max-width: 768px) {
-                    flex-direction: column;
-                    text-align: center;
-                    gap: 20px;
-                }
-
-                .center-logo {
-                    flex-shrink: 0;
-                    width: 130px;
-                    height: 130px;
-                    background: #fff;
-                    border-radius: 50%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    padding: 18px;
-                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
-                    transition: transform 0.3s ease;
-
-                    &:hover {
-                        transform: scale(1.05);
-                    }
-
-                    @media (max-width: 768px) {
-                        width: 110px;
-                        height: 110px;
-                        padding: 15px;
-                    }
-
-                    .center-logo-img {
-                        width: 100%;
-                        height: 100%;
-                        object-fit: contain;
-                    }
-                }
-
-                .center-info {
-                    flex: 1;
-
-                    .center-title {
-                        font-size: 24px;
-                        font-weight: 700;
-                        color: #008DC2;
-                        margin: 0 0 18px 0;
-                        line-height: 1.3;
-                        letter-spacing: 0.2px;
-
-                        @media (max-width: 768px) {
-                            font-size: 20px;
-                            margin-bottom: 15px;
-                        }
-                    }
-
-                    .center-description {
-                        font-size: 15px;
-                        color: #374151;
-                        line-height: 1.8;
-
-                        @media (max-width: 768px) {
-                            font-size: 14px;
-                            line-height: 1.7;
-                        }
-
-                        p {
-                            margin-bottom: 12px;
-                            line-height: 1.8;
-
-                            &:last-child {
-                                margin-bottom: 0;
-                            }
-                        }
-
-                        strong {
-                            font-weight: 700;
-                            text-transform: uppercase;
-                            color: #1F2937;
-                            letter-spacing: 0.5px;
-                        }
-                    }
-                }
             }
         }
     }
+}
 
-    .post-aside {
+.post-aside {
         position: sticky;
         top: 20px;
         align-self: flex-start;
+        width: 100%;
 
         @media (max-width: 960px) {
             position: static;
+            width: 100%;
         }
 
         .aside-posts {
@@ -6727,9 +6472,18 @@
 
         .major-hero-features {
             margin-bottom: 40px;
+            padding-left: 0;
+            padding-right: 0;
+
+            @media (min-width: 1024px) {
+                padding-left: 150px;
+                padding-right: 150px;
+            }
 
             @media (max-width: 768px) {
                 margin-bottom: 30px;
+                padding-left: 0;
+                padding-right: 0;
             }
 
             .uk-grid {
@@ -6824,7 +6578,7 @@
                 }
 
                 .major-feature-text {
-                    font-size: 14px;
+                    font-size: 20px;
                     font-weight: 600;
                     color: #fff;
                     line-height: 1.4;
@@ -14317,6 +14071,8 @@ button{
 
         .download-roadmap-script-wrapper {
             width: 100%;
+            background: #fff;
+            text-align: center;
 
             // Style cho Form.io container
             .formio_form_iframe_container {
@@ -14440,6 +14196,7 @@ button{
 
     .download-roadmap-footer {
         padding: 15px 30px 25px;
+        margin-top: 15px;
         text-align: center;
         background: #fff;
         color: #333;
@@ -14449,8 +14206,9 @@ button{
         // Highlight số trong footer (màu cam)
         strong,
         span[style*="color"],
-        .highlight-number {
-            color: #FF8C00;
+        .highlight-number,
+        .cl {
+            color: #FF8C00 !important;
             font-weight: 700;
         }
     }
@@ -14591,6 +14349,8 @@ button{
 
         .download-roadmap-script-wrapper {
             width: 100%;
+            background: #fff;
+            text-align: center;
 
             // Style cho Form.io container
             .formio_form_iframe_container {
@@ -14650,6 +14410,7 @@ button{
 
     .download-roadmap-footer {
         padding: 15px 30px 25px;
+        margin-top: 15px;
         text-align: center;
         background: #fff;
         color: #333;
@@ -14659,8 +14420,9 @@ button{
         // Highlight số trong footer (màu cam)
         strong,
         span[style*="color"],
+        .highlight-number,
         .cl {
-            color: #FF6B35;
+            color: #FF8C00 !important;
             font-weight: 700;
         }
     }
@@ -14733,6 +14495,8 @@ button{
 
         .download-roadmap-script-wrapper {
             width: 100%;
+            background: #fff;
+            text-align: center;
 
             // Style cho Form.io container
             .formio_form_iframe_container {
@@ -14792,6 +14556,7 @@ button{
 
     .download-roadmap-footer {
         padding: 15px 30px 25px;
+        margin-top: 15px;
         text-align: center;
         background: #fff;
         color: #333;
@@ -14801,8 +14566,9 @@ button{
         // Highlight số trong footer (màu cam)
         strong,
         span[style*="color"],
+        .highlight-number,
         .cl {
-            color: #FF6B35;
+            color: #FF8C00 !important;
             font-weight: 700;
         }
     }
@@ -14867,9 +14633,71 @@ button{
             line-height: 1.4;
         }
     }
+}
+
+// Consultation Form Modal và Register Form Modal - Tái sử dụng style từ Download Roadmap Modal
+#consultation-form-modal,
+#register-form-modal {
+    .download-roadmap-modal-dialog {
+        width: 480px;
+        max-width: 90vw;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: #008DC2;
+        padding: 10px;
+    }
+
+    .uk-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        z-index: 10;
+        color: #333;
+        opacity: 0.7;
+        font-size: 24px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.9);
+        transition: all 0.3s ease;
+
+        &:hover {
+            opacity: 1;
+            background: #fff;
+            transform: scale(1.1);
+        }
+    }
+
+    .download-roadmap-header {
+        background: #fff;
+        padding: 25px 30px 20px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+
+        .download-roadmap-title {
+            color: #008DC2;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            text-transform: uppercase;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
+        }
+    }
 
     .download-roadmap-form-wrapper {
-        padding: 20px;
+        padding: 20px 30px 0;
         margin: 0;
         border-radius: 0;
         background: #fff;
@@ -14877,6 +14705,8 @@ button{
         .download-roadmap-script-wrapper,
         .consultation-script-wrapper {
             width: 100%;
+            background: #fff;
+            text-align: center;
 
             // Style cho Form.io container
             .formio_form_iframe_container {
@@ -15000,17 +14830,237 @@ button{
 
     .download-roadmap-footer {
         padding: 15px 30px 25px;
+        margin-top: 15px;
         text-align: center;
         background: #fff;
-        color: #333;
+        color: #666;
         font-size: 14px;
         line-height: 1.5;
 
         // Highlight số trong footer (màu cam)
         strong,
         span[style*="color"],
-        .highlight-number {
-            color: #FF8C00;
+        .highlight-number,
+        .cl {
+            color: #FF8C00 !important;
+            font-weight: 700;
+        }
+    }
+}
+
+// Style cho consultation-form-modal và register-form-modal (tái sử dụng từ consultation-modal)
+#consultation-form-modal,
+#register-form-modal,
+#school-consultation-modal,
+#school-tai-lo-trinh-modal,
+#school-hoc-thu-modal {
+    .download-roadmap-modal-dialog {
+        width: 480px;
+        max-width: 90vw;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        background: #008DC2;
+        padding: 10px;
+    }
+
+    .uk-close {
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        z-index: 10;
+        color: #000;
+        opacity: 0.7;
+        font-size: 24px;
+        width: 30px;
+        height: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0;
+        background: transparent;
+        transition: all 0.3s ease;
+
+        &:hover {
+            opacity: 1;
+            color: #000;
+            transform: scale(1.1);
+        }
+    }
+
+    .download-roadmap-header {
+        background: #fff;
+        padding: 25px 30px 20px;
+        text-align: center;
+        border-bottom: 1px solid #f0f0f0;
+
+        .download-roadmap-title {
+            color: #008DC2;
+            font-size: 22px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            line-height: 1.3;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .download-roadmap-description {
+            color: #000;
+            font-size: 15px;
+            font-weight: 400;
+            margin: 0;
+            line-height: 1.4;
+            text-align: center;
+        }
+    }
+
+    .download-roadmap-form-wrapper {
+        padding: 20px;
+        margin: 0;
+        border-radius: 0;
+        background: #fff;
+
+        .download-roadmap-script-wrapper {
+            width: 100%;
+            background: #fff;
+            text-align: center;
+
+            // Style cho Form.io container
+            .formio_form_iframe_container {
+                width: 100%;
+                min-height: 400px;
+            }
+
+            // Style cho iframe được render từ Form.io
+            iframe {
+                width: 100% !important;
+                border: none;
+                min-height: 400px;
+            }
+
+            // Style cho các input, select, textarea được render từ script
+            input[type="text"],
+            input[type="tel"],
+            input[type="email"],
+            input[type="number"],
+            input[type="date"],
+            select,
+            textarea {
+                width: 100%;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                padding: 10px 14px;
+                font-size: 14px;
+                transition: all 0.3s ease;
+                background: #fff;
+                font-family: inherit;
+                margin-bottom: 15px;
+
+                &:focus {
+                    outline: none;
+                    border-color: #008DC2;
+                    box-shadow: 0 0 0 3px rgba(0, 141, 194, 0.1);
+                }
+
+                &::placeholder {
+                    color: #999;
+                }
+            }
+
+            select {
+                cursor: pointer;
+                appearance: none;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+                background-repeat: no-repeat;
+                background-position: right 12px center;
+                padding-right: 35px;
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 100px;
+            }
+
+            // Style cho label
+            label {
+                display: block;
+                font-weight: 600;
+                color: #000;
+                margin-bottom: 8px;
+                font-size: 14px;
+
+                .required,
+                span[style*="color: red"],
+                span[style*="color:red"] {
+                    color: #DC2626;
+                    margin-left: 2px;
+                }
+            }
+
+            // Style cho button được render từ Form.io
+            button[type="submit"],
+            input[type="submit"],
+            .btn-submit,
+            .formio-submit-button {
+                width: 100%;
+                padding: 14px 20px;
+                background: #008DC2;
+                color: #fff;
+                border: none;
+                border-radius: 6px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                margin-top: 10px;
+                text-transform: uppercase;
+
+                &:hover {
+                    background: #0073a3;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+            }
+
+            // Style cho form container từ Form.io
+            form {
+                width: 100%;
+            }
+
+            // Style cho các div container từ Form.io
+            .form-group,
+            .formio-form-group,
+            .formio-component {
+                margin-bottom: 15px;
+            }
+        }
+    }
+
+    .download-roadmap-footer {
+        padding: 15px 30px 25px;
+        margin-top: 15px;
+        text-align: center;
+        background: #fff;
+        color: #666;
+        font-size: 14px;
+        line-height: 1.5;
+
+        // Highlight số trong footer (màu cam)
+        strong,
+        span[style*="color"],
+        .highlight-number,
+        .cl {
+            color: #FF8C00 !important;
             font-weight: 700;
         }
     }
@@ -17087,46 +17137,229 @@ button{
 // ============================================
 // Schedule Table (Lịch khai giảng dự kiến)
 // ============================================
+// Post Content Wrapper Component
+.post-content-wrapper-full {
+    width: 100%;
+    padding: 30px 0;
+
+    @media (max-width: 768px) {
+        padding: 20px 0;
+    }
+
+    .post-article {
+        .post-content {
+            .post-title {
+                font-size: 32px;
+                font-weight: 700;
+                color: #1F2937;
+                margin: 0 0 20px 0;
+                line-height: 1.3;
+
+                @media (max-width: 768px) {
+                    font-size: 24px;
+                    margin-bottom: 15px;
+                }
+            }
+
+            .post-description {
+                font-size: 18px;
+                color: #4B5563;
+                margin: 0 0 25px 0;
+                line-height: 1.6;
+
+                @media (max-width: 768px) {
+                    font-size: 16px;
+                    margin-bottom: 20px;
+                }
+            }
+
+            // Căn giữa tất cả hình ảnh trong post content
+            img {
+                display: block;
+                margin: 20px auto;
+                max-width: 100%;
+                height: auto;
+            }
+
+            // Style cho ul trong post content - đảm bảo có marker
+            ul:not(.no-marker):not([class*="no-marker"]) {
+                padding-left: 20px !important;
+                list-style-type: disc !important;
+                list-style-position: outside !important;
+                list-style: disc outside !important;
+                margin: 15px 0 !important;
+
+                li {
+                    margin-bottom: 8px;
+                    line-height: 1.6;
+                    display: list-item !important;
+                    list-style-type: inherit !important;
+                }
+            }
+
+            // Style cho ol trong post content
+            ol:not(.no-marker):not([class*="no-marker"]) {
+                padding-left: 20px !important;
+                list-style-type: decimal !important;
+                list-style-position: outside !important;
+                list-style: decimal outside !important;
+                margin: 15px 0 !important;
+
+                li {
+                    margin-bottom: 8px;
+                    line-height: 1.6;
+                    display: list-item !important;
+                    list-style-type: inherit !important;
+                }
+            }
+        }
+    }
+}
+
 .panel-post-detail.no-sidebar {
+    padding-top: 0; // Bỏ padding-top cho trang lịch khai giảng
+    padding-bottom: 40px;
+
+    @media (max-width: 768px) {
+        padding-bottom: 30px;
+    }
+
     .post-content-wrapper-full {
         width: 100%;
         max-width: 100%;
-        padding: 0;
+        padding: 30px 0;
+
+        @media (max-width: 768px) {
+            padding: 20px 0;
+        }
     }
 
     .post-content {
         width: 100%;
         max-width: 100%;
+    }
 
-        // Table wrapper để scroll ngang
-        .table-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            margin: 30px 0;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    // Style lại khối CTA cho trang lịch
+    .post-contact-block {
+        background: linear-gradient(135deg, #008DC2 0%, #00a3d9 100%);
+        border-radius: 16px;
+        padding: 25px 40px;
+        box-shadow: 0 8px 24px rgba(0, 141, 194, 0.25);
+        margin-top: 0;
+        text-align: center;
+        border: none;
 
-            @media (max-width: 768px) {
-                margin: 20px 0;
+        @media (max-width: 768px) {
+            padding: 25px 25px;
+            margin-bottom: 30px;
+        }
+
+        .contact-block-content {
+            .contact-text-line-1 {
+                font-size: 20px;
+                font-weight: 700;
+                color: #fff;
+                margin: 0 0 15px 0;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                line-height: 1.4;
+
+                @media (max-width: 768px) {
+                    font-size: 18px;
+                    margin-bottom: 12px;
+                }
             }
 
-            &::-webkit-scrollbar {
-                height: 8px;
+            .contact-text-line-2 {
+                font-size: 18px;
+                font-weight: 600;
+                color: #fff;
+                margin: 0 0 20px 0;
+                line-height: 1.5;
+
+                strong {
+                    color: #FFD700;
+                    font-weight: 700;
+                }
+
+                @media (max-width: 768px) {
+                    font-size: 16px;
+                    margin-bottom: 18px;
+                }
             }
 
-            &::-webkit-scrollbar-track {
-                background: #f1f1f1;
-                border-radius: 10px;
+            .contact-text-line-3 {
+                display: none; // Ẩn dòng này
             }
 
-            &::-webkit-scrollbar-thumb {
-                background: #008DC2;
-                border-radius: 10px;
+            .btn-consultation-free {
+                background: #E31E24;
+                border:0;
+                cursor:pointer;
+                border-radius:5px;
+                transition: all 0.4s linear;
+                color: #fff;
+                padding: 12px 30px;
+                font-size: 14px;
+                font-weight: 400;
+                box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
 
                 &:hover {
-                    background: #0073a3;
+                    background: #C91A20;
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 16px rgba(227, 30, 36, 0.4);
                 }
+
+                @media (max-width: 768px) {
+                    padding: 10px 25px;
+                    font-size: 13px;
+                    width: 100%;
+                }
+            }
+        }
+    }
+
+    // Ẩn post-center-block trong trang lịch
+    .post-center-block {
+        display: none;
+    }
+}
+
+// Table wrapper full width (ra khỏi container)
+.table-wrapper-full-width {
+    width: 100%;
+    margin: 30px 0;
+    padding: 0 20px;
+
+    @media (max-width: 768px) {
+        padding: 0 15px;
+        margin: 20px 0;
+    }
+
+    .table-wrapper {
+        width: 100%;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        margin: 0;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+        &::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        &::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            background: #008DC2;
+            border-radius: 10px;
+
+            &:hover {
+                background: #0073a3;
             }
         }
 
@@ -17144,8 +17377,8 @@ button{
             }
 
             thead {
-                background: linear-gradient(135deg, #008DC2 0%, #00a3d9 100%);
-                color: #fff;
+                background: rgb(0, 141, 194); // Màu xanh nhạt giống ảnh
+                color: #000;
 
                 th {
                     padding: 15px 20px;
@@ -17154,9 +17387,14 @@ button{
                     font-size: 13px;
                     text-transform: uppercase;
                     letter-spacing: 0.5px;
-                    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+                    border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+                    border-right: 1px solid rgba(0, 0, 0, 0.1);
                     white-space: normal;
                     word-wrap: break-word;
+
+                    &:last-child {
+                        border-right: none;
+                    }
 
                     @media (max-width: 768px) {
                         padding: 12px 15px;
@@ -17167,12 +17405,13 @@ button{
                         position: sticky;
                         left: 0;
                         z-index: 10;
-                        background: linear-gradient(135deg, #008DC2 0%, #00a3d9 100%);
+                        background: rgb(0, 141, 194); // Màu xanh nhạt giống ảnh
                         min-width: 60px;
                         max-width: 60px;
                         width: 60px;
                         text-align: center;
                         padding: 15px 10px;
+                        border-right: 1px solid rgba(0, 0, 0, 0.1);
 
                         @media (max-width: 768px) {
                             min-width: 50px;
@@ -17183,12 +17422,14 @@ button{
                     }
 
                     &:nth-child(2) {
-                        min-width: 250px;
+                        min-width: 300px;
                         max-width: 300px;
+                        width: 300px;
 
                         @media (max-width: 768px) {
-                            min-width: 180px;
-                            max-width: 220px;
+                            min-width: 250px;
+                            max-width: 250px;
+                            width: 250px;
                         }
                     }
                 }
@@ -17225,41 +17466,47 @@ button{
                             position: sticky;
                             left: 0;
                             z-index: 5;
-                            background: #fff;
+                            background: #008DC2;
                             font-weight: 600;
-                            color: #008DC2;
-                            min-width: 60px;
-                            max-width: 60px;
-                            width: 60px;
-                            text-align: center;
-                            padding: 15px 10px;
-                            border-right: 2px solid #008DC2;
+                            color: #fff;
+                            min-width: 300px;
+                            max-width: 300px;
+                            width: 300px;
+                            text-align: left;
+                            padding: 15px 20px;
+                            border-right: 2px solid rgba(255, 255, 255, 0.3);
                             box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
+                            white-space: normal;
+                            word-wrap: break-word;
 
                             @media (max-width: 768px) {
-                                min-width: 50px;
-                                max-width: 50px;
-                                width: 50px;
-                                padding: 12px 8px;
+                                min-width: 250px;
+                                max-width: 250px;
+                                width: 250px;
+                                padding: 12px 15px;
                             }
                         }
 
                         &:nth-child(2) {
                             position: sticky;
-                            left: 60px;
+                            left: 300px;
                             z-index: 4;
                             background: #fff;
                             font-weight: 600;
                             color: #008DC2;
-                            min-width: 250px;
+                            min-width: 300px;
                             max-width: 300px;
+                            width: 300px;
+                            white-space: normal;
+                            word-wrap: break-word;
                             border-right: 2px solid #008DC2;
                             box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
 
                             @media (max-width: 768px) {
-                                left: 50px;
-                                min-width: 180px;
-                                max-width: 220px;
+                                left: 250px;
+                                min-width: 250px;
+                                max-width: 250px;
+                                width: 250px;
                             }
                         }
 
@@ -17268,7 +17515,10 @@ button{
                         }
                     }
 
-                    &:hover td:first-child,
+                    &:hover td:first-child {
+                        background: #0073a3; // Màu xanh đậm hơn khi hover
+                    }
+                    
                     &:hover td:nth-child(2) {
                         background: #f8f9fa;
                     }
@@ -17947,4 +18197,745 @@ button{
             }
         }
     }
+}
+
+.table-wrapper{
+    table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 1200px;
+    }
+    
+    /* Header chính (TRƯỜNG, THÁI NGUYÊN, HÀ NỘI, ...) */
+    thead tr:first-child th {
+        background: #008DC2;
+        color: white;
+        font-weight: bold;
+        padding: 12px 8px;
+        border: 1px solid #1e4278;
+        text-align: center;
+    }
+    
+    /* Header phụ (HẠN NHẬN HỒ SƠ, LỊCH KHAI GIẢNG) */
+    thead tr:last-child th {
+        background: #008DC2;
+        color: white;
+        font-weight: bold;
+        padding: 10px 8px;
+        border: 1px solid #008DC2;
+        text-align: center;
+        font-size: 13px;
+    }
+    
+    /* Cột đầu tiên (tên trường) */
+    tbody td:first-child {
+        background: #e8f0f7;
+        font-weight: bold;
+        padding: 12px 8px;
+        border: 1px solid #ccc;
+        text-align: left;
+        min-width: 250px;
+    }
+    
+    /* Các ô dữ liệu */
+    tbody td {
+        padding: 10px 8px;
+        border: 1px solid #ddd;
+        text-align: center;
+        font-size: 13px;
+        line-height: 1.6;
+    }
+    
+    /* Hàng chú thích */
+    tfoot td {
+        background: #fff3cd;
+        padding: 12px;
+        border: 1px solid #ffc107;
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.8;
+    }
+    
+    /* Hover effect cho các hàng */
+    tbody tr:hover td {
+        background: #f8f9fa;
+    }
+    
+    tbody tr:hover td:first-child {
+        background: #d4e4f7;
+    }
+}
+
+// ============================================
+// Consultation Form Modal
+// ============================================
+.consultation-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+
+    &.show {
+        display: flex;
+    }
+
+    .consultation-modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+    }
+
+    .consultation-modal-content {
+        position: relative;
+        background: #fff;
+        border-radius: 16px;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        padding: 40px;
+        z-index: 1;
+
+        @media (max-width: 768px) {
+            padding: 30px 20px;
+            max-height: 95vh;
+            border-radius: 12px;
+        }
+
+        .consultation-modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f3f4f6;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #6B7280;
+            font-size: 18px;
+
+            &:hover {
+                background: #e5e7eb;
+                color: #1F2937;
+                transform: rotate(90deg);
+            }
+        }
+
+        .consultation-modal-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #008DC2;
+            margin: 0 0 15px 0;
+            text-align: center;
+            line-height: 1.3;
+
+            @media (max-width: 768px) {
+                font-size: 22px;
+                margin-bottom: 12px;
+            }
+        }
+
+        .consultation-modal-description {
+            font-size: 16px;
+            color: #4B5563;
+            margin: 0 0 30px 0;
+            text-align: center;
+            line-height: 1.6;
+
+            @media (max-width: 768px) {
+                font-size: 14px;
+                margin-bottom: 25px;
+            }
+        }
+
+        .consultation-form-embed {
+            margin: 20px 0;
+            width: 100%;
+            
+            // Style cho iframe embed
+            iframe {
+                width: 100%;
+                min-height: 400px;
+                border: none;
+                border-radius: 8px;
+                
+                @media (max-width: 768px) {
+                    min-height: 300px;
+                }
+            }
+            
+            // Style cho form được embed (Google Forms, Typeform, etc.)
+            form {
+                width: 100%;
+                
+                input[type="text"],
+                input[type="email"],
+                input[type="tel"],
+                input[type="number"],
+                textarea,
+                select {
+                    width: 100%;
+                    padding: 12px 15px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    outline: none;
+                    margin-bottom: 15px;
+                    font-family: inherit;
+                    
+                    &:focus {
+                        border-color: #008DC2;
+                        box-shadow: 0 0 0 3px rgba(0, 141, 194, 0.1);
+                    }
+                }
+                
+                label {
+                    display: block;
+                    font-weight: 600;
+                    color: #1F2937;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+                }
+                
+                button[type="submit"],
+                input[type="submit"] {
+                    width: 100%;
+                    padding: 16px;
+                    background: linear-gradient(135deg, #008DC2 0%, #00a3d9 100%);
+                    color: #fff;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 700;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+                    
+                    &:hover {
+                        background: linear-gradient(135deg, #0073a3 0%, #008DC2 100%);
+                        box-shadow: 0 6px 16px rgba(0, 141, 194, 0.4);
+                        transform: translateY(-2px);
+                    }
+                    
+                    &:active {
+                        transform: translateY(0);
+                    }
+                }
+            }
+            
+            // Style cho các div container thường có trong form embed
+            > div {
+                width: 100%;
+            }
+        }
+
+        .consultation-form {
+            .form-group {
+                margin-bottom: 20px;
+
+                label {
+                    display: block;
+                    font-weight: 600;
+                    color: #1F2937;
+                    margin-bottom: 8px;
+                    font-size: 14px;
+
+                    .required {
+                        color: #DC2626;
+                    }
+                }
+
+                .form-control {
+                    width: 100%;
+                    padding: 12px 15px;
+                    border: 1px solid #e5e7eb;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    transition: all 0.3s ease;
+                    outline: none;
+
+                    &:focus {
+                        border-color: #008DC2;
+                        box-shadow: 0 0 0 3px rgba(0, 141, 194, 0.1);
+                    }
+                }
+
+                textarea.form-control {
+                    resize: vertical;
+                    min-height: 100px;
+                }
+            }
+
+            .consultation-form-submit {
+                width: 100%;
+                padding: 16px;
+                background: linear-gradient(135deg, #008DC2 0%, #00a3d9 100%);
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 700;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+                box-shadow: 0 4px 12px rgba(0, 141, 194, 0.3);
+
+                &:hover {
+                    background: linear-gradient(135deg, #0073a3 0%, #008DC2 100%);
+                    box-shadow: 0 6px 16px rgba(0, 141, 194, 0.4);
+                    transform: translateY(-2px);
+                }
+
+                &:active {
+                    transform: translateY(0);
+                }
+
+                &:disabled {
+                    opacity: 0.6;
+                    cursor: not-allowed;
+                    transform: none;
+                }
+
+                i {
+                    font-size: 18px;
+                }
+            }
+        }
+
+        .consultation-modal-footer {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            font-size: 14px;
+            color: #6B7280;
+            line-height: 1.6;
+        }
+    }
+}
+
+// ============================================
+// Post Detail - Blocks in uk-width-large-3-4
+// ============================================
+.panel-post-detail {
+    .uk-width-large-3-4 {
+        .post-contact-block {
+            background: linear-gradient(135deg, #008DC2 0%, #006A9C 100%);
+            border-radius: 16px;
+            padding: 45px 40px;
+            box-shadow: 0 10px 30px rgba(0, 141, 194, 0.3);
+            margin-top: 0;
+            border: none;
+            position: relative;
+            overflow: hidden;
+
+            &::before {
+                content: '';
+                position: absolute;
+                top: -50%;
+                right: -50%;
+                width: 200%;
+                height: 200%;
+                background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+                pointer-events: none;
+            }
+
+            @media (max-width: 768px) {
+                padding: 35px 25px;
+                margin-top: 30px;
+                border-radius: 12px;
+            }
+
+            .contact-block-content {
+                text-align: center;
+                position: relative;
+                z-index: 1;
+
+                .contact-text-line-1 {
+                    font-size: 19px;
+                    font-weight: 600;
+                    color: #fff;
+                    margin: 0 0 18px 0;
+                    line-height: 1.7;
+                    letter-spacing: 0.3px;
+
+                    @media (max-width: 768px) {
+                        font-size: 17px;
+                        margin-bottom: 15px;
+                        line-height: 1.6;
+                    }
+                }
+
+                .contact-text-line-2 {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #fff;
+                    margin: 0 0 22px 0;
+                    line-height: 1.5;
+                    letter-spacing: 0.2px;
+
+                    strong.text-red {
+                        color: #FFD700;
+                        font-weight: 800;
+                        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                    }
+
+                    @media (max-width: 768px) {
+                        font-size: 19px;
+                        margin-bottom: 20px;
+                    }
+                }
+
+                .contact-text-line-3 {
+                    font-size: 16px;
+                    color: rgba(255, 255, 255, 0.95);
+                    margin: 0 0 30px 0;
+                    line-height: 1.7;
+                    font-weight: 400;
+
+                    @media (max-width: 768px) {
+                        font-size: 15px;
+                        margin-bottom: 25px;
+                    }
+                }
+
+                .contact-buttons {
+                    display: flex;
+                    justify-content: center;
+                    gap: 0;
+                }
+
+                .btn-consultation-free {
+                    display: inline-flex;
+                    align-items: center;
+                    gap: 12px;
+                    background: #E31E24;
+                    color: #fff;
+                    padding: 18px 40px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    text-transform: uppercase;
+                    cursor: pointer;
+                    transition: all 0.3s ease;
+                    box-shadow: 0 6px 20px rgba(227, 30, 36, 0.4);
+                    text-decoration: none;
+                    letter-spacing: 0.5px;
+
+                    &:hover {
+                        background: #C91A20;
+                        box-shadow: 0 8px 25px rgba(227, 30, 36, 0.5);
+                        transform: translateY(-3px);
+                        color: #fff;
+                    }
+
+                    &:active {
+                        transform: translateY(-1px);
+                    }
+
+                    i {
+                        font-size: 18px;
+                    }
+
+                    @media (max-width: 768px) {
+                        padding: 16px 32px;
+                        font-size: 15px;
+                        width: 100%;
+                        justify-content: center;
+                        gap: 10px;
+                    }
+                }
+            }
+        }
+
+        .post-center-block {
+            background: linear-gradient(135deg, #F8FAFC 0%, #FFFFFF 100%);
+            border-radius: 16px;
+            padding: 40px 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            margin-top: 40px;
+            border: 1px solid #E5E7EB;
+            transition: all 0.3s ease;
+
+            &:hover {
+                box-shadow: 0 6px 25px rgba(0, 0, 0, 0.12);
+                transform: translateY(-2px);
+            }
+
+            @media (max-width: 768px) {
+                padding: 30px 25px;
+                margin-top: 30px;
+                border-radius: 12px;
+            }
+
+            .center-block-content {
+                display: flex;
+                align-items: flex-start;
+                gap: 30px;
+
+                @media (max-width: 768px) {
+                    flex-direction: column;
+                    text-align: center;
+                    gap: 25px;
+                    align-items: center;
+                }
+
+                .center-logo {
+                    flex-shrink: 0;
+                    width: 140px;
+                    height: 140px;
+                    background: #fff;
+                    border-radius: 50%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    padding: 20px;
+                    box-shadow: 0 6px 20px rgba(0, 141, 194, 0.15);
+                    transition: all 0.3s ease;
+                    border: 3px solid #E0F2FE;
+
+                    &:hover {
+                        transform: scale(1.08);
+                        box-shadow: 0 8px 25px rgba(0, 141, 194, 0.25);
+                        border-color: #008DC2;
+                    }
+
+                    @media (max-width: 768px) {
+                        width: 120px;
+                        height: 120px;
+                        padding: 18px;
+                    }
+
+                    .center-logo-img {
+                        width: 100%;
+                        height: 100%;
+                        object-fit: contain;
+                    }
+                }
+
+                .center-info {
+                    flex: 1;
+                    padding-top: 5px;
+
+                    @media (max-width: 768px) {
+                        padding-top: 0;
+                    }
+
+                    .center-title {
+                        font-size: 24px;
+                        font-weight: 700;
+                        color: #008DC2;
+                        margin: 0 0 18px 0;
+                        line-height: 1.4;
+                        letter-spacing: 0.3px;
+
+                        @media (max-width: 768px) {
+                            font-size: 20px;
+                            margin-bottom: 15px;
+                        }
+                    }
+
+                    .center-description {
+                        font-size: 15px;
+                        color: #4B5563;
+                        line-height: 1.85;
+
+                        @media (max-width: 768px) {
+                            font-size: 14px;
+                            line-height: 1.75;
+                        }
+
+                        p {
+                            margin-bottom: 14px;
+                            line-height: 1.85;
+
+                            &:last-child {
+                                margin-bottom: 0;
+                            }
+                        }
+
+                        strong {
+                            font-weight: 700;
+                            text-transform: uppercase;
+                            color: #1F2937;
+                            letter-spacing: 0.5px;
+                        }
+
+                        a {
+                            color: #008DC2;
+                            text-decoration: none;
+                            font-weight: 600;
+                            transition: all 0.3s ease;
+                            border-bottom: 1px solid transparent;
+
+                            &:hover {
+                                color: #0073a3;
+                                border-bottom-color: #0073a3;
+                            }
+                        }
+
+                        ul, ol {
+                            margin: 14px 0;
+                            padding-left: 20px;
+
+                            li {
+                                margin-bottom: 8px;
+                                line-height: 1.8;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .post-related {
+            background: #fff;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+            margin-top: 40px;
+
+            @media (max-width: 768px) {
+                padding: 25px 20px;
+                margin-top: 30px;
+            }
+
+            .related-title {
+                font-size: 28px;
+                font-weight: 700;
+                color: #008DC2;
+                margin: 0 0 30px 0;
+                line-height: 1.3;
+
+                @media (max-width: 768px) {
+                    font-size: 24px;
+                    margin-bottom: 20px;
+                }
+            }
+
+            .related-posts-grid {
+                .uk-grid {
+                    margin-left: -15px;
+                    margin-right: -15px;
+                    margin-bottom: -20px;
+
+                    > * {
+                        padding-left: 15px;
+                        padding-right: 15px;
+                        margin-bottom: 20px;
+                    }
+                }
+
+                .related-post-item { 
+                    display: flex;
+                    gap: 15px;
+                    transition: transform 0.3s ease;
+
+                    &:hover {
+                        transform: translateY(-3px);
+                    }
+
+                    .related-post-image {
+                        flex-shrink: 0;
+                        width: 150px;
+                        height: 100px;
+                        display: block;
+                        overflow: hidden;
+                        border-radius: 8px;
+
+                        @media (max-width: 768px) {
+                            width: 120px;
+                            height: 80px;
+                        }
+
+                        img {
+                            width: 100%;
+                            height: 100%;
+                            object-fit: cover; 
+                            transition: transform 0.3s ease;
+                        }
+
+                        &:hover img {
+                            transform: scale(1.05);
+                        }
+                    }
+
+                    .related-post-content {
+                        flex: 1;
+                        display: flex;
+                        flex-direction: column;
+                        justify-content: space-between;
+
+                        .related-post-title {
+                            margin: 0 0 8px 0;
+                            font-size: 16px;
+                            font-weight: 600;
+                            line-height: 1.4;
+
+                            @media (max-width: 768px) {
+                                font-size: 14px;
+                            }
+
+                            a {
+                                color: #1F2937;
+                                text-decoration: none;
+                                transition: color 0.3s ease;
+
+                                &:hover { 
+                                    color: #008DC2;
+                                }
+                            }
+                        }
+
+                        .related-post-date {
+                            font-size: 13px;
+                            color: #9CA3AF;
+                            display: flex;
+                            align-items: center;
+                            gap: 6px;
+
+                            @media (max-width: 768px) {
+                                font-size: 12px;
+                            }
+
+                            i {
+                                font-size: 12px;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}  
+
+.download-roadmap-footer{
+    padding:20px 0;
+    background: #fff;
+    text-align: center;
+} 
+
+#formio_form_app{
+    padding: 15px !important;
 }

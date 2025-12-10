@@ -47,72 +47,49 @@
     <!-- Post Detail Content -->
     <div class="panel-post-detail {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'no-sidebar' : '' }}">
         @if($postPivot->canonical === 'lich-khai-giang-du-kien')
+            <div class="table-wrapper-full-width">
+                <div class="table-wrapper">
+                    {!! $postContent !!}
+                </div>
+            </div>
             <div class="uk-container uk-container-center">
-                <div class="post-content-wrapper-full">
+                <!-- Contact Information Block for Schedule Page -->
+                <div class="post-contact-block">
+                    <div class="contact-block-content">
+                        <p class="contact-text-line-1">ĐĂNG KÝ TƯ VẤN ĐỢT KHAI GIẢNG MỚI NHẤT</p>
+                        <p class="contact-text-line-2">Nắm lấy cơ hội sở hữu <strong>"BẰNG ĐẠI HỌC"</strong> ngay hôm nay</p>
+                        <button type="button" class="btn-consultation-free" onclick="openConsultationModal()">
+                            <i class="fa fa-phone"></i>
+                            NHẬN TƯ VẤN MIỄN PHÍ
+                        </button>
+                    </div>
+                </div>
+            </div>
         @else
             <div class="uk-container uk-container-center">
                 <div class="uk-grid uk-grid-medium" data-uk-grid-match>
                     <!-- Left Column: Post Content -->
                     <div class="uk-width-large-3-4">
                         <div class="post-content-wrapper">
-        @endif
-                        <article class="post-article">
-                            <div class="post-content">
-                                <h1 class="post-title">{{ $postName }}</h1>
-                                @if($postDescription)
-                                    <div class="post-description">
-                                        <strong>{!! $postDescription !!}</strong>
-                                    </div>
-                                @endif
-                                @if($postPivot->canonical !== 'lich-khai-giang-du-kien')
-                                    <x-table-of-contents :content="$contentWithToc" />
-                                @endif
-                                @if($postPivot->canonical === 'lich-khai-giang-du-kien')
-                                    <div class="table-wrapper">
-                                        {!! $postContent !!}
-                                    </div>
-                                @else
-                                    {!! $postContent !!}
-                                @endif
-                                
-                                <!-- Social Share Buttons -->
-                                @php
-                                    $postCanonical = $postPivot->canonical ?? '';
-                                    $postUrl = $postCanonical ? write_url($postCanonical) : url()->current();
-                                    $encodedUrl = urlencode($postUrl);
-                                    $encodedTitle = urlencode($postName);
-                                @endphp
-                                <div class="post-social-share">
-                                    <div class="social-share-buttons">
-                                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ $encodedUrl }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-facebook" title="Chia sẻ trên Facebook">
-                                            <i class="fa fa-facebook"></i>
-                                        </a>
-                                        <a href="https://twitter.com/intent/tweet?url={{ $encodedUrl }}&text={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-twitter" title="Chia sẻ trên Twitter">
-                                            <i class="fa fa-twitter"></i>
-                                        </a>
-                                        <a href="mailto:?subject={{ $encodedTitle }}&body={{ $encodedUrl }}" class="social-share-btn social-email" title="Chia sẻ qua Email">
-                                            <i class="fa fa-envelope"></i>
-                                        </a>
-                                        <a href="https://pinterest.com/pin/create/button/?url={{ $encodedUrl }}&description={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-pinterest" title="Chia sẻ trên Pinterest">
-                                            <i class="fa fa-pinterest"></i>
-                                        </a>
-                                        <a href="https://www.linkedin.com/shareArticle?mini=true&url={{ $encodedUrl }}&title={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-linkedin" title="Chia sẻ trên LinkedIn">
-                                            <i class="fa fa-linkedin"></i>
-                                        </a>
-                                        <a href="https://www.tumblr.com/widgets/share/tool?canonicalUrl={{ $encodedUrl }}&title={{ $encodedTitle }}" target="_blank" rel="noopener noreferrer" class="social-share-btn social-tumblr" title="Chia sẻ trên Tumblr">
-                                            <i class="fa fa-tumblr"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </article>
+                            <x-post-content-wrapper 
+                                :postName="$postName"
+                                :postDescription="$postDescription"
+                                :postContent="$postContent"
+                                :contentWithToc="$contentWithToc"
+                                :postPivot="$postPivot"
+                            />
+                        </div>
 
-                        <!-- Contact Information Block -->
+                        <!-- Contact Information Block for Post Detail Page -->
                         <div class="post-contact-block">
                             <div class="contact-block-content">
-                                <p class="contact-text-line-1">50.000+ Học Viên Tin Tưởng và Lựa chọn Hệ Từ Xa Để phát triển bản thân và sự nghiệp</p>
-                                <p class="contact-text-line-2">Nắm lấy cơ hội sở hữu <strong>BẰNG ĐẠI HỌC</strong> ngay hôm nay</p>
                                 <p class="contact-text-line-3">📩 Liên hệ để được tư vấn miễn phí và chọn Trường, chọn ngành học phù hợp nhất</p>
+                                <div class="contact-buttons">
+                                    <button type="button" class="btn-consultation-free" onclick="openConsultationModal()">
+                                        <i class="fa fa-phone"></i>
+                                        NHẬN TƯ VẤN MIỄN PHÍ
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -177,88 +154,88 @@
                             </div>
                         @endif
                     </div>
-                </div>
 
-                <!-- Right Column: Aside Posts -->
-                <div class="uk-width-large-1-4 {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'uk-hidden' : '' }}">
-                    <div class="post-aside">
-                        <div class="aside-posts">
-                            <h3 class="aside-title">Bài viết mới</h3>
-                            <div class="aside-posts-list">
-                                @if($asidePosts && $asidePosts->isNotEmpty())
-                                    @foreach($asidePosts as $asidePost)
-                                        @php
-                                            $asidePostLanguage = $asidePost->languages->first();
-                                            $asidePostPivot = $asidePostLanguage->pivot ?? null;
-                                            $asidePostName = $asidePostPivot->name ?? '';
-                                            $asidePostCanonical = $asidePostPivot->canonical ?? '';
-                                            $asidePostUrl = $asidePostCanonical ? write_url($asidePostCanonical) : '#';
-                                            $asidePostImage = $asidePost->image ?? '';
-                                            $asidePostImageUrl = $asidePostImage ? (function_exists('thumb') ? thumb($asidePostImage, 100, 100) : asset($asidePostImage)) : asset('frontend/resources/img/default-news.jpg');
-                                            $asidePostDate = $asidePost->created_at ?? now();
-                                            $asidePostFormattedDate = $asidePostDate ? date('d/m/Y', strtotime($asidePostDate)) : '';
-                                        @endphp
-                                        <div class="aside-post-item">
-                                            <a href="{{ $asidePostUrl }}" class="aside-post-image">
-                                                <img src="{{ $asidePostImageUrl }}" alt="{{ $asidePostName }}">
-                                            </a>
-                                            <div class="aside-post-content">
-                                                <h4 class="aside-post-title">
-                                                    <a href="{{ $asidePostUrl }}">{{ $asidePostName }}</a>
-                                                </h4>
-                                                <span class="aside-post-date">
-                                                    <i class="fa fa-calendar"></i>
-                                                    {{ $asidePostFormattedDate }}
-                                                </span>
+                    <!-- Right Column: Aside Posts -->
+                    <div class="uk-width-large-1-4 {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'uk-hidden' : '' }}">
+                        <div class="post-aside">
+                            <div class="aside-posts">
+                                <h3 class="aside-title">Bài viết mới</h3>
+                                <div class="aside-posts-list">
+                                    @if($asidePosts && $asidePosts->isNotEmpty())
+                                        @foreach($asidePosts as $asidePost)
+                                            @php
+                                                $asidePostLanguage = $asidePost->languages->first();
+                                                $asidePostPivot = $asidePostLanguage->pivot ?? null;
+                                                $asidePostName = $asidePostPivot->name ?? '';
+                                                $asidePostCanonical = $asidePostPivot->canonical ?? '';
+                                                $asidePostUrl = $asidePostCanonical ? write_url($asidePostCanonical) : '#';
+                                                $asidePostImage = $asidePost->image ?? '';
+                                                $asidePostImageUrl = $asidePostImage ? (function_exists('thumb') ? thumb($asidePostImage, 100, 100) : asset($asidePostImage)) : asset('frontend/resources/img/default-news.jpg');
+                                                $asidePostDate = $asidePost->created_at ?? now();
+                                                $asidePostFormattedDate = $asidePostDate ? date('d/m/Y', strtotime($asidePostDate)) : '';
+                                            @endphp
+                                            <div class="aside-post-item">
+                                                <a href="{{ $asidePostUrl }}" class="aside-post-image">
+                                                    <img src="{{ $asidePostImageUrl }}" alt="{{ $asidePostName }}">
+                                                </a>
+                                                <div class="aside-post-content">
+                                                    <h4 class="aside-post-title">
+                                                        <a href="{{ $asidePostUrl }}">{{ $asidePostName }}</a>
+                                                    </h4>
+                                                    <span class="aside-post-date">
+                                                        <i class="fa fa-calendar"></i>
+                                                        {{ $asidePostFormattedDate }}
+                                                    </span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    @endforeach
-                                @endif
+                                        @endforeach
+                                    @endif
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Registration Form -->
-                        <div class="aside-register-form">
-                            <h3 class="aside-title">Đăng ký tư vấn</h3>
-                            <form id="aside-register-form" action="{{ route('contact.save') }}" method="POST" class="aside-form-content">
-                                @csrf
-                                <div class="form-group">
-                                    <label for="aside-name">Họ và tên <span class="required">*</span></label>
-                                    <input type="text" name="name" id="aside-name" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="aside-phone">Số điện thoại <span class="required">*</span></label>
-                                    <input type="tel" name="phone" id="aside-phone" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="aside-email">Email <span class="required">*</span></label>
-                                    <input type="email" name="email" id="aside-email" class="form-control" required>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="aside-address">Địa chỉ</label>
-                                    <input type="text" name="address" id="aside-address" class="form-control">
-                                </div>
-                                
-                                <div class="form-group">
-                                    <label for="aside-message">Lời nhắn</label>
-                                    <textarea name="message" id="aside-message" class="form-control" rows="3"></textarea>
-                                </div>
-                                
-                                <div class="form-group">
-                                    <button type="submit" class="form-submit-btn">
-                                        <i class="fa fa-paper-plane"></i>
-                                        Gửi đăng ký
-                                    </button>
-                                </div>
-                            </form>
+                            <!-- Registration Form -->
+                            <div class="aside-register-form">
+                                <h3 class="aside-title">Đăng ký tư vấn</h3>
+                                <form id="aside-register-form" action="{{ route('contact.save') }}" method="POST" class="aside-form-content">
+                                    @csrf
+                                    <div class="form-group">
+                                        <label for="aside-name">Họ và tên <span class="required">*</span></label>
+                                        <input type="text" name="name" id="aside-name" class="form-control" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="aside-phone">Số điện thoại <span class="required">*</span></label>
+                                        <input type="tel" name="phone" id="aside-phone" class="form-control" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="aside-email">Email <span class="required">*</span></label>
+                                        <input type="email" name="email" id="aside-email" class="form-control" required>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="aside-address">Địa chỉ</label>
+                                        <input type="text" name="address" id="aside-address" class="form-control">
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="aside-message">Lời nhắn</label>
+                                        <textarea name="message" id="aside-message" class="form-control" rows="3"></textarea>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <button type="submit" class="form-submit-btn">
+                                            <i class="fa fa-paper-plane"></i>
+                                            Gửi đăng ký
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+        @endif
     </div>
 
     <script>
@@ -307,4 +284,10 @@
         }
     });
     </script>
+
+    <!-- Consultation Form Modal -->
+    <x-consultation-form-modal :system="$system" />
+    
+    <!-- Register Form Modal -->
+    <x-register-form-modal :system="$system" />
 @endsection

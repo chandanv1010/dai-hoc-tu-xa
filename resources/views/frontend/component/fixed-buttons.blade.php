@@ -22,10 +22,19 @@
             </svg>
         </div>
     </button>
+    
+    {{-- Scroll Top Button (inside fixed-buttons-left on mobile) --}}
+    <button type="button" class="fixed-btn fixed-btn-scroll-top scroll-top-btn-mobile" id="scroll-top-btn-mobile" title="Lên đầu trang">
+        <div class="fixed-btn-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 15l-6-6-6 6"/>
+            </svg>
+        </div>
+    </button>
 </div>
 
-{{-- Scroll Top Button Right Side --}}
-<button type="button" class="scroll-top-btn" id="scroll-top-btn" title="Lên đầu trang">
+{{-- Scroll Top Button Right Side (desktop only) --}}
+<button type="button" class="scroll-top-btn scroll-top-btn-desktop" id="scroll-top-btn" title="Lên đầu trang">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M18 15l-6-6-6 6"/>
     </svg>
@@ -33,23 +42,36 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Scroll to top
+        // Scroll to top - handle both desktop and mobile buttons
         const scrollTopBtn = document.getElementById('scroll-top-btn');
+        const scrollTopBtnMobile = document.getElementById('scroll-top-btn-mobile');
+        
+        function handleScrollTop() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > 300) {
+                if (scrollTopBtn) scrollTopBtn.classList.add('show');
+                if (scrollTopBtnMobile) scrollTopBtnMobile.classList.add('show');
+            } else {
+                if (scrollTopBtn) scrollTopBtn.classList.remove('show');
+                if (scrollTopBtnMobile) scrollTopBtnMobile.classList.remove('show');
+            }
+        }
+        
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+        
+        window.addEventListener('scroll', handleScrollTop);
+        
         if (scrollTopBtn) {
-            window.addEventListener('scroll', function() {
-                if (window.pageYOffset > 300) {
-                    scrollTopBtn.classList.add('show');
-                } else {
-                    scrollTopBtn.classList.remove('show');
-                }
-            });
-
-            scrollTopBtn.addEventListener('click', function() {
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
-            });
+            scrollTopBtn.addEventListener('click', scrollToTop);
+        }
+        
+        if (scrollTopBtnMobile) {
+            scrollTopBtnMobile.addEventListener('click', scrollToTop);
         }
 
         // Open consultation form

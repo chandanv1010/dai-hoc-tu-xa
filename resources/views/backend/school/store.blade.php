@@ -25,46 +25,6 @@
     $event = ($pivot && isset($pivot->event)) ? (is_array($pivot->event) ? $pivot->event : []) : [];
     $value = ($pivot && isset($pivot->value)) ? (is_array($pivot->value) ? $pivot->value : []) : [];
     
-    // Lấy dữ liệu form
-    $formScript = old('form_script', isset($school) ? ($school->form_script ?? '') : '');
-    
-    // Xử lý form_json: decode nếu là string, hoặc lấy trực tiếp nếu là array
-    $formJsonRaw = old('form_json');
-    if ($formJsonRaw === null) {
-        // Nếu không có old value, lấy từ database
-        $formJsonRaw = isset($school) ? ($school->form_json ?? null) : null;
-    }
-    
-    $formJson = [];
-    if ($formJsonRaw) {
-        if (is_array($formJsonRaw)) {
-            $formJson = $formJsonRaw;
-        } elseif (is_string($formJsonRaw)) {
-            $decoded = json_decode($formJsonRaw, true);
-            if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                $formJson = $decoded;
-            }
-        }
-    }
-    
-    // Nếu có old value từ form submit, ưu tiên dùng old value
-    if (old('form_json.form_title') !== null) {
-        $formTitle = old('form_json.form_title', '');
-    } else {
-        $formTitle = $formJson['form_title'] ?? '';
-    }
-    
-    if (old('form_json.form_description') !== null) {
-        $formDescription = old('form_json.form_description', '');
-    } else {
-        $formDescription = $formJson['form_description'] ?? '';
-    }
-    
-    if (old('form_json.form_footer') !== null) {
-        $formFooter = old('form_json.form_footer', '');
-    } else {
-        $formFooter = $formJson['form_footer'] ?? '';
-    }
 @endphp
 <form action="{{ $url }}" method="post" class="box" id="schoolForm">
     @csrf
@@ -955,67 +915,6 @@
                                     @include('backend.school.component.degree-value-item', ['itemIndex' => $itemIndex, 'item' => $item])
                                 @endforeach
                             @endif
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Khối Form Enrollment -->
-                <div class="ibox">
-                    <div class="ibox-title">
-                        <h5>Form đăng ký tuyển sinh</h5>
-                    </div>
-                    <div class="ibox-content">
-                        <div class="row mb15">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label for="" class="control-label text-left">Script nhúng form</label>
-                                    <textarea 
-                                        name="form_script" 
-                                        class="form-control"
-                                        rows="8"
-                                        placeholder="Nhập script nhúng form (Form.io hoặc script khác)">{{ $formScript }}</textarea>
-                                    <small class="text-muted">Nhập script nhúng form từ hệ thống CRM hoặc Form.io</small>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb15">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label for="" class="control-label text-left">Tiêu đề form</label>
-                                    <input 
-                                        type="text"
-                                        name="form_json[form_title]"
-                                        value="{{ $formTitle }}"
-                                        class="form-control"
-                                        placeholder="Nhập tiêu đề form"
-                                        autocomplete="off"
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb15">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label for="" class="control-label text-left">Mô tả form</label>
-                                    <textarea 
-                                        name="form_json[form_description]" 
-                                        class="form-control"
-                                        rows="3"
-                                        placeholder="Nhập mô tả form">{{ $formDescription }}</textarea>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb15">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label for="" class="control-label text-left">Footer form</label>
-                                    <textarea 
-                                        name="form_json[form_footer]" 
-                                        class="form-control"
-                                        rows="3"
-                                        placeholder="Nhập nội dung footer form">{{ $formFooter }}</textarea>
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

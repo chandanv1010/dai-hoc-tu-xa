@@ -20,7 +20,7 @@
             <div class="swiper-container school-slide-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
-                        <span class="image img-cover">
+                        <span class="image img-cover" style="cursor: pointer;" data-uk-modal="{target:'#school-consultation-modal'}">
                             <img src="{{ image($pcImage) }}" alt="{{ $name }}">
                         </span>
                     </div>
@@ -33,7 +33,7 @@
             <div class="swiper-container school-slide-container">
                 <div class="swiper-wrapper">
                     <div class="swiper-slide">
-                        <span class="image img-cover">
+                        <span class="image img-cover" style="cursor: pointer;" data-uk-modal="{target:'#school-consultation-modal'}">
                             <img src="{{ image($mobileImage) }}" alt="{{ $name }}">
                         </span>
                     </div>
@@ -145,10 +145,10 @@
                                 </div>
                             @endif
 
-                            {{-- Nút Tìm Hiểu Thêm và Tải Tài Liệu --}}
+                            {{-- Nút Tải Lộ Trình Học và Tải Tài Liệu --}}
                             <div class="school-intro-actions">
-                                <a href="javascript:void(0)" class="btn-learn-more">
-                                    <span>Tìm Hiểu Thêm</span>
+                                <a href="javascript:void(0)" class="btn-learn-more" data-uk-modal="{target:'#school-tai-lo-trinh-modal'}">
+                                    <span>Tải lộ trình học</span>
                                 </a>
                                 @if(!empty($school->download_file))
                                     <a href="{{ asset($school->download_file) }}" class="btn-download" download>
@@ -304,7 +304,7 @@
                     <i class="fa fa-check-circle"></i>
                     Đăng ký ngay để nhận thông tin tuyển sinh mới nhất!
                 </p>
-                <button class="register-banner-btn" data-uk-modal="{target:'#school-enrollment-modal'}">
+                <button class="register-banner-btn" data-uk-modal="{target:'#school-hoc-thu-modal'}">
                     <i class="fa fa-paper-plane"></i>
                     <span>Đăng Ký Ngay</span>
                 </button>
@@ -597,27 +597,12 @@
                 <div class="enrollment-right">
                     <div class="enrollment-form-card">
                         @php
-                            // Lấy form_json và decode nếu cần
-                            $formJsonRaw = $school->form_json ?? null;
-                            $formJson = [];
-                            if ($formJsonRaw) {
-                                if (is_array($formJsonRaw)) {
-                                    $formJson = $formJsonRaw;
-                                } elseif (is_string($formJsonRaw)) {
-                                    $decoded = json_decode($formJsonRaw, true);
-                                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                                        $formJson = $decoded;
-                                    }
-                                }
-                            }
-                            
-                            $formTitle = $formJson['form_title'] ?? 'Đăng Ký Học Trực Tuyến';
-                            $formDescription = $formJson['form_description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
-                            $formFooter = $formJson['form_footer'] ?? '';
-                            $formScript = trim($school->form_script ?? '');
-                            
-                            // Debug: Uncomment dòng dưới để kiểm tra dữ liệu
-                            // dd(['form_script' => $formScript, 'form_json' => $formJson, 'school_id' => $school->id]);
+                            // Sử dụng form_tu_van_mien_phi thay cho form_json cũ
+                            $formTuVan = $school->form_tu_van_mien_phi ?? [];
+                            $formTitle = $formTuVan['title'] ?? 'Đăng Ký Học Trực Tuyến';
+                            $formDescription = $formTuVan['description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
+                            $formFooter = $formTuVan['footer'] ?? '';
+                            $formScript = $formTuVan['script'] ?? trim($school->form_script ?? '');
                         @endphp
                         
                         @if(!empty($formTitle))
@@ -1013,24 +998,12 @@
         <div class="uk-modal-dialog school-enrollment-modal-dialog">
             <a class="uk-modal-close uk-close"></a>
             @php
-                // Lấy form_json và decode nếu cần
-                $formJsonRaw = $school->form_json ?? null;
-                $formJson = [];
-                if ($formJsonRaw) {
-                    if (is_array($formJsonRaw)) {
-                        $formJson = $formJsonRaw;
-                    } elseif (is_string($formJsonRaw)) {
-                        $decoded = json_decode($formJsonRaw, true);
-                        if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
-                            $formJson = $decoded;
-                        }
-                    }
-                }
-                
-                $formTitle = $formJson['form_title'] ?? 'Đăng Ký Học Trực Tuyến';
-                $formDescription = $formJson['form_description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
-                $formFooter = $formJson['form_footer'] ?? '';
-                $formScript = trim($school->form_script ?? '');
+                // Sử dụng form_tu_van_mien_phi thay cho form_json cũ
+                $formTuVan = $school->form_tu_van_mien_phi ?? [];
+                $formTitle = $formTuVan['title'] ?? 'Đăng Ký Học Trực Tuyến';
+                $formDescription = $formTuVan['description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
+                $formFooter = $formTuVan['footer'] ?? '';
+                $formScript = $formTuVan['script'] ?? trim($school->form_script ?? '');
             @endphp
             
             <!-- Header với màu cam và đỏ -->
@@ -1144,6 +1117,74 @@
         </div>
     </div>
 
+    {{-- Modal Form Tư Vấn Miễn Phí (sử dụng form_script) --}}
+    @php
+        // Lấy title, description, footer từ form_tu_van_mien_phi
+        $formTuVan = $school->form_tu_van_mien_phi ?? [];
+        $formTuVanTitle = $formTuVan['title'] ?? 'Tư vấn miễn phí';
+        $formTuVanDescription = $formTuVan['description'] ?? '';
+        $formTuVanFooter = $formTuVan['footer'] ?? '';
+        
+        // Lấy script từ form_script của school (mã nhúng)
+        $formScript = trim($school->form_script ?? '');
+    @endphp
+    
+    @if(!empty($formScript) || !empty($formTuVanTitle))
+        <x-form-modal
+            modalId="school-consultation-modal"
+            modalClass="download-roadmap-modal"
+            :title="$formTuVanTitle"
+            :description="$formTuVanDescription"
+            :script="$formScript"
+            :footer="$formTuVanFooter"
+        />
+    @endif
+
+    {{-- Modal Form Tải Lộ Trình Học (sử dụng form_script) --}}
+    @php
+        // Lấy title, description, footer từ form_tai_lo_trinh_hoc
+        $formTaiLoTrinhHoc = $school->form_tai_lo_trinh_hoc ?? [];
+        $formTaiLoTrinhHocTitle = $formTaiLoTrinhHoc['title'] ?? 'NHẬN LỘ TRÌNH ĐÀO TẠO CHI TIẾT';
+        $formTaiLoTrinhHocDescription = $formTaiLoTrinhHoc['description'] ?? '';
+        $formTaiLoTrinhHocFooter = $formTaiLoTrinhHoc['footer'] ?? '';
+        
+        // Lấy script từ form_script của school (mã nhúng)
+        $formScript = trim($school->form_script ?? '');
+    @endphp
+    
+    @if(!empty($formScript) || !empty($formTaiLoTrinhHocTitle))
+        <x-form-modal
+            modalId="school-tai-lo-trinh-modal"
+            modalClass="download-roadmap-modal"
+            :title="$formTaiLoTrinhHocTitle"
+            :description="$formTaiLoTrinhHocDescription"
+            :script="$formScript"
+            :footer="$formTaiLoTrinhHocFooter"
+        />
+    @endif
+
+    {{-- Modal Form Học Thử Miễn Phí (sử dụng form_script) --}}
+    @php
+        // Lấy title, description, footer từ form_hoc_thu
+        $formHocThu = $school->form_hoc_thu ?? [];
+        $formHocThuTitle = $formHocThu['title'] ?? 'Học thử miễn phí';
+        $formHocThuDescription = $formHocThu['description'] ?? '';
+        $formHocThuFooter = $formHocThu['footer'] ?? '';
+        
+        // Lấy script từ form_script của school (mã nhúng)
+        $formScript = trim($school->form_script ?? '');
+    @endphp
+    
+    @if(!empty($formScript) || !empty($formHocThuTitle))
+        <x-form-modal
+            modalId="school-hoc-thu-modal"
+            modalClass="download-roadmap-modal"
+            :title="$formHocThuTitle"
+            :description="$formHocThuDescription"
+            :script="$formScript"
+            :footer="$formHocThuFooter"
+        />
+    @endif
 @endsection
 
 @section('script')
@@ -1356,6 +1397,27 @@ document.addEventListener('DOMContentLoaded', function() {
     if (schoolEnrollmentFooter) {
         const text = schoolEnrollmentFooter.innerHTML;
         schoolEnrollmentFooter.innerHTML = text.replace(/(\d+)/g, '<span style="color: #FF8C00; font-weight: 700;">$1</span>');
+    }
+
+    // Highlight số trong footer của consultation modal (màu cam)
+    const consultationFooter = document.querySelector('#school-consultation-modal .download-roadmap-footer');
+    if (consultationFooter) {
+        const text = consultationFooter.innerHTML;
+        consultationFooter.innerHTML = text.replace(/(\d+)/g, '<span style="color: #FF8C00; font-weight: 700;">$1</span>');
+    }
+
+    // Highlight số trong footer của tải lộ trình học modal (màu cam)
+    const taiLoTrinhFooter = document.querySelector('#school-tai-lo-trinh-modal .download-roadmap-footer');
+    if (taiLoTrinhFooter) {
+        const text = taiLoTrinhFooter.innerHTML;
+        taiLoTrinhFooter.innerHTML = text.replace(/(\d+)/g, '<span style="color: #FF8C00; font-weight: 700;">$1</span>');
+    }
+
+    // Highlight số trong footer của học thử miễn phí modal (màu cam)
+    const hocThuFooter = document.querySelector('#school-hoc-thu-modal .download-roadmap-footer');
+    if (hocThuFooter) {
+        const text = hocThuFooter.innerHTML;
+        hocThuFooter.innerHTML = text.replace(/(\d+)/g, '<span style="color: #FF8C00; font-weight: 700;">$1</span>');
     }
 });
 </script>

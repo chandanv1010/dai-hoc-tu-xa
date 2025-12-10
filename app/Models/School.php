@@ -39,7 +39,9 @@ class School extends Model
         'is_show_event',
         'is_show_value',
         'form_script',
-        'form_json',
+        'form_tai_lo_trinh_hoc',
+        'form_tu_van_mien_phi',
+        'form_hoc_thu',
         'graduation_system',
         'training_majors',
         'exam_location',
@@ -49,7 +51,9 @@ class School extends Model
 
     protected $casts = [
         'album' => 'array',
-        'form_json' => 'array',
+        'form_tai_lo_trinh_hoc' => 'array',
+        'form_tu_van_mien_phi' => 'array',
+        'form_hoc_thu' => 'array',
     ];
 
     public function languages(){
