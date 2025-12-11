@@ -225,10 +225,17 @@ class MajorRepository extends BaseRepository
             $majors = $query->get();
         }
 
-        // Load languages relationship cho từng major
+        // Load languages và schools relationships cho từng major
         foreach ($majors as $major) {
             $major->load(['languages' => function($query) use ($language_id) {
                 $query->where('languages.id', $language_id);
+            }]);
+            
+            // Load schools relationship với language
+            $major->load(['schools' => function($query) use ($language_id) {
+                $query->with(['languages' => function($q) use ($language_id) {
+                    $q->where('languages.id', $language_id);
+                }]);
             }]);
         }
 

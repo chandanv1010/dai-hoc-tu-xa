@@ -3296,14 +3296,10 @@
                 }
 
                 .swiper-slide {
-                    height: auto; // Để slide có chiều cao tự động
+                    height: auto;
                     
-                    .major-card-wrapper {
+                    .major-card {
                         height: 100%;
-                        
-                        .major-card {
-                            height: 100%;
-                        }
                     }
                 }
             }

@@ -628,96 +628,93 @@
         // AJAX filter cho major catalogues
         var majorsSwiper = null;
         
-        $(document).ready(function() {
-            // Kiểm tra tab active khi trang load
-            var $activeTab = $('.major-catalogue-filter .filter-tab.active');
-            var isAllMajorsOnLoad = $activeTab.length > 0 && ($activeTab.data('catalogue-id') === '' || $activeTab.data('catalogue-id') === undefined);
+        // Khởi tạo swiper cho tab "Tất cả ngành"
+        function initMajorsSwiper() {
+            var $swiperContainer = $('.majors-list-swiper');
+            if (typeof Swiper !== 'undefined' && $swiperContainer.length > 0) {
+                // Destroy swiper cũ nếu có
+                if (majorsSwiper) {
+                    majorsSwiper.destroy(true, true);
+                    majorsSwiper = null;
+                }
+                
+                majorsSwiper = new Swiper('.majors-list-swiper', {
+                    slidesPerView: 3,
+                    spaceBetween: 30,
+                    navigation: {
+                        nextEl: '.majors-list-swiper .swiper-button-next',
+                        prevEl: '.majors-list-swiper .swiper-button-prev',
+                    },
+                    breakpoints: {
+                        0: {
+                            slidesPerView: 1,
+                            spaceBetween: 15,
+                        },
+                        768: {
+                            slidesPerView: 2,
+                            spaceBetween: 20,
+                        },
+                        1024: {
+                            slidesPerView: 3,
+                            spaceBetween: 30,
+                        }
+                    }
+                });
+            }
+        }
+        
+        // Function để load majors qua AJAX
+        function loadMajorsByCatalogue(catalogueId, canonical, isActiveTab) {
+            var isAllMajors = catalogueId === '';
             
-            if (isAllMajorsOnLoad) {
-                // Tab "Tất cả ngành" đang active - hiển thị swiper
-                $('#majors-swiper-wrapper').show();
-                $('#majors-grid-wrapper').hide();
-                // Khởi tạo swiper sau khi DOM ready và swiper đã được show
-                setTimeout(function() {
-                    initMajorsSwiper();
-                }, 200);
-            } else {
-                // Tab khác active - hiển thị grid
-                $('#majors-swiper-wrapper').hide();
-                $('#majors-grid-wrapper').show();
+            // Hiển thị loading
+            var $swiperWrapper = $('#majors-swiper-wrapper');
+            var $gridWrapper = $('#majors-grid-wrapper');
+            var $gridContent = $gridWrapper.find('.uk-grid');
+            var $swiperContainer = $swiperWrapper.find('.majors-list-swiper');
+            var $swiperWrapperInner = $swiperContainer.find('.swiper-wrapper');
+            
+            // Ẩn cả 2 wrapper trước
+            $swiperWrapper.hide();
+            $gridWrapper.hide();
+            
+            // Nếu không có grid container, tạo mới
+            if ($gridContent.length === 0) {
+                $gridWrapper.prepend('<div class="uk-grid uk-grid-medium" data-uk-grid-match></div>');
+                $gridContent = $gridWrapper.find('.uk-grid');
             }
             
-            $('.major-catalogue-filter .filter-tab').on('click', function(e) {
-                e.preventDefault();
-                
-                // Remove active class từ tất cả tabs
-                $('.major-catalogue-filter .filter-tab').removeClass('active');
-                
-                // Add active class cho tab được click
-                $(this).addClass('active');
-                
-                // Lấy catalogue_id và canonical
-                var catalogueId = $(this).data('catalogue-id') || '';
-                var canonical = $(this).data('canonical') || '';
-                var isAllMajors = catalogueId === '';
-                
-                // Hiển thị loading
-                var $swiperWrapper = $('#majors-swiper-wrapper');
-                var $gridWrapper = $('#majors-grid-wrapper');
-                var $gridContent = $gridWrapper.find('.uk-grid');
-                var $swiperContainer = $swiperWrapper.find('.majors-list-swiper');
-                var $swiperWrapperInner = $swiperContainer.find('.swiper-wrapper');
-                
-                // Ẩn cả 2 wrapper trước
-                $swiperWrapper.hide();
-                $gridWrapper.hide();
-                
-                // Nếu không có grid container, tạo mới
-                if ($gridContent.length === 0) {
-                    $gridWrapper.prepend('<div class="uk-grid uk-grid-medium" data-uk-grid-match></div>');
-                    $gridContent = $gridWrapper.find('.uk-grid');
-                }
-                
-                // Hiển thị loading
-                if (isAllMajors) {
-                    $swiperWrapperInner.html('<div class="swiper-slide" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
-                    $swiperWrapper.show();
-                } else {
-                    $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
-                    $gridWrapper.show();
-                }
-                
-                // Gọi AJAX
-                $.ajax({
-                    url: '{{ route("ajax.major.getMajorsByCatalogue") }}',
-                    type: 'GET',
-                    data: {
-                        catalogue_id: catalogueId,
-                        limit: isAllMajors ? 0 : 6 // 0 = không giới hạn cho tab "Tất cả ngành"
-                    },
-                    success: function(response) {
+            // Hiển thị loading
+            if (isAllMajors) {
+                $swiperWrapperInner.html('<div class="swiper-slide" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                $swiperWrapper.show();
+            } else {
+                $gridContent.html('<div class="uk-width-1-1" style="text-align: center; padding: 40px;"><i class="fa fa-spinner fa-spin fa-2x"></i></div>');
+                $gridWrapper.show();
+            }
+            
+            // Gọi AJAX
+            $.ajax({
+                url: '{{ route("ajax.major.getMajorsByCatalogue") }}',
+                type: 'GET',
+                data: {
+                    catalogue_id: catalogueId,
+                    limit: isAllMajors ? 0 : 6 // 0 = không giới hạn cho tab "Tất cả ngành"
+                },
+                success: function(response) {
                         if (response.success && response.html) {
                             if (isAllMajors) {
                                 // Tab "Tất cả ngành" - dùng swiper
-                                // Parse HTML và wrap mỗi major-item trong swiper-slide
+                                // Parse HTML và wrap mỗi major-card vào swiper-slide
                                 var wrappedHtml = '';
                                 var $tempDiv = $('<div>').html(response.html);
                                 
-                                // Tìm tất cả các major-item (có class uk-width-medium-1-3)
-                                $tempDiv.find('.uk-width-medium-1-3').each(function() {
-                                    var $item = $(this);
-                                    // Lấy HTML của major-card bên trong
-                                    var itemHtml = $item.html();
-                                    wrappedHtml += '<div class="swiper-slide"><div class="major-card-wrapper">' + itemHtml + '</div></div>';
+                                // Tìm tất cả major-card (có thể nằm trong uk-width-medium-1-3 hoặc trực tiếp)
+                                $tempDiv.find('.major-card').each(function() {
+                                    var $card = $(this);
+                                    var cardHtml = $card[0].outerHTML;
+                                    wrappedHtml += '<div class="swiper-slide">' + cardHtml + '</div>';
                                 });
-                                
-                                // Nếu không tìm thấy bằng cách trên, thử tìm trực tiếp major-card
-                                if (!wrappedHtml) {
-                                    $tempDiv.find('.major-card').each(function() {
-                                        var $card = $(this);
-                                        wrappedHtml += '<div class="swiper-slide"><div class="major-card-wrapper">' + $card.parent().html() + '</div></div>';
-                                    });
-                                }
                                 
                                 $swiperWrapperInner.html(wrappedHtml);
                                 $swiperWrapper.show();
@@ -725,12 +722,12 @@
                                 
                                 // Khởi tạo hoặc update swiper
                                 if (majorsSwiper) {
-                                    majorsSwiper.update();
-                                } else {
-                                    setTimeout(function() {
-                                        initMajorsSwiper();
-                                    }, 100);
+                                    majorsSwiper.destroy(true, true);
+                                    majorsSwiper = null;
                                 }
+                                setTimeout(function() {
+                                    initMajorsSwiper();
+                                }, 100);
                             } else {
                                 // Các tab khác - dùng grid
                                 $gridContent.html(response.html);
@@ -773,42 +770,40 @@
                         }
                     }
                 });
-            });
+        }
+        
+        $(document).ready(function() {
+            // Kiểm tra tab active khi trang load
+            var $activeTab = $('.major-catalogue-filter .filter-tab.active');
+            var isAllMajorsOnLoad = $activeTab.length > 0 && ($activeTab.data('catalogue-id') === '' || $activeTab.data('catalogue-id') === undefined);
             
-            // Khởi tạo swiper cho tab "Tất cả ngành"
-            function initMajorsSwiper() {
-                var $swiperContainer = $('.majors-list-swiper');
-                if (typeof Swiper !== 'undefined' && $swiperContainer.length > 0 && !majorsSwiper) {
-                    // Destroy swiper cũ nếu có
-                    if (majorsSwiper) {
-                        majorsSwiper.destroy(true, true);
-                        majorsSwiper = null;
-                    }
-                    
-                    majorsSwiper = new Swiper('.majors-list-swiper', {
-                        slidesPerView: 3,
-                        spaceBetween: 30,
-                        navigation: {
-                            nextEl: '.majors-list-swiper .swiper-button-next',
-                            prevEl: '.majors-list-swiper .swiper-button-prev',
-                        },
-                        breakpoints: {
-                            100: {
-                                slidesPerView: 1,
-                                spaceBetween: 15,
-                            },
-                            768: {
-                                slidesPerView: 2,
-                                spaceBetween: 20,
-                            },
-                            1024: {
-                                slidesPerView: 3,
-                                spaceBetween: 30,
-                            }
-                        }
-                    });
-                }
+            if (isAllMajorsOnLoad) {
+                // Tab "Tất cả ngành" đang active - gọi AJAX để lấy tất cả majors
+                var catalogueId = '';
+                var canonical = '';
+                loadMajorsByCatalogue(catalogueId, canonical, true);
+            } else {
+                // Tab khác active - hiển thị grid với dữ liệu hiện có
+                $('#majors-swiper-wrapper').hide();
+                $('#majors-grid-wrapper').show();
             }
+            
+            $('.major-catalogue-filter .filter-tab').on('click', function(e) {
+                e.preventDefault();
+                
+                // Remove active class từ tất cả tabs
+                $('.major-catalogue-filter .filter-tab').removeClass('active');
+                
+                // Add active class cho tab được click
+                $(this).addClass('active');
+                
+                // Lấy catalogue_id và canonical
+                var catalogueId = $(this).data('catalogue-id') || '';
+                var canonical = $(this).data('canonical') || '';
+                
+                // Gọi function load majors
+                loadMajorsByCatalogue(catalogueId, canonical, false);
+            });
         });
 
     </script>
