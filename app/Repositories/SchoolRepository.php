@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\School;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Str;
 
 class SchoolRepository extends BaseRepository
 {
@@ -13,6 +14,72 @@ class SchoolRepository extends BaseRepository
     {
         $this->model = $model;
         parent::__construct($model);
+    }
+
+    /**
+     * Slug hóa giá trị để so sánh (xử lý tiếng Việt)
+     */
+    private function slugValue($value)
+    {
+        if (empty($value)) {
+            return '';
+        }
+        
+        // Chuẩn hóa: lowercase, trim, loại bỏ khoảng trắng thừa
+        $value = mb_strtolower(trim($value), 'UTF-8');
+        $value = preg_replace('/\s+/', ' ', $value);
+        
+        // Bỏ dấu tiếng Việt và chuyển thành slug
+        $value = $this->removeVietnameseAccents($value);
+        
+        return Str::slug($value, '-');
+    }
+
+    /**
+     * Loại bỏ dấu tiếng Việt
+     */
+    private function removeVietnameseAccents($str)
+    {
+        $str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", 'a', $str);
+        $str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", 'e', $str);
+        $str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", 'i', $str);
+        $str = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", 'o', $str);
+        $str = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", 'u', $str);
+        $str = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", 'y', $str);
+        $str = preg_replace("/(đ)/", 'd', $str);
+        $str = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", 'A', $str);
+        $str = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", 'E', $str);
+        $str = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", 'I', $str);
+        $str = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", 'O', $str);
+        $str = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", 'U', $str);
+        $str = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", 'Y', $str);
+        $str = preg_replace("/(Đ)/", 'D', $str);
+        
+        return $str;
+    }
+
+    /**
+     * Kiểm tra xem một giá trị có match với một string chứa nhiều giá trị cách nhau bởi dấu phẩy không (so sánh bằng slug)
+     */
+    private function valueMatchesInString($value, $commaSeparatedString)
+    {
+        if (empty($commaSeparatedString) || empty($value)) {
+            return false;
+        }
+        
+        $valueSlug = $this->slugValue($value);
+        if (empty($valueSlug)) {
+            return false;
+        }
+        
+        $values = array_map('trim', explode(',', $commaSeparatedString));
+        foreach ($values as $dbValue) {
+            if (!empty($dbValue) && $this->slugValue($dbValue) === $valueSlug) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function getSchoolById(int $id = 0, $language_id = 0)
@@ -148,17 +215,64 @@ class SchoolRepository extends BaseRepository
         ->where('schools.publish', '=', 2)
         ->whereNull('schools.deleted_at');
         
-        // Filter theo Hệ Tốt Nghiệp
+        // Chuẩn bị filter values cho graduation_system và exam_location (sử dụng slug)
+        $graduationSystemFilters = [];
+        $examLocationFilters = [];
+        
         if ($request->has('graduation_system')) {
             $graduationSystem = $request->input('graduation_system');
-            if (is_array($graduationSystem) && count($graduationSystem) > 0) {
-                $query->where(function($q) use ($graduationSystem) {
-                    foreach ($graduationSystem as $system) {
-                        $q->orWhere('schools.graduation_system', '=', trim($system));
+            $graduationSystemFilters = is_array($graduationSystem) ? $graduationSystem : [$graduationSystem];
+            $graduationSystemFilters = array_filter(array_map('trim', $graduationSystemFilters));
+        }
+        
+        if ($request->has('exam_location')) {
+            $examLocation = $request->input('exam_location');
+            $examLocationFilters = is_array($examLocation) ? $examLocation : [$examLocation];
+            $examLocationFilters = array_filter(array_map('trim', $examLocationFilters));
+        }
+        
+        // Nếu có filter graduation_system hoặc exam_location, filter bằng slug
+        if (!empty($graduationSystemFilters) || !empty($examLocationFilters)) {
+            $allSchools = $this->model->select('id', 'graduation_system', 'exam_location')
+                ->where('publish', '=', 2)
+                ->whereNull('deleted_at')
+                ->get();
+            
+            $filteredIds = [];
+            foreach ($allSchools as $school) {
+                $matchGraduation = empty($graduationSystemFilters);
+                $matchLocation = empty($examLocationFilters);
+                
+                // Kiểm tra graduation_system
+                if (!empty($graduationSystemFilters)) {
+                    foreach ($graduationSystemFilters as $system) {
+                        if ($this->valueMatchesInString($system, $school->graduation_system)) {
+                            $matchGraduation = true;
+                            break;
+                        }
                     }
-                });
-            } elseif (is_string($graduationSystem) && !empty(trim($graduationSystem))) {
-                $query->where('schools.graduation_system', '=', trim($graduationSystem));
+                }
+                
+                // Kiểm tra exam_location
+                if (!empty($examLocationFilters)) {
+                    foreach ($examLocationFilters as $location) {
+                        if ($this->valueMatchesInString($location, $school->exam_location)) {
+                            $matchLocation = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Chỉ thêm vào nếu match cả 2 điều kiện (nếu có)
+                if ($matchGraduation && $matchLocation) {
+                    $filteredIds[] = $school->id;
+                }
+            }
+            
+            if (!empty($filteredIds)) {
+                $query->whereIn('schools.id', $filteredIds);
+            } else {
+                $query->whereRaw('1 = 0'); // Không có kết quả
             }
         }
         
@@ -174,20 +288,6 @@ class SchoolRepository extends BaseRepository
                 $query->whereHas('majors', function($q) use ($majorIds) {
                     $q->where('majors.id', '=', (int)$majorIds);
                 });
-            }
-        }
-        
-        // Filter theo Địa Điểm Thi
-        if ($request->has('exam_location')) {
-            $examLocation = $request->input('exam_location');
-            if (is_array($examLocation) && count($examLocation) > 0) {
-                $query->where(function($q) use ($examLocation) {
-                    foreach ($examLocation as $location) {
-                        $q->orWhere('schools.exam_location', '=', trim($location));
-                    }
-                });
-            } elseif (is_string($examLocation) && !empty(trim($examLocation))) {
-                $query->where('schools.exam_location', '=', trim($examLocation));
             }
         }
         
@@ -255,25 +355,60 @@ class SchoolRepository extends BaseRepository
             ->whereNull('deleted_at')
             ->get();
         
-        $graduationSystems = [];
-        $examLocations = [];
+        $graduationSystemsMap = []; // key: slug, value: giá trị gốc (lấy giá trị đầu tiên hoặc giá trị có format đẹp nhất)
+        $examLocationsMap = [];
         
         foreach ($schools as $school) {
-            // Xử lý graduation_system (TEXT field)
+            // Xử lý graduation_system (TEXT field) - explode các giá trị cách nhau bởi dấu phẩy
             if ($school->graduation_system && !empty(trim($school->graduation_system))) {
-                $graduationSystems[] = trim($school->graduation_system);
+                // Explode bằng dấu phẩy và trim từng giá trị
+                $values = array_map('trim', explode(',', $school->graduation_system));
+                // Lọc bỏ các giá trị rỗng và thêm vào mảng
+                foreach ($values as $value) {
+                    if (!empty($value)) {
+                        $slug = $this->slugValue($value);
+                        if (!empty($slug) && !isset($graduationSystemsMap[$slug])) {
+                            // Lưu giá trị gốc đầu tiên tìm thấy (hoặc có thể ưu tiên giá trị có format đẹp hơn)
+                            $graduationSystemsMap[$slug] = $value;
+                        }
+                    }
+                }
             }
             
-            // Xử lý exam_location (TEXT field)
+            // Xử lý exam_location (TEXT field) - explode các giá trị cách nhau bởi dấu phẩy
             if ($school->exam_location && !empty(trim($school->exam_location))) {
-                $examLocations[] = trim($school->exam_location);
+                // Explode bằng dấu phẩy và trim từng giá trị
+                $values = array_map('trim', explode(',', $school->exam_location));
+                // Lọc bỏ các giá trị rỗng và thêm vào mảng
+                foreach ($values as $value) {
+                    if (!empty($value)) {
+                        $slug = $this->slugValue($value);
+                        if (!empty($slug) && !isset($examLocationsMap[$slug])) {
+                            // Lưu giá trị gốc đầu tiên tìm thấy
+                            $examLocationsMap[$slug] = $value;
+                        }
+                    }
+                }
             }
         }
         
+        // Chuyển từ map về array và sắp xếp
+        $graduationSystems = array_values($graduationSystemsMap);
+        $examLocations = array_values($examLocationsMap);
+        
+        // Sắp xếp theo thứ tự alphabet (không phân biệt hoa thường)
+        usort($graduationSystems, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        usort($examLocations, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        
         return [
-            'graduation_system' => array_values(array_unique(array_filter($graduationSystems))),
-            'exam_location' => array_values(array_unique(array_filter($examLocations))),
+            'graduation_system' => $graduationSystems,
+            'exam_location' => $examLocations,
         ];
     }
 }
+
 

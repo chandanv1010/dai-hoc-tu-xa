@@ -50,4 +50,17 @@ class PostCatalogueRepository extends BaseRepository
         ->find($id);
     }
 
+    public function getAllByLanguage($language_id = 0){
+        return $this->model->select([
+                'post_catalogues.id',
+                'tb2.name',
+            ]
+        )
+        ->join('post_catalogue_language as tb2', 'tb2.post_catalogue_id', '=','post_catalogues.id')
+        ->where('tb2.language_id', '=', $language_id)
+        ->where('post_catalogues.publish', '=', 2)
+        ->orderBy('tb2.name', 'asc')
+        ->get();
+    }
+
 }

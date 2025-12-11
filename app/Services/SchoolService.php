@@ -319,7 +319,9 @@ class SchoolService extends BaseService
         $payload['majors'] = $request->input('majors', []);
         $payload['study_method'] = $request->input('study_method', []);
         $payload['feedback'] = $request->input('feedback', []);
-        $payload['event'] = $request->input('event', []);
+        // Event giờ lưu post_catalogue_id thay vì array post_ids
+        $eventData = $request->input('event', []);
+        $payload['event'] = !empty($eventData['post_catalogue_id']) ? ['post_catalogue_id' => $eventData['post_catalogue_id']] : [];
         $payload['value'] = $request->input('value', []);
         
         return $payload;

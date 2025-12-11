@@ -47,9 +47,11 @@
     <!-- Post Detail Content -->
     <div class="panel-post-detail {{ $postPivot->canonical === 'lich-khai-giang-du-kien' ? 'no-sidebar' : '' }}">
         @if($postPivot->canonical === 'lich-khai-giang-du-kien')
-            <div class="table-wrapper-full-width">
-                <div class="table-wrapper">
-                    {!! $postContent !!}
+            <div class="uk-container uk-container-center">
+                <div class="table-wrapper-full-width">
+                    <div class="table-wrapper">
+                        {!! $postContent !!}
+                    </div>
                 </div>
             </div>
             <div class="uk-container uk-container-center">

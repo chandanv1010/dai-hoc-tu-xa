@@ -22,7 +22,8 @@
     $majors = ($pivot && isset($pivot->majors)) ? (is_array($pivot->majors) ? $pivot->majors : []) : [];
     $studyMethod = ($pivot && isset($pivot->study_method)) ? (is_array($pivot->study_method) ? $pivot->study_method : []) : [];
     $feedback = ($pivot && isset($pivot->feedback)) ? (is_array($pivot->feedback) ? $pivot->feedback : []) : [];
-    $event = ($pivot && isset($pivot->event)) ? (is_array($pivot->event) ? $pivot->event : []) : [];
+    // Event giờ lưu post_catalogue_id (single value) thay vì array post_ids
+    $eventPostCatalogueId = ($pivot && isset($pivot->event)) ? (is_array($pivot->event) ? ($pivot->event['post_catalogue_id'] ?? null) : (is_string($pivot->event) ? json_decode($pivot->event, true)['post_catalogue_id'] ?? null : null)) : null;
     $value = ($pivot && isset($pivot->value)) ? (is_array($pivot->value) ? $pivot->value : []) : [];
     
 @endphp
@@ -410,14 +411,11 @@
                             <div class="col-lg-12">
                                 <div class="form-row">
                                     <label for="" class="control-label text-left">Địa chỉ</label>
-                                    <input 
-                                        type="text"
-                                        name="announce[address]"
-                                        value="{{ old('announce.address', (isset($announce) && isset($announce['address'])) ? $announce['address'] : '') }}"
-                                        class="form-control"
-                                        placeholder="Nhập địa chỉ"
-                                        autocomplete="off"
-                                    >
+                                    <textarea 
+                                        name="announce[address]" 
+                                        class="ck-editor" 
+                                        id="ckAnnounceAddress"
+                                        data-height="200">{{ old('announce.address', (isset($announce) && isset($announce['address'])) ? $announce['address'] : '') }}</textarea>
                                 </div>
                             </div>
                         </div>
@@ -810,21 +808,21 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-row">
-                                    <label for="" class="control-label text-left">Chọn bài viết</label>
+                                    <label for="" class="control-label text-left">Chọn chuyên mục</label>
                                     <select 
-                                        name="event[]"
-                                        id="event_post_ids" 
+                                        name="event[post_catalogue_id]"
+                                        id="event_post_catalogue_id" 
                                         class="form-control select2" 
-                                        multiple
-                                        data-placeholder="Chọn các bài viết"
+                                        data-placeholder="Chọn chuyên mục"
                                     >
-                                        @if(isset($posts) && count($posts) > 0)
-                                            @foreach($posts as $post)
+                                        <option value="">-- Chọn chuyên mục --</option>
+                                        @if(isset($postCatalogues) && count($postCatalogues) > 0)
+                                            @foreach($postCatalogues as $postCatalogue)
                                                 <option 
-                                                    value="{{ $post->id }}"
-                                                    {{ (old('event') && in_array($post->id, old('event'))) || (isset($event) && is_array($event) && in_array($post->id, $event)) ? 'selected' : '' }}
+                                                    value="{{ $postCatalogue->id }}"
+                                                    {{ (old('event.post_catalogue_id') == $postCatalogue->id) || ($eventPostCatalogueId == $postCatalogue->id) ? 'selected' : '' }}
                                                 >
-                                                    {{ $post->name }}
+                                                    {{ $postCatalogue->name }}
                                                 </option>
                                             @endforeach
                                         @endif
@@ -990,8 +988,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 updateMajorsDetails();
             });
             
-            $('#event_post_ids').select2({
-                placeholder: 'Chọn các bài viết',
+            $('#event_post_catalogue_id').select2({
+                placeholder: 'Chọn chuyên mục',
                 allowClear: true
             });
         }

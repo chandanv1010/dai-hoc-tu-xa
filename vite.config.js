@@ -5,9 +5,21 @@ export default defineConfig({
     plugins: [
         laravel({
             input: ['resources/css/app.scss', 'resources/js/app.js'],
-            refresh: true,
+            refresh: [
+                'resources/views/**',
+                'resources/css/**',
+                'resources/js/**',
+            ],
         }),
     ],
+    server: {
+        hmr: {
+            host: 'localhost',
+        },
+        watch: {
+            usePolling: true,
+        },
+    },
     css: {
         devSourcemap: true,
     },

@@ -431,7 +431,7 @@
                     </div>
                 </div>
                 <div class="advantage-banner-action">
-                    <a href="#consultation-modal" class="btn-consultation" data-uk-modal>
+                    <a href="#school-consultation-modal" class="btn-consultation" data-uk-modal>
                         <i class="fa fa-headphones"></i>
                         <span>NHẬN TƯ VẤN MIỄN PHÍ</span>
                     </a>
@@ -458,53 +458,85 @@
                     </p>
                 </div>
 
-                <div class="majors-grid">
-                    @foreach($schoolMajors as $item)
-                        @php
-                            $major = $item['major'];
-                            $majorPivot = $item['majorPivot'];
-                            $majorData = $item['data'];
-                            $majorName = $majorPivot->name ?? '';
-                            $majorImage = $major->image ?? '';
-                            $majorCredits = $majorData['credits'] ?? '';
-                            $majorDuration = $majorData['duration'] ?? '';
-                            $majorCanonical = $majorPivot->canonical ?? '';
-                            $majorDelay = (0.8 + ($loop->index * 0.15)) . 's';
-                        @endphp
-                        <div class="major-card wow fadeInUp" data-wow-delay="{{ $majorDelay }}">
-                            @if(!empty($majorImage))
-                                <div class="major-card-image">
-                                    <span class="image img-cover">
-                                        <img src="{{ image($majorImage) }}" alt="{{ $majorName }}">
-                                    </span>
-                                </div>
-                            @endif
-                            <div class="major-card-content">
-                                @if(!empty($majorName))
-                                    <h3 class="major-card-title">{{ $majorName }}</h3>
-                                @endif
-                                <div class="major-card-info">
-                                    @if(!empty($majorCredits))
-                                        <div class="major-info-item">
-                                            <i class="fa fa-book"></i>
-                                            <span class="info-label">Số tín chỉ:</span>
-                                            <span class="info-value">{{ $majorCredits }}</span>
+                <div class="majors-swiper">
+                    <div class="swiper-container majors-swiper-container">
+                        <div class="swiper-button-next"></div>
+                        <div class="swiper-button-prev"></div>
+                        <div class="swiper-wrapper">
+                            @foreach($schoolMajors as $item)
+                                @php
+                                    $major = $item['major'];
+                                    $majorPivot = $item['majorPivot'];
+                                    $majorData = $item['data'];
+                                    $majorName = $majorPivot->name ?? '';
+                                    $majorImage = $major->image ?? '';
+                                    $majorCredits = $majorData['credits'] ?? '';
+                                    $majorDuration = $majorData['duration'] ?? '';
+                                    $majorCanonical = $majorPivot->canonical ?? '';
+                                    $majorUrl = $majorCanonical ? write_url($majorCanonical) : '#';
+                                    $majorDelay = (0.8 + ($loop->index * 0.15)) . 's';
+                                    
+                                    // Lấy form tải lộ trình từ major
+                                    $formTaiLoTrinh = $major->form_tai_lo_trinh_json ?? null;
+                                    $hasForm = $formTaiLoTrinh && !empty($formTaiLoTrinh['script']);
+                                    $formTitle = $hasForm ? ($formTaiLoTrinh['title'] ?? 'Tải Lộ Trình Học') : '';
+                                    $formDescription = $hasForm ? ($formTaiLoTrinh['description'] ?? '') : '';
+                                    $formScript = $hasForm ? ($formTaiLoTrinh['script'] ?? '') : '';
+                                    $formFooter = $hasForm ? ($formTaiLoTrinh['footer'] ?? '') : '';
+                                @endphp
+                                <div class="swiper-slide">
+                                    <div class="major-card wow fadeInUp" data-wow-delay="{{ $majorDelay }}">
+                                        @if(!empty($majorImage))
+                                            <div class="major-card-image">
+                                                <span class="image img-cover">
+                                                    <img src="{{ image($majorImage) }}" alt="{{ $majorName }}">
+                                                </span>
+                                            </div>
+                                        @endif
+                                        <div class="major-card-content">
+                                            @if(!empty($majorName))
+                                                <h3 class="major-card-title">
+                                                    <a href="{{ $majorUrl }}" title="{{ $majorName }}">{{ $majorName }}</a>
+                                                </h3>
+                                            @endif
+                                            <div class="major-card-info">
+                                                @if(!empty($majorCredits))
+                                                    <div class="major-info-item">
+                                                        <i class="fa fa-book"></i>
+                                                        <span class="info-label">Số tín chỉ:</span>
+                                                        <span class="info-value">{{ $majorCredits }}</span>
+                                                    </div>
+                                                @endif
+                                                @if(!empty($majorDuration))
+                                                    <div class="major-info-item">
+                                                        <i class="fa fa-clock-o"></i>
+                                                        <span class="info-label">Thời Gian Đào Tạo:</span>
+                                                        <span class="info-value">{{ $majorDuration }}</span>
+                                                    </div>
+                                                @endif
+                                            </div>
+                                            @if($hasForm)
+                                                <button type="button" 
+                                                    class="major-card-btn major-roadmap-btn" 
+                                                    data-major-form-title="{{ htmlspecialchars($formTitle, ENT_QUOTES, 'UTF-8') }}"
+                                                    data-major-form-description="{{ htmlspecialchars($formDescription, ENT_QUOTES, 'UTF-8') }}"
+                                                    data-major-form-script="{{ htmlspecialchars($formScript, ENT_QUOTES, 'UTF-8') }}"
+                                                    data-major-form-footer="{{ htmlspecialchars($formFooter, ENT_QUOTES, 'UTF-8') }}"
+                                                    onclick="if(typeof window.openMajorRoadmapModal === 'function') { window.openMajorRoadmapModal(this); } else { console.error('openMajorRoadmapModal not found'); }">
+                                                    Nhận lộ trình chi tiết
+                                                </button>
+                                            @else
+                                                <a href="{{ $majorUrl }}" class="major-card-btn">
+                                                    Xem chi tiết
+                                                </a>
+                                            @endif
                                         </div>
-                                    @endif
-                                    @if(!empty($majorDuration))
-                                        <div class="major-info-item">
-                                            <i class="fa fa-clock-o"></i>
-                                            <span class="info-label">Thời Gian Đào Tạo:</span>
-                                            <span class="info-value">{{ $majorDuration }}</span>
-                                        </div>
-                                    @endif
+                                    </div>
                                 </div>
-                                <a href="{{ write_url($majorCanonical) }}" class="major-card-btn">
-                                    Nhận lộ trình chi tiết
-                                </a>
-                            </div>
+                            @endforeach
                         </div>
-                    @endforeach
+                        <div class="swiper-pagination"></div>
+                    </div>
                 </div>
 
                 <div class="majors-footer">
@@ -515,6 +547,221 @@
             </div>
         </div>
     @endif
+
+    {{-- Modal Form Tải Lộ Trình Học cho Major (Dynamic) --}}
+    <div id="major-roadmap-modal" class="uk-modal download-roadmap-modal">
+        <div class="uk-modal-dialog download-roadmap-modal-dialog">
+            <a class="uk-modal-close uk-close"></a>
+            
+            <!-- Header -->
+            <div class="download-roadmap-header">
+                <h2 class="download-roadmap-title" id="major-roadmap-title"></h2>
+                <div class="download-roadmap-description" id="major-roadmap-description"></div>
+            </div>
+            
+            <!-- Wrapper cho script nhúng -->
+            <div class="download-roadmap-form-wrapper">
+                <div class="download-roadmap-script-wrapper" id="major-roadmap-script"></div>
+            </div>
+            
+            <!-- Footer -->
+            <div class="download-roadmap-footer" id="major-roadmap-footer"></div>
+        </div>
+    </div>
+
+    {{-- Script inline để đảm bảo function sẵn sàng ngay lập tức --}}
+    <script>
+    (function() {
+        // Function để decode HTML entities
+        function decodeHtmlEntities(str) {
+            if (!str) return '';
+            const textarea = document.createElement('textarea');
+            textarea.innerHTML = str;
+            return textarea.value;
+        }
+
+        // Function để mở modal tải lộ trình học cho major - ĐỊNH NGHĨA GLOBAL NGAY
+        window.openMajorRoadmapModal = function(button) {
+            console.log('=== openMajorRoadmapModal called ===', button);
+            
+            try {
+                // Lấy và decode HTML entities từ data attributes
+                let title = button.getAttribute('data-major-form-title') || 'Tải Lộ Trình Học';
+                let description = button.getAttribute('data-major-form-description') || '';
+                let script = button.getAttribute('data-major-form-script') || '';
+                let footer = button.getAttribute('data-major-form-footer') || '';
+                
+                console.log('Raw data:', { title, description, script: script.substring(0, 100), footer });
+                
+                // Decode HTML entities
+                title = decodeHtmlEntities(title);
+                description = decodeHtmlEntities(description);
+                script = decodeHtmlEntities(script);
+                footer = decodeHtmlEntities(footer);
+                
+                console.log('Decoded data:', { title, description, script: script.substring(0, 100), footer });
+                
+                // Kiểm tra modal có tồn tại không
+                const modal = document.getElementById('major-roadmap-modal');
+                if (!modal) {
+                    console.error('Major roadmap modal not found');
+                    alert('Modal không tìm thấy. Vui lòng tải lại trang.');
+                    return;
+                }
+                console.log('Modal found:', modal);
+                
+                // Cập nhật nội dung modal
+                const titleEl = document.getElementById('major-roadmap-title');
+                const descEl = document.getElementById('major-roadmap-description');
+                const scriptEl = document.getElementById('major-roadmap-script');
+                const footerEl = document.getElementById('major-roadmap-footer');
+                
+                console.log('Elements found:', { titleEl, descEl, scriptEl, footerEl });
+                
+                if (titleEl) {
+                    titleEl.textContent = title;
+                    console.log('Title set:', title);
+                } else {
+                    console.error('major-roadmap-title element not found');
+                }
+                
+                if (descEl) {
+                    descEl.innerHTML = description;
+                    console.log('Description set');
+                } else {
+                    console.error('major-roadmap-description element not found');
+                }
+                
+                if (scriptEl) {
+                    // Clear previous content
+                    scriptEl.innerHTML = '';
+                    
+                    console.log('Script content length:', script.length);
+                    console.log('Script content preview:', script.substring(0, 200));
+                    
+                    // Inject script HTML
+                    if (script && script.trim() !== '') {
+                        scriptEl.innerHTML = script;
+                        
+                        // Re-execute all script tags found in the injected HTML
+                        const scripts = scriptEl.getElementsByTagName('script');
+                        const scriptsArray = Array.from(scripts); // Convert to array to avoid live NodeList issues
+                        
+                        console.log('Found scripts to execute:', scriptsArray.length);
+                        
+                        scriptsArray.forEach(function(oldScript) {
+                            const newScript = document.createElement('script');
+                            
+                            // Copy all attributes
+                            Array.from(oldScript.attributes).forEach(function(attr) {
+                                newScript.setAttribute(attr.name, attr.value);
+                            });
+                            
+                            // Copy script content
+                            if (oldScript.src) {
+                                newScript.src = oldScript.src;
+                            } else {
+                                newScript.text = oldScript.text || oldScript.innerHTML;
+                            }
+                            
+                            // Append new script to body (scripts execute when appended)
+                            document.body.appendChild(newScript);
+                            
+                            // Remove old script
+                            oldScript.parentNode.removeChild(oldScript);
+                            
+                            console.log('Script executed:', oldScript.src || 'inline script');
+                        });
+                        
+                        // Handle iframes (like Form.io)
+                        const iframes = scriptEl.getElementsByTagName('iframe');
+                        console.log('Found iframes:', iframes.length);
+                        Array.from(iframes).forEach(function(iframe) {
+                            console.log('Iframe found:', iframe.src || iframe.id);
+                        });
+                        
+                        console.log('Script set and executed successfully');
+                    } else {
+                        console.warn('Script is empty or not provided');
+                        scriptEl.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">Form đang được cập nhật...</p>';
+                    }
+                } else {
+                    console.error('major-roadmap-script element not found');
+                }
+                
+                if (footerEl) {
+                    footerEl.innerHTML = footer;
+                    console.log('Footer set');
+                } else {
+                    console.error('major-roadmap-footer element not found');
+                }
+                
+                // Mở modal bằng UIkit - mở TRƯỚC để đảm bảo modal được render
+                console.log('Checking UIkit:', typeof UIkit, UIkit);
+                
+                if (typeof UIkit !== 'undefined' && UIkit.modal) {
+                    const modalInstance = UIkit.modal('#major-roadmap-modal');
+                    console.log('Modal instance:', modalInstance);
+                    if (modalInstance) {
+                        modalInstance.show();
+                        console.log('Modal.show() called via UIkit.modal()');
+                    }
+                } else {
+                    console.error('UIkit is not loaded, trying alternative method...');
+                    // Fallback: thêm class trực tiếp
+                    modal.classList.add('uk-open');
+                    document.body.classList.add('uk-modal-page');
+                    console.log('Modal opened by adding classes');
+                }
+                
+                // Re-check và re-execute scripts sau khi modal đã mở (delay để DOM được render)
+                setTimeout(function() {
+                    console.log('Re-checking scripts after modal opened...');
+                    const scriptEl = document.getElementById('major-roadmap-script');
+                    if (scriptEl) {
+                        const scripts = scriptEl.getElementsByTagName('script');
+                        const scriptsArray = Array.from(scripts);
+                        console.log('Re-found scripts after modal opened:', scriptsArray.length);
+                        
+                        // Re-execute nếu có script tags mới
+                        if (scriptsArray.length > 0) {
+                            scriptsArray.forEach(function(oldScript) {
+                                // Kiểm tra xem script đã được execute chưa (có src hoặc đã có parent khác)
+                                if (!oldScript.src || oldScript.parentNode === scriptEl) {
+                                    const newScript = document.createElement('script');
+                                    Array.from(oldScript.attributes).forEach(function(attr) {
+                                        newScript.setAttribute(attr.name, attr.value);
+                                    });
+                                    if (oldScript.src) {
+                                        newScript.src = oldScript.src;
+                                    } else {
+                                        newScript.text = oldScript.text || oldScript.innerHTML;
+                                    }
+                                    document.body.appendChild(newScript);
+                                    oldScript.parentNode.removeChild(oldScript);
+                                    console.log('Re-executed script after modal opened');
+                                }
+                            });
+                        }
+                    }
+                    
+                    // Kiểm tra modal có mở không
+                    if (modal.classList.contains('uk-open') || modal.style.display !== 'none') {
+                        console.log('Modal is open and scripts should be executed!');
+                    } else {
+                        console.warn('Modal might not be visible');
+                    }
+                }, 300);
+            } catch (error) {
+                console.error('Error opening major roadmap modal:', error);
+                console.error('Error stack:', error.stack);
+                alert('Có lỗi xảy ra khi mở form: ' + error.message);
+            }
+        };
+        
+        console.log('openMajorRoadmapModal function defined:', typeof window.openMajorRoadmapModal);
+    })();
+    </script>
 
     {{-- Khối Đăng Ký Tuyển Sinh --}}
     <div class="panel-school-enrollment wow fadeInUp" data-wow-delay="0.8s">
@@ -590,19 +837,19 @@
                     @if(!empty($school->enrollment_quota))
                         <div class="enrollment-quota-box">
                             <i class="fa fa-bolt"></i>
-                            <span>Còn <strong>{{ $school->enrollment_quota }} chỉ tiêu</strong> tuyển sinh năm 2025</span>
+                            <span> <strong>{{ $school->enrollment_quota }}</strong></span>
                         </div>
                     @endif
                 </div>
                 <div class="enrollment-right">
                     <div class="enrollment-form-card">
                         @php
-                            // Sử dụng form_tu_van_mien_phi thay cho form_json cũ
+                            // Sử dụng form_tu_van_mien_phi
                             $formTuVan = $school->form_tu_van_mien_phi ?? [];
                             $formTitle = $formTuVan['title'] ?? 'Đăng Ký Học Trực Tuyến';
                             $formDescription = $formTuVan['description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
                             $formFooter = $formTuVan['footer'] ?? '';
-                            $formScript = $formTuVan['script'] ?? trim($school->form_script ?? '');
+                            $formScript = trim($formTuVan['script'] ?? '');
                         @endphp
                         
                         @if(!empty($formTitle))
@@ -924,70 +1171,60 @@
                         <h2 class="news-outstanding-title">{{ $eventName }}</h2>
                     </div>
 
-                    <!-- News Grid -->
-                    <div class="news-outstanding-grid">
-                        <div class="uk-grid uk-grid-medium" data-uk-grid-match>
-                            @foreach($eventPosts as $index => $post)
-                                @php
-                                    $postName = $post->name ?? '';
-                                    $postDescription = $post->description ?? '';
-                                    $postCanonical = $post->canonical ?? '';
-                                    $postUrl = $postCanonical ? write_url($postCanonical) : '#';
-                                    $postImage = $post->image ?? '';
-                                    $hasPostImage = !empty($postImage);
-                                    $postImageUrl = $hasPostImage ? (function_exists('thumb') ? thumb($postImage, 400, 300) : asset($postImage)) : '';
-                                    
-                                    // Lấy ngày tháng
-                                    $postDate = $post->created_at ?? now();
-                                    $formattedDate = $postDate ? date('d/m/Y', strtotime($postDate)) : '';
-                                    
-                                    // Ẩn các sự kiện từ thứ 4 trở đi
-                                    $isHidden = $index >= 3;
-                                @endphp
-                                @php
-                                    $eventDelay = (0.7 + ($index * 0.15)) . 's';
-                                @endphp
-                                <div class="uk-width-medium-1-2 uk-width-large-1-3 event-item {{ $isHidden ? 'event-item-hidden' : '' }}" data-event-index="{{ $index }}">
-                                    <div class="news-item wow fadeInUp" data-wow-delay="{{ $eventDelay }}">
-                                        <a href="{{ $postUrl }}" class="news-image img-cover {{ !$hasPostImage ? 'no-image' : '' }}">
-                                            @if($hasPostImage)
-                                                <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
-                                            @endif
-                                        </a>
-                                        <div class="news-content">
-                                            <span class="news-category-label">{{ $eventName }}</span>
-                                            <h3 class="news-title">
-                                                <a href="{{ $postUrl }}" title="{{ $postName }}">{{ $postName }}</a>
-                                            </h3>
-                                            @if($postDescription)
-                                                @php
-                                                    $cleanDescription = strip_tags($postDescription);
-                                                    $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
-                                                @endphp
-                                                <p class="news-description">{!! $shortDescription !!}</p>
-                                            @endif
-                                            <div class="news-meta">
-                                                <span class="news-date">
-                                                    <i class="fa fa-calendar"></i>
-                                                    {{ $formattedDate }}
-                                                </span>
-                                                <a href="{{ $postUrl }}" class="news-detail-link">Xem chi tiết →</a>
+                    <!-- News Swiper -->
+                    <div class="news-outstanding-swiper">
+                        <div class="swiper-container event-swiper">
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-wrapper">
+                                @foreach($eventPosts as $index => $post)
+                                    @php
+                                        $postName = $post->name ?? '';
+                                        $postDescription = $post->description ?? '';
+                                        $postCanonical = $post->canonical ?? '';
+                                        $postUrl = $postCanonical ? write_url($postCanonical) : '#';
+                                        $postImage = $post->image ?? '';
+                                        $hasPostImage = !empty($postImage);
+                                        $postImageUrl = $hasPostImage ? (function_exists('thumb') ? thumb($postImage, 400, 300) : asset($postImage)) : '';
+                                        
+                                        // Lấy ngày tháng
+                                        $postDate = $post->created_at ?? now();
+                                        $formattedDate = $postDate ? date('d/m/Y', strtotime($postDate)) : '';
+                                    @endphp
+                                    <div class="swiper-slide">
+                                        <div class="news-item wow fadeInUp" data-wow-delay="{{ (0.7 + ($index * 0.15)) . 's' }}">
+                                            <a href="{{ $postUrl }}" class="news-image img-cover {{ !$hasPostImage ? 'no-image' : '' }}">
+                                                @if($hasPostImage)
+                                                    <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
+                                                @endif
+                                            </a>
+                                            <div class="news-content">
+                                                <span class="news-category-label">{{ $eventName }}</span>
+                                                <h3 class="news-title">
+                                                    <a href="{{ $postUrl }}" title="{{ $postName }}">{{ $postName }}</a>
+                                                </h3>
+                                                @if($postDescription)
+                                                    @php
+                                                        $cleanDescription = strip_tags($postDescription);
+                                                        $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
+                                                    @endphp
+                                                    <p class="news-description">{!! $shortDescription !!}</p>
+                                                @endif
+                                                <div class="news-meta">
+                                                    <span class="news-date">
+                                                        <i class="fa fa-calendar"></i>
+                                                        {{ $formattedDate }}
+                                                    </span>
+                                                    <a href="{{ $postUrl }}" class="news-detail-link">Xem chi tiết →</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
+                            <div class="swiper-pagination"></div>
                         </div>
                     </div>
-
-                    <!-- Footer: Xem thêm button -->
-                    @if($eventPosts->count() > 3)
-                        <div class="news-outstanding-footer">
-                            <button type="button" class="news-outstanding-cta-button" id="show-more-events-btn">
-                                Xem thêm
-                            </button>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
@@ -998,12 +1235,12 @@
         <div class="uk-modal-dialog school-enrollment-modal-dialog">
             <a class="uk-modal-close uk-close"></a>
             @php
-                // Sử dụng form_tu_van_mien_phi thay cho form_json cũ
+                // Sử dụng form_tu_van_mien_phi
                 $formTuVan = $school->form_tu_van_mien_phi ?? [];
                 $formTitle = $formTuVan['title'] ?? 'Đăng Ký Học Trực Tuyến';
                 $formDescription = $formTuVan['description'] ?? 'Hoàn thành thông tin để nhận tư vấn';
                 $formFooter = $formTuVan['footer'] ?? '';
-                $formScript = $formTuVan['script'] ?? trim($school->form_script ?? '');
+                $formScript = trim($formTuVan['script'] ?? '');
             @endphp
             
             <!-- Header với màu cam và đỏ -->
@@ -1117,77 +1354,255 @@
         </div>
     </div>
 
-    {{-- Modal Form Tư Vấn Miễn Phí (sử dụng form_script) --}}
+    {{-- Modal Form Tư Vấn Miễn Phí --}}
     @php
-        // Lấy title, description, footer từ form_tu_van_mien_phi
+        // Lấy title, description, footer, script từ form_tu_van_mien_phi
         $formTuVan = $school->form_tu_van_mien_phi ?? [];
         $formTuVanTitle = $formTuVan['title'] ?? 'Tư vấn miễn phí';
         $formTuVanDescription = $formTuVan['description'] ?? '';
         $formTuVanFooter = $formTuVan['footer'] ?? '';
-        
-        // Lấy script từ form_script của school (mã nhúng)
-        $formScript = trim($school->form_script ?? '');
+        $formTuVanScript = trim($formTuVan['script'] ?? '');
     @endphp
     
-    @if(!empty($formScript) || !empty($formTuVanTitle))
+    @if(!empty($formTuVanScript) || !empty($formTuVanTitle))
         <x-form-modal
             modalId="school-consultation-modal"
             modalClass="download-roadmap-modal"
             :title="$formTuVanTitle"
             :description="$formTuVanDescription"
-            :script="$formScript"
+            :script="$formTuVanScript"
             :footer="$formTuVanFooter"
         />
     @endif
 
-    {{-- Modal Form Tải Lộ Trình Học (sử dụng form_script) --}}
+    {{-- Modal Form Tải Lộ Trình Học --}}
     @php
-        // Lấy title, description, footer từ form_tai_lo_trinh_hoc
+        // Lấy title, description, footer, script từ form_tai_lo_trinh_hoc
         $formTaiLoTrinhHoc = $school->form_tai_lo_trinh_hoc ?? [];
         $formTaiLoTrinhHocTitle = $formTaiLoTrinhHoc['title'] ?? 'NHẬN LỘ TRÌNH ĐÀO TẠO CHI TIẾT';
         $formTaiLoTrinhHocDescription = $formTaiLoTrinhHoc['description'] ?? '';
         $formTaiLoTrinhHocFooter = $formTaiLoTrinhHoc['footer'] ?? '';
-        
-        // Lấy script từ form_script của school (mã nhúng)
-        $formScript = trim($school->form_script ?? '');
+        $formTaiLoTrinhHocScript = trim($formTaiLoTrinhHoc['script'] ?? '');
     @endphp
     
-    @if(!empty($formScript) || !empty($formTaiLoTrinhHocTitle))
+    @if(!empty($formTaiLoTrinhHocScript) || !empty($formTaiLoTrinhHocTitle))
         <x-form-modal
             modalId="school-tai-lo-trinh-modal"
             modalClass="download-roadmap-modal"
             :title="$formTaiLoTrinhHocTitle"
             :description="$formTaiLoTrinhHocDescription"
-            :script="$formScript"
+            :script="$formTaiLoTrinhHocScript"
             :footer="$formTaiLoTrinhHocFooter"
         />
     @endif
 
-    {{-- Modal Form Học Thử Miễn Phí (sử dụng form_script) --}}
+    {{-- Modal Form Học Thử Miễn Phí --}}
     @php
-        // Lấy title, description, footer từ form_hoc_thu
+        // Lấy title, description, footer, script từ form_hoc_thu
         $formHocThu = $school->form_hoc_thu ?? [];
         $formHocThuTitle = $formHocThu['title'] ?? 'Học thử miễn phí';
         $formHocThuDescription = $formHocThu['description'] ?? '';
         $formHocThuFooter = $formHocThu['footer'] ?? '';
-        
-        // Lấy script từ form_script của school (mã nhúng)
-        $formScript = trim($school->form_script ?? '');
+        $formHocThuScript = trim($formHocThu['script'] ?? '');
     @endphp
     
-    @if(!empty($formScript) || !empty($formHocThuTitle))
+    @if(!empty($formHocThuScript) || !empty($formHocThuTitle))
         <x-form-modal
             modalId="school-hoc-thu-modal"
             modalClass="download-roadmap-modal"
             :title="$formHocThuTitle"
             :description="$formHocThuDescription"
-            :script="$formScript"
+            :script="$formHocThuScript"
             :footer="$formHocThuFooter"
         />
     @endif
 @endsection
 
 @section('script')
+<script>
+    // Function để decode HTML entities
+    function decodeHtmlEntities(str) {
+        if (!str) return '';
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value;
+    }
+
+    // Function để decode HTML entities
+    function decodeHtmlEntities(str) {
+        if (!str) return '';
+        const textarea = document.createElement('textarea');
+        textarea.innerHTML = str;
+        return textarea.value;
+    }
+
+    // Function đã được định nghĩa inline ngay sau modal, không cần định nghĩa lại
+    // Chỉ giữ lại comment này để tham khảo
+    if (typeof window.openMajorRoadmapModal === 'undefined') {
+        // Fallback nếu inline script chưa load
+        window.openMajorRoadmapModal = function(button) {
+            alert('Function chưa được load. Vui lòng tải lại trang.');
+        };
+    }
+        console.log('=== openMajorRoadmapModal called ===', button);
+        
+        try {
+            // Lấy và decode HTML entities từ data attributes
+            let title = button.getAttribute('data-major-form-title') || 'Tải Lộ Trình Học';
+            let description = button.getAttribute('data-major-form-description') || '';
+            let script = button.getAttribute('data-major-form-script') || '';
+            let footer = button.getAttribute('data-major-form-footer') || '';
+            
+            console.log('Raw data:', { title, description, script: script.substring(0, 100), footer });
+            
+            // Decode HTML entities
+            title = decodeHtmlEntities(title);
+            description = decodeHtmlEntities(description);
+            script = decodeHtmlEntities(script);
+            footer = decodeHtmlEntities(footer);
+            
+            console.log('Decoded data:', { title, description, script: script.substring(0, 100), footer });
+            
+            // Kiểm tra modal có tồn tại không
+            const modal = document.getElementById('major-roadmap-modal');
+            if (!modal) {
+                console.error('Major roadmap modal not found');
+                alert('Modal không tìm thấy. Vui lòng tải lại trang.');
+                return;
+            }
+            console.log('Modal found:', modal);
+            
+            // Cập nhật nội dung modal
+            const titleEl = document.getElementById('major-roadmap-title');
+            const descEl = document.getElementById('major-roadmap-description');
+            const scriptEl = document.getElementById('major-roadmap-script');
+            const footerEl = document.getElementById('major-roadmap-footer');
+            
+            console.log('Elements found:', { titleEl, descEl, scriptEl, footerEl });
+            
+            if (titleEl) {
+                titleEl.textContent = title;
+                console.log('Title set:', title);
+            } else {
+                console.error('major-roadmap-title element not found');
+            }
+            
+            if (descEl) {
+                descEl.innerHTML = description;
+                console.log('Description set');
+            } else {
+                console.error('major-roadmap-description element not found');
+            }
+            
+            if (scriptEl) {
+                scriptEl.innerHTML = script;
+                // Re-execute scripts if any
+                const scripts = scriptEl.getElementsByTagName('script');
+                for (let i = 0; i < scripts.length; i++) {
+                    const newScript = document.createElement('script');
+                    newScript.text = scripts[i].text;
+                    scriptEl.appendChild(newScript);
+                    scriptEl.removeChild(scripts[i]);
+                }
+                console.log('Script set and executed');
+            } else {
+                console.error('major-roadmap-script element not found');
+            }
+            
+            if (footerEl) {
+                footerEl.innerHTML = footer;
+                console.log('Footer set');
+            } else {
+                console.error('major-roadmap-footer element not found');
+            }
+            
+            // Mở modal bằng UIkit - thử nhiều cách
+            console.log('Checking UIkit:', typeof UIkit, UIkit);
+            console.log('Checking jQuery:', typeof $, $);
+            
+            let modalOpened = false;
+            
+            // Cách 1: UIkit.modal().show()
+            if (typeof UIkit !== 'undefined' && UIkit.modal) {
+                try {
+                    const modalInstance = UIkit.modal('#major-roadmap-modal');
+                    console.log('Modal instance:', modalInstance);
+                    if (modalInstance) {
+                        modalInstance.show();
+                        console.log('Modal.show() called via UIkit.modal()');
+                        modalOpened = true;
+                    }
+                } catch (e) {
+                    console.error('Error with UIkit.modal().show():', e);
+                }
+            }
+            
+            // Cách 2: UIkit.modal.alert() hoặc trigger event
+            if (!modalOpened && typeof UIkit !== 'undefined') {
+                try {
+                    UIkit.util.on('#major-roadmap-modal', 'show', function() {
+                        console.log('Modal show event triggered');
+                    });
+                    // Trigger bằng cách thêm class
+                    modal.classList.add('uk-open');
+                    document.body.classList.add('uk-modal-page');
+                    console.log('Modal opened by adding classes');
+                    modalOpened = true;
+                } catch (e) {
+                    console.error('Error with UIkit event:', e);
+                }
+            }
+            
+            // Cách 3: jQuery nếu có
+            if (!modalOpened && typeof $ !== 'undefined') {
+                try {
+                    $('#major-roadmap-modal').modal('show');
+                    console.log('Modal.show() called via jQuery');
+                    modalOpened = true;
+                } catch (e) {
+                    console.error('Error with jQuery modal:', e);
+                }
+            }
+            
+            // Cách 4: Trigger click vào element có data-uk-modal
+            if (!modalOpened) {
+                try {
+                    // Tạo một element tạm để trigger
+                    const tempTrigger = document.createElement('a');
+                    tempTrigger.setAttribute('data-uk-modal', '');
+                    tempTrigger.setAttribute('href', '#major-roadmap-modal');
+                    document.body.appendChild(tempTrigger);
+                    tempTrigger.click();
+                    document.body.removeChild(tempTrigger);
+                    console.log('Modal triggered via data-uk-modal');
+                    modalOpened = true;
+                } catch (e) {
+                    console.error('Error with data-uk-modal trigger:', e);
+                }
+            }
+            
+            if (!modalOpened) {
+                console.error('All methods failed to open modal');
+                alert('Không thể mở modal. Vui lòng kiểm tra console để xem chi tiết lỗi.');
+            } else {
+                // Kiểm tra lại sau 200ms
+                setTimeout(function() {
+                    if (modal.classList.contains('uk-open') || modal.style.display !== 'none') {
+                        console.log('Modal is open!');
+                    } else {
+                        console.warn('Modal might not be visible');
+                    }
+                }, 200);
+            }
+        } catch (error) {
+            console.error('Error opening major roadmap modal:', error);
+            console.error('Error stack:', error.stack);
+            alert('Có lỗi xảy ra khi mở form: ' + error.message);
+        }
+    };
+    
+    console.log('openMajorRoadmapModal function defined:', typeof window.openMajorRoadmapModal);
+</script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     @if(isset($album) && !empty($album) && count($album) > 0)
@@ -1248,20 +1663,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     @endif
 
-    // Xử lý nút "Xem thêm" cho sự kiện
-    const showMoreEventsBtn = document.getElementById('show-more-events-btn');
-    if (showMoreEventsBtn) {
-        showMoreEventsBtn.addEventListener('click', function() {
-            const hiddenItems = document.querySelectorAll('.event-item-hidden');
-            hiddenItems.forEach(function(item) {
-                item.style.display = '';
-                item.classList.remove('event-item-hidden');
-            });
-            
-            // Ẩn nút "Xem thêm" sau khi hiển thị tất cả
-            showMoreEventsBtn.style.display = 'none';
-        });
-    }
 
 
     // Xử lý form enrollment

@@ -126,9 +126,10 @@ class SchoolController extends FrontendController
         // Decode event từ JSON và lấy posts
         $eventPosts = collect();
         if ($pivot && isset($pivot->event)) {
-            $eventIds = is_array($pivot->event) ? $pivot->event : json_decode($pivot->event, true);
-            if (is_array($eventIds) && !empty($eventIds)) {
-                // Lấy posts theo IDs
+            $eventData = is_array($pivot->event) ? $pivot->event : json_decode($pivot->event, true);
+            if (is_array($eventData) && !empty($eventData['post_catalogue_id'])) {
+                $postCatalogueId = $eventData['post_catalogue_id'];
+                // Lấy tất cả posts trong post_catalogue được chọn
                 $eventPosts = Post::select([
                         'posts.id',
                         'posts.post_catalogue_id',
@@ -139,10 +140,11 @@ class SchoolController extends FrontendController
                         'tb2.canonical',
                     ])
                     ->join('post_language as tb2', 'tb2.post_id', '=', 'posts.id')
+                    ->join('post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id')
                     ->where('tb2.language_id', '=', $this->language)
-                    ->whereIn('posts.id', $eventIds)
+                    ->where('tb3.post_catalogue_id', '=', $postCatalogueId)
                     ->where('posts.publish', '=', 2)
-                    ->orderByRaw('FIELD(posts.id, ' . implode(',', $eventIds) . ')')
+                    ->orderBy('posts.id', 'desc')
                     ->get();
             }
         }

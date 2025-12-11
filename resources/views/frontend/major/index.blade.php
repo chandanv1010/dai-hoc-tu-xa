@@ -1260,10 +1260,60 @@
                 const scriptEl = consultationModal.querySelector('.download-roadmap-script-wrapper');
                 const footerEl = consultationModal.querySelector('.download-roadmap-footer');
                 
-                if (titleEl) titleEl.textContent = {!! json_encode($formTuVan['title'] ?? '') !!};
-                if (descEl) descEl.textContent = {!! json_encode($formTuVan['description'] ?? '') !!};
-                if (scriptEl) scriptEl.innerHTML = {!! json_encode($formTuVan['script'] ?? '') !!};
-                if (footerEl) footerEl.innerHTML = {!! json_encode($formTuVan['footer'] ?? '') !!};
+                // Lưu dữ liệu form từ major
+                const formData = {
+                    title: {!! json_encode($formTuVan['title'] ?? '') !!},
+                    description: {!! json_encode($formTuVan['description'] ?? '') !!},
+                    script: {!! json_encode($formTuVan['script'] ?? '') !!},
+                    footer: {!! json_encode($formTuVan['footer'] ?? '') !!}
+                };
+                
+                // Function để update modal content và re-execute scripts
+                function updateConsultationModal() {
+                    if (titleEl) titleEl.textContent = formData.title;
+                    if (descEl) descEl.textContent = formData.description;
+                    
+                    if (footerEl) footerEl.innerHTML = formData.footer;
+                    
+                    // Clear và inject script
+                    if (scriptEl) {
+                        scriptEl.innerHTML = formData.script;
+                        
+                        // Re-execute all script tags
+                        const scripts = scriptEl.getElementsByTagName('script');
+                        const scriptsArray = Array.from(scripts);
+                        
+                        scriptsArray.forEach(function(oldScript) {
+                            const newScript = document.createElement('script');
+                            
+                            // Copy all attributes
+                            Array.from(oldScript.attributes).forEach(function(attr) {
+                                newScript.setAttribute(attr.name, attr.value);
+                            });
+                            
+                            // Copy script content
+                            if (oldScript.src) {
+                                newScript.src = oldScript.src;
+                            } else {
+                                newScript.text = oldScript.text || oldScript.innerHTML;
+                            }
+                            
+                            // Append to body to execute
+                            document.body.appendChild(newScript);
+                            oldScript.parentNode.removeChild(oldScript);
+                        });
+                    }
+                }
+                
+                // Update ngay khi DOM ready
+                updateConsultationModal();
+                
+                // Listen for modal show event để update lại khi modal được mở
+                if (typeof UIkit !== 'undefined' && UIkit.util) {
+                    UIkit.util.on('#consultation-modal', 'show', function() {
+                        updateConsultationModal();
+                    });
+                }
             }
         });
         </script>

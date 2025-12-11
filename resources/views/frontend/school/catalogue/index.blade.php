@@ -1,13 +1,33 @@
 @extends('frontend.homepage.layout')
 @section('content')
     <!-- Breadcrumb Section -->
+    @php
+        // Lấy dữ liệu từ widget
+        $widget = $widgets['schools-list'] ?? null;
+        $widgetDescription = '';
+        $currentLanguage = $config['language'] ?? 1;
+        
+        if ($widget) {
+            // Lấy description từ widget description (JSON)
+            $widgetDescriptionData = $widget->description ?? [];
+            if (is_array($widgetDescriptionData) && isset($widgetDescriptionData[$currentLanguage])) {
+                $widgetDescription = $widgetDescriptionData[$currentLanguage] ?? '';
+            } elseif (is_array($widgetDescriptionData) && isset($widgetDescriptionData[1])) {
+                $widgetDescription = $widgetDescriptionData[1] ?? '';
+            }
+        }
+    @endphp
     <div class="page-breadcrumb-large">
         <div class="breadcrumb-overlay"></div>
         <div class="uk-container uk-container-center">
             <div class="breadcrumb-content">
                 <h1 class="breadcrumb-title">Các trường đào tạo từ xa</h1>
                 <div class="breadcrumb-description">
-                    <p>Danh sách đầy đủ các trường đào tạo từ xa uy tín, chất lượng. Tìm hiểu thông tin chi tiết về các chương trình đào tạo từ xa tại các trường đại học hàng đầu.</p>
+                    @if($widgetDescription)
+                        <p>{!! $widgetDescription !!}</p>
+                    @else
+                        <p>Danh sách đầy đủ các trường đào tạo từ xa uy tín, chất lượng. Tìm hiểu thông tin chi tiết về các chương trình đào tạo từ xa tại các trường đại học hàng đầu.</p>
+                    @endif
                 </div>
                 <nav class="breadcrumb-nav">
                     <ul class="breadcrumb-list">

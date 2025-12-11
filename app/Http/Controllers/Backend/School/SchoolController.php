@@ -8,6 +8,7 @@ use App\Services\SchoolService;
 use App\Repositories\SchoolRepository;
 use App\Repositories\MajorRepository;
 use App\Repositories\PostRepository;
+use App\Repositories\PostCatalogueRepository;
 use App\Http\Requests\School\StoreSchoolRequest;
 use App\Http\Requests\School\UpdateSchoolRequest;
 use App\Models\Language;
@@ -19,13 +20,15 @@ class SchoolController extends Controller
     protected $schoolRepository;
     protected $majorRepository;
     protected $postRepository;
+    protected $postCatalogueRepository;
     protected $language;
 
     public function __construct(
         SchoolService $schoolService,
         SchoolRepository $schoolRepository,
         MajorRepository $majorRepository,
-        PostRepository $postRepository
+        PostRepository $postRepository,
+        PostCatalogueRepository $postCatalogueRepository
     ) {
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
@@ -38,6 +41,7 @@ class SchoolController extends Controller
         $this->schoolRepository = $schoolRepository;
         $this->majorRepository = $majorRepository;
         $this->postRepository = $postRepository;
+        $this->postCatalogueRepository = $postCatalogueRepository;
     }
 
     public function index(Request $request)
@@ -71,13 +75,13 @@ class SchoolController extends Controller
         $config['seo'] = 'Quản lý Trường học';
         $config['method'] = 'create';
         $majorsList = $this->majorRepository->getAllByLanguage($this->language);
-        $posts = $this->postRepository->getAllByLanguage($this->language);
+        $postCatalogues = $this->postCatalogueRepository->getAllByLanguage($this->language);
         $template = 'backend.school.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
             'majorsList',
-            'posts',
+            'postCatalogues',
         ));
     }
 
@@ -104,14 +108,14 @@ class SchoolController extends Controller
         $config['seo'] = 'Quản lý Trường học';
         $config['method'] = 'edit';
         $majorsList = $this->majorRepository->getAllByLanguage($this->language);
-        $posts = $this->postRepository->getAllByLanguage($this->language);
+        $postCatalogues = $this->postCatalogueRepository->getAllByLanguage($this->language);
         $template = 'backend.school.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
             'school',
             'majorsList',
-            'posts',
+            'postCatalogues',
         ));
     }
 

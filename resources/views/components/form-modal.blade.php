@@ -17,13 +17,13 @@
                 <div class="download-roadmap-script-wrapper">
                     {!! $script !!}
                 </div>
-                
-                <!-- Footer -->
-                @if(!empty($footer))
-                    <div class="download-roadmap-footer">
-                        {!! $footer !!}
-                    </div>
-                @endif
+            </div>
+        @endif
+        
+        <!-- Footer -->
+        @if(!empty($footer))
+            <div class="download-roadmap-footer">
+                {!! $footer !!}
             </div>
         @endif
     </div>

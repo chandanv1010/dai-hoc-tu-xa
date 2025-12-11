@@ -192,13 +192,9 @@
                                     <p class="download-description">
                                         Tải lộ trình đào tạo chi tiết. Bao gồm khung chương trình, tiến độ đào tạo, số lượng tín chỉ từng môn học, học phí,...
                                     </p>
-                                    <a href="#download-roadmap-modal" class="download-roadmap-banner" data-uk-modal>
-                                        <div class="download-pdf-icon">
-                                            <div class="pdf-icon-box">
-                                                <span class="pdf-text">PDF</span>
-                                            </div>
-                                        </div>
-                                        <div class="download-filename">LO-TRINH-HOC.PDF</div>
+                                    <a href="#download-roadmap-modal" class="download-roadmap-banner pdf-icon-box" data-uk-modal>
+                                        <i class="fa fa-file-pdf"></i>
+                                        <span>Tải xuống lộ trình học</span>
                                     </a>
                                 </div>
                             </div>

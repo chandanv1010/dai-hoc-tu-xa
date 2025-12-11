@@ -226,6 +226,130 @@
 		});
 	}
 
+	HT.majorsSwiper = () => {
+		// Kiểm tra Swiper đã load chưa
+		if (typeof Swiper === 'undefined') {
+			console.warn('Swiper library is not loaded');
+			return;
+		}
+		
+		var slideContainer = document.querySelector(".panel-school-majors .majors-swiper-container");
+		if (!slideContainer) {
+			console.log('Majors swiper container not found');
+			return;
+		}
+		
+		var slides = slideContainer.querySelectorAll('.swiper-slide');
+		var slideCount = slides.length;
+		
+		if (slideCount === 0) {
+			console.log('No slides found in majors swiper');
+			return;
+		}
+		
+		// Với slidesPerView tối đa là 3, cần ít nhất 6 slides để loop hoạt động tốt
+		var enableLoop = slideCount > 3;
+		
+		try {
+			var swiper = new Swiper(".panel-school-majors .majors-swiper-container", {
+				loop: enableLoop,
+				pagination: {
+					el: '.panel-school-majors .swiper-pagination',
+					clickable: true,
+				},
+				navigation: {
+					nextEl: '.panel-school-majors .swiper-button-next',
+					prevEl: '.panel-school-majors .swiper-button-prev',
+				},
+				autoplay: enableLoop ? {
+					delay: 3000,
+					disableOnInteraction: false,
+				} : false,
+				spaceBetween: 30,
+				slidesPerView: 1,
+				breakpoints: {
+					640: {
+						slidesPerView: 1,
+						spaceBetween: 20,
+					},
+					768: {
+						slidesPerView: 2,
+						spaceBetween: 20,
+					},
+					1024: {
+						slidesPerView: 3,
+						spaceBetween: 30,
+					}
+				}
+			});
+			console.log('Majors swiper initialized successfully');
+		} catch (error) {
+			console.error('Error initializing majors swiper:', error);
+		}
+	}
+
+	HT.eventSwiper = () => {
+		// Kiểm tra Swiper đã load chưa
+		if (typeof Swiper === 'undefined') {
+			console.warn('Swiper library is not loaded');
+			return;
+		}
+		
+		var slideContainer = document.querySelector(".panel-news-outstanding .event-swiper");
+		if (!slideContainer) {
+			console.log('Event swiper container not found');
+			return;
+		}
+		
+		var slides = slideContainer.querySelectorAll('.swiper-slide');
+		var slideCount = slides.length;
+		
+		if (slideCount === 0) {
+			console.log('No slides found in event swiper');
+			return;
+		}
+		
+		// Với slidesPerView tối đa là 3, cần ít nhất 6 slides để loop hoạt động tốt
+		var enableLoop = slideCount > 3;
+		
+		try {
+			var swiper = new Swiper(".panel-news-outstanding .event-swiper", {
+				loop: enableLoop,
+				pagination: {
+					el: '.event-swiper .swiper-pagination',
+					clickable: true,
+				},
+				navigation: {
+					nextEl: '.event-swiper .swiper-button-next',
+					prevEl: '.event-swiper .swiper-button-prev',
+				},
+				autoplay: enableLoop ? {
+					delay: 3000,
+					disableOnInteraction: false,
+				} : false,
+				spaceBetween: 30,
+				slidesPerView: 1,
+				breakpoints: {
+					640: {
+						slidesPerView: 1,
+						spaceBetween: 20,
+					},
+					768: {
+						slidesPerView: 2,
+						spaceBetween: 20,
+					},
+					1024: {
+						slidesPerView: 3,
+						spaceBetween: 30,
+					}
+				}
+			});
+			console.log('Event swiper initialized successfully');
+		} catch (error) {
+			console.error('Error initializing event swiper:', error);
+		}
+	}
+
 	HT.service = () => {
 		var slideContainer = document.querySelector('.panel-service-1 .swiper-container');
 		if (!slideContainer) return;
@@ -1479,6 +1603,8 @@
 		HT.feedbackSwiper()
 		HT.schoolsSwiper()
 		HT.schoolsListSwiper()
+		HT.eventSwiper()
+		HT.majorsSwiper()
 		
 		/* CORE JS */
         HT.swiper()

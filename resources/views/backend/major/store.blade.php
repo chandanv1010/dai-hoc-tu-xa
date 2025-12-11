@@ -926,8 +926,8 @@
                     </div>
                 </div> --}}
 
-                {{-- Tắt phần cấu hình nâng cao (SEO) --}}
-                {{-- @php
+                {{-- Cấu hình nâng cao (SEO) --}}
+                @php
                     // Tạo object để truyền vào SEO component với dữ liệu từ pivot
                     $seoModel = isset($major) ? (object) [
                         'meta_title' => $metaTitle,
@@ -936,7 +936,7 @@
                         'canonical' => $canonical,
                     ] : null;
                 @endphp
-                @include('backend.dashboard.component.seo', ['model' => $seoModel]) --}}
+                @include('backend.dashboard.component.seo', ['model' => $seoModel])
             </div>
             <div class="col-lg-3">
                 <div class="text-right mb15 fixed-bottom">

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Repositories\SchoolRepository;
 use App\Repositories\SystemRepository;
 use App\Repositories\MajorRepository;
+use App\Services\WidgetService;
 
 class SchoolCatalogueController extends FrontendController
 {
@@ -15,15 +16,18 @@ class SchoolCatalogueController extends FrontendController
     protected $schoolRepository;
     protected $systemRepository;
     protected $majorRepository;
+    protected $widgetService;
 
     public function __construct(
         SchoolRepository $schoolRepository,
         SystemRepository $systemRepository,
         MajorRepository $majorRepository,
+        WidgetService $widgetService,
     ) {
         $this->schoolRepository = $schoolRepository;
         $this->systemRepository = $systemRepository;
         $this->majorRepository = $majorRepository;
+        $this->widgetService = $widgetService;
         parent::__construct();
     }
 
@@ -65,6 +69,11 @@ class SchoolCatalogueController extends FrontendController
         // Lấy SEO từ system
         $seo = $this->getSeo($page);
         
+        // Lấy widget schools-list để lấy description
+        $widgets = $this->widgetService->getWidget([
+            ['keyword' => 'schools-list'],
+        ], $this->language);
+        
         $config = $this->config();
         $system = $this->system;
         
@@ -78,7 +87,8 @@ class SchoolCatalogueController extends FrontendController
             'page',
             'filterOptions',
             'selectedFilters',
-            'majors'
+            'majors',
+            'widgets'
         ));
     }
 

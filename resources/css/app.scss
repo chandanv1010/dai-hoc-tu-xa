@@ -823,7 +823,6 @@
     &:hover {
         background: rgba(180, 180, 180, 0.6) !important;
         box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18) !important;
-        transform: scale(1.08) translateY(-2px) !important;
         border-color: rgba(255, 255, 255, 0.3) !important;
 
         .swiper-navigation-icon {
@@ -4248,6 +4247,242 @@
             }
         }
 
+        .news-outstanding-swiper {
+            position: relative;
+            margin-bottom: 40px;
+            padding: 0 80px;
+
+            @media (max-width: 768px) {
+                padding: 0 60px;
+            }
+
+            .event-swiper {
+                position: relative;
+                overflow: hidden;
+            }
+
+            .swiper-button-next,
+            .swiper-button-prev {
+                width: 40px !important;
+                height: 40px !important;
+                background: #008DC2 !important;
+                border-radius: 50% !important;
+                color: #fff !important;
+                margin-top: 0 !important;
+                top: 50% !important;
+                transform: translateY(-50%) !important;
+                transition: background 0.3s ease !important;
+                z-index: 10 !important;
+
+                &::after {
+                    font-size: 18px !important;
+                    font-weight: bold !important;
+                    color: #fff !important;
+                }
+
+                &:hover {
+                    background: #006B94 !important;
+                }
+
+                @media (max-width: 768px) {
+                    width: 35px !important;
+                    height: 35px !important;
+
+                    &::after {
+                        font-size: 16px !important;
+                    }
+                }
+            }
+
+            .swiper-button-next {
+                right: 0 !important;
+
+                @media (max-width: 768px) {
+                    right: 0 !important;
+                }
+            }
+
+            .swiper-button-prev {
+                left: 0 !important;
+
+                @media (max-width: 768px) {
+                    left: 0 !important;
+                }
+            }
+
+                .swiper-pagination {
+                    position: relative;
+                    margin-top: 30px;
+                    bottom: auto;
+
+                    .swiper-pagination-bullet {
+                        width: 12px;
+                        height: 12px;
+                        background: #008DC2;
+                        opacity: 0.3;
+
+                        &.swiper-pagination-bullet-active {
+                            opacity: 1;
+                            background: #008DC2;
+                        }
+                    }
+                }
+
+                .swiper-slide {
+                    height: auto;
+
+                    .news-item {
+                        background: #fff;
+                        border-radius: 12px;
+                        overflow: hidden;
+                        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+                        transition: transform 0.3s ease, box-shadow 0.3s ease;
+                        height: 100%;
+                        display: flex;
+                        flex-direction: column;
+
+                        &:hover {
+                            transform: translateY(-5px);
+                            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+                        }
+
+                        .news-image {
+                            width: 100%;
+                            height: 200px;
+                            display: block;
+                            overflow: hidden;
+                            position: relative;
+                            background: linear-gradient(135deg, #E0F2FE 0%, #B3E5FC 100%);
+
+                            &.no-image {
+                                background: linear-gradient(135deg, #E0F2FE 0%, #B3E5FC 100%);
+                            }
+
+                            img {
+                                width: 100%;
+                                height: 100%;
+                                object-fit: cover;
+                                transition: transform 0.3s ease;
+                            }
+
+                            &:hover img {
+                                transform: scale(1.05);
+                            }
+
+                            @media (max-width: 768px) {
+                                height: 180px;
+                            }
+                        }
+
+                        .news-content {
+                            padding: 20px;
+                            flex: 1;
+                            display: flex;
+                            flex-direction: column;
+
+                            .news-category-label {
+                                display: inline-block;
+                                background: #DC2626;
+                                color: #fff;
+                                font-size: 12px;
+                                font-weight: 600;
+                                padding: 4px 12px;
+                                border-radius: 20px;
+                                margin-bottom: 12px;
+                                align-self: flex-start;
+
+                                @media (max-width: 768px) {
+                                    font-size: 11px;
+                                    padding: 3px 10px;
+                                }
+                            }
+
+                            .news-title {
+                                margin: 0 0 10px 0;
+                                font-size: 18px;
+                                font-weight: 600;
+                                line-height: 1.4;
+
+                                @media (max-width: 768px) {
+                                    font-size: 16px;
+                                }
+
+                                a {
+                                    color: #1F2937;
+                                    text-decoration: none;
+                                    transition: color 0.3s ease;
+
+                                    &:hover {
+                                        color: #008DC2;
+                                    }
+                                }
+                            }
+
+                            .news-description {
+                                font-size: 14px;
+                                color: #6B7280;
+                                line-height: 1.6;
+                                margin: 0 0 15px 0;
+                                flex: 1;
+
+                                @media (max-width: 768px) {
+                                    font-size: 13px;
+                                    margin-bottom: 12px;
+                                }
+                            }
+
+                            .news-meta {
+                                display: flex;
+                                justify-content: space-between;
+                                align-items: center;
+                                margin-top: auto;
+                                padding-top: 15px;
+                                border-top: 1px solid #E5E7EB;
+
+                                .news-date {
+                                    font-size: 13px;
+                                    color: #9CA3AF;
+                                    display: flex;
+                                    align-items: center;
+                                    gap: 6px;
+
+                                    i {
+                                        font-size: 14px;
+                                    }
+
+                                    @media (max-width: 768px) {
+                                        font-size: 12px;
+                                    }
+                                }
+
+                                .news-detail-link {
+                                    color: #008DC2;
+                                    font-size: 14px;
+                                    font-weight: 600;
+                                    text-decoration: none;
+                                    transition: all 0.3s ease;
+                                    box-shadow: 0 2px 4px rgba(0, 141, 194, 0.15);
+                                    padding: 6px 12px;
+                                    border-radius: 6px;
+
+                                    &:hover {
+                                        color: #0070A3;
+                                        box-shadow: 0 4px 8px rgba(0, 141, 194, 0.25);
+                                        transform: translateY(-1px);
+                                    }
+
+                                    @media (max-width: 768px) {
+                                        font-size: 13px;
+                                        padding: 5px 10px;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         .news-outstanding-grid {
             margin-bottom: 40px;
 
@@ -4449,7 +4684,6 @@
                 }
             }
         }
-    }
 
     // Responsive
     @media (max-width: 960px) {
@@ -10102,7 +10336,7 @@ button{
 
 // School Degree Value Panel
     .panel-major-trial-banner {
-        background: linear-gradient(to right, #22D3EE 9%, #008DC2 100%);
+        background: #008DC2;
         padding: 60px 0;
         text-align: center;
 
@@ -10310,7 +10544,7 @@ button{
     .degree-notice-banner {
         .degree-notice-main-button {
             position: relative;
-            background: linear-gradient(to right, #4A90E2 0%, #357ABD 100%);
+            background: #008DC2;
             border-radius: 12px;
             padding: 40px 30px;
             text-align: center;
@@ -10319,7 +10553,7 @@ button{
             align-items: center;
             justify-content: center;
             min-height: 200px;
-            box-shadow: 0 4px 15px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 141, 194, 0.3);
 
             @media (max-width: 768px) {
                 padding: 30px 20px;
@@ -10587,6 +10821,96 @@ button{
         }
     }
 
+    .majors-swiper {
+        position: relative;
+        margin-bottom: 40px;
+        padding: 0 80px;
+
+        @media (max-width: 768px) {
+            padding: 0 60px;
+        }
+
+        .majors-swiper-container {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .swiper-button-next,
+        .swiper-button-prev {
+            width: 40px !important;
+            height: 40px !important;
+            background: #008DC2 !important;
+            border-radius: 50% !important;
+            color: #fff !important;
+            margin-top: 0 !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            transition: background 0.3s ease !important;
+            z-index: 10 !important;
+
+            &::after {
+                font-size: 18px !important;
+                font-weight: bold !important;
+                color: #fff !important;
+            }
+
+            &:hover {
+                background: #006B94 !important;
+            }
+
+            @media (max-width: 768px) {
+                width: 35px !important;
+                height: 35px !important;
+
+                &::after {
+                    font-size: 16px !important;
+                }
+            }
+        }
+
+        .swiper-button-next {
+            right: 0 !important;
+
+            @media (max-width: 768px) {
+                right: 0 !important;
+            }
+        }
+
+        .swiper-button-prev {
+            left: 0 !important;
+
+            @media (max-width: 768px) {
+                left: 0 !important;
+            }
+        }
+
+        .swiper-pagination {
+            position: relative;
+            margin-top: 30px;
+            bottom: auto;
+
+            .swiper-pagination-bullet {
+                width: 12px;
+                height: 12px;
+                background: #008DC2;
+                opacity: 0.3;
+
+                &.swiper-pagination-bullet-active {
+                    opacity: 1;
+                    background: #008DC2;
+                }
+            }
+        }
+
+        .swiper-slide {
+            height: auto;
+
+            .major-card {
+                height: 100%;
+            }
+        }
+    }
+
     .major-card {
         background: #fff;
         border: 1px solid #008DC2;
@@ -10641,6 +10965,16 @@ button{
                 @media (max-width: 768px) {
                     font-size: 20px;
                     margin-bottom: 15px;
+                }
+
+                a {
+                    color: #333;
+                    text-decoration: none;
+                    transition: color 0.3s ease;
+
+                    &:hover {
+                        color: #008DC2;
+                    }
                 }
             }
 
@@ -13900,9 +14234,9 @@ button{
             flex-direction: column;
             align-items: center;
             text-align: center;
-            border: 2px solid transparent;
+            border: 2px solid #008DC2;  
 
-            @media (max-width: 768px) {
+            @media (max-width: 768px) { 
                 padding: 20px 15px;
                 border-radius: 12px;
             }
@@ -13914,7 +14248,7 @@ button{
             }
 
             .intro-school-logo {
-                width: 120px;
+                width: 120px; 
                 height: 120px;
                 margin-bottom: 20px;
                 display: flex;
@@ -14047,7 +14381,7 @@ button{
 
         .download-roadmap-title {
             color: #008DC2;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             margin: 0 0 10px 0;
             line-height: 1.3;
@@ -14325,7 +14659,7 @@ button{
 
         .download-roadmap-title {
             color: #008DC2;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             margin: 0 0 10px 0;
             line-height: 1.3;
@@ -14471,7 +14805,7 @@ button{
 
         .download-roadmap-title {
             color: #008DC2;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             margin: 0 0 10px 0;
             line-height: 1.3;
@@ -14618,7 +14952,7 @@ button{
 
         .download-roadmap-title {
             color: #008DC2;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             margin: 0 0 10px 0;
             line-height: 1.3;
@@ -14680,7 +15014,7 @@ button{
 
         .download-roadmap-title {
             color: #008DC2;
-            font-size: 22px;
+            font-size: 18px;
             font-weight: 700;
             margin: 0 0 10px 0;
             line-height: 1.3;
@@ -14853,7 +15187,8 @@ button{
 #register-form-modal,
 #school-consultation-modal,
 #school-tai-lo-trinh-modal,
-#school-hoc-thu-modal {
+#school-hoc-thu-modal,
+#major-roadmap-modal {
     .download-roadmap-modal-dialog {
         width: 480px;
         max-width: 90vw;
@@ -17064,6 +17399,45 @@ button{
                 color: #fff;
             }
 
+            // Style khi có class pdf-icon-box (giống nút PDF ở trang ngành học)
+            &.pdf-icon-box {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 12px 20px;
+                background: #E31E24;
+                color: #fff;
+                border-radius: 8px;
+                text-decoration: none;
+                font-weight: 600;
+                transition: all 0.3s ease;
+                width: 100%;
+                justify-content: center;
+
+                @media (max-width: 768px) {
+                    padding: 10px 16px;
+                }
+
+                &:hover {
+                    background: #C91A20;
+                    transform: translateY(-2px);
+                    box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+                    color: #fff;
+                    text-decoration: none;
+                }
+
+                i {
+                    font-size: 18px;
+                    color: #fff;
+                }
+
+                span {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #fff;
+                }
+            }
+
             &.disabled {
                 background: #e0e0e0;
                 color: #999;
@@ -17081,27 +17455,40 @@ button{
                 flex-shrink: 0;
 
                 .pdf-icon-box {
-                    width: 50px;
-                    height: 50px;
-                    background: rgba(255, 255, 255, 0.2);
-                    border-radius: 8px;
                     display: flex;
                     align-items: center;
+                    gap: 10px;
+                    padding: 12px 20px;
+                    background: #E31E24;
+                    color: #fff;
+                    border-radius: 8px;
+                    text-decoration: none;
+                    font-weight: 600;
+                    transition: all 0.3s ease;
+                    width: 100%;
                     justify-content: center;
 
                     @media (max-width: 768px) {
-                        width: 40px;
-                        height: 40px;
+                        padding: 10px 16px;
+                    }
+
+                    &:hover {
+                        background: #C91A20;
+                        transform: translateY(-2px);
+                        box-shadow: 0 4px 12px rgba(227, 30, 36, 0.3);
+                        color: #fff;
+                        text-decoration: none;
                     }
 
                     .pdf-text {
-                        font-size: 16px;
-                        font-weight: 700;
+                        font-size: 14px;
+                        font-weight: 600;
                         color: #fff;
+                    }
 
-                        @media (max-width: 768px) {
-                            font-size: 14px;
-                        }
+                    i {
+                        font-size: 18px;
+                        color: #fff;
                     }
                 }
             }
@@ -17119,9 +17506,21 @@ button{
 
             &.disabled {
                 .pdf-icon-box {
-                    background: rgba(0, 0, 0, 0.1);
+                    background: #ccc;
+                    cursor: not-allowed;
+                    opacity: 0.6;
+
+                    &:hover {
+                        background: #ccc;
+                        transform: none;
+                        box-shadow: none;
+                    }
 
                     .pdf-text {
+                        color: #999;
+                    }
+
+                    i {
                         color: #999;
                     }
                 }
@@ -17330,17 +17729,14 @@ button{
 .table-wrapper-full-width {
     width: 100%;
     margin: 30px 0;
-    padding: 0 20px;
 
     @media (max-width: 768px) {
-        padding: 0 15px;
         margin: 20px 0;
     }
 
     .table-wrapper {
         width: 100%;
         overflow-x: auto;
-        -webkit-overflow-scrolling: touch;
         margin: 0;
         border-radius: 8px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -17365,16 +17761,13 @@ button{
 
         table {
             width: 100%;
-            min-width: 1400px; // Đảm bảo table có độ rộng tối thiểu
+            min-width: 1200px;
             border-collapse: collapse;
             margin: 0;
             background: #fff;
             border-radius: 8px;
             overflow: hidden;
-
-            @media (max-width: 768px) {
-                min-width: 1000px;
-            }
+            table-layout: auto;
 
             thead {
                 background: rgb(0, 141, 194); // Màu xanh nhạt giống ảnh
@@ -17449,7 +17842,7 @@ button{
                     }
 
                     td {
-                        padding: 15px 20px;
+                        padding: 15px 20px; 
                         font-size: 13px;
                         color: #333;
                         vertical-align: middle;
@@ -17462,16 +17855,16 @@ button{
                             font-size: 12px;
                         }
 
-                        &:first-child {
+                        &:first-child { 
                             position: sticky;
                             left: 0;
                             z-index: 5;
                             background: #008DC2;
                             font-weight: 600;
                             color: #fff;
-                            min-width: 300px;
-                            max-width: 300px;
-                            width: 300px;
+                            min-width: 125px;
+                            max-width: 125px;
+                            width: 125px;
                             text-align: left;
                             padding: 15px 20px;
                             border-right: 2px solid rgba(255, 255, 255, 0.3);
@@ -17480,9 +17873,9 @@ button{
                             word-wrap: break-word;
 
                             @media (max-width: 768px) {
-                                min-width: 250px;
-                                max-width: 250px;
-                                width: 250px;
+                                min-width: 125px;
+                                max-width: 125px;
+                                width: 125px;
                                 padding: 12px 15px;
                             }
                         }
@@ -18231,10 +18624,17 @@ button{
     tbody td:first-child {
         background: #e8f0f7;
         font-weight: bold;
-        padding: 12px 8px;
+        padding: 12px 15px;
         border: 1px solid #ccc;
         text-align: left;
-        min-width: 250px;
+        min-width: 125px;
+        width: 125px;
+        white-space: nowrap;
+    }
+    
+    thead th:first-child {
+        min-width: 125px;
+        width: 125px;
     }
     
     /* Các ô dữ liệu */
@@ -18934,8 +19334,15 @@ button{
     padding:20px 0;
     background: #fff;
     text-align: center;
+    margin-top: 0 !important;
 } 
 
 #formio_form_app{
     padding: 15px !important;
+}
+
+.panel-school-majors{
+    .swiper-container{
+        padding:0 80px;
+    }
 }

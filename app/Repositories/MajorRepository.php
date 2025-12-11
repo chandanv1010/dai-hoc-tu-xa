@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\Major;
 use App\Repositories\BaseRepository;
+use Illuminate\Support\Str;
 
 class MajorRepository extends BaseRepository
 {
@@ -13,6 +14,72 @@ class MajorRepository extends BaseRepository
     {
         $this->model = $model;
         parent::__construct($model);
+    }
+
+    /**
+     * Slug hóa giá trị để so sánh (xử lý tiếng Việt)
+     */
+    private function slugValue($value)
+    {
+        if (empty($value)) {
+            return '';
+        }
+        
+        // Chuẩn hóa: lowercase, trim, loại bỏ khoảng trắng thừa
+        $value = mb_strtolower(trim($value), 'UTF-8');
+        $value = preg_replace('/\s+/', ' ', $value);
+        
+        // Bỏ dấu tiếng Việt và chuyển thành slug
+        $value = $this->removeVietnameseAccents($value);
+        
+        return Str::slug($value, '-');
+    }
+
+    /**
+     * Loại bỏ dấu tiếng Việt
+     */
+    private function removeVietnameseAccents($str)
+    {
+        $str = preg_replace("/(à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", 'a', $str);
+        $str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", 'e', $str);
+        $str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", 'i', $str);
+        $str = preg_replace("/(ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ)/", 'o', $str);
+        $str = preg_replace("/(ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ)/", 'u', $str);
+        $str = preg_replace("/(ỳ|ý|ỵ|ỷ|ỹ)/", 'y', $str);
+        $str = preg_replace("/(đ)/", 'd', $str);
+        $str = preg_replace("/(À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ)/", 'A', $str);
+        $str = preg_replace("/(È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ)/", 'E', $str);
+        $str = preg_replace("/(Ì|Í|Ị|Ỉ|Ĩ)/", 'I', $str);
+        $str = preg_replace("/(Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|Ỡ)/", 'O', $str);
+        $str = preg_replace("/(Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ)/", 'U', $str);
+        $str = preg_replace("/(Ỳ|Ý|Ỵ|Ỷ|Ỹ)/", 'Y', $str);
+        $str = preg_replace("/(Đ)/", 'D', $str);
+        
+        return $str;
+    }
+
+    /**
+     * Kiểm tra xem một giá trị có match với một string chứa nhiều giá trị cách nhau bởi dấu phẩy không (so sánh bằng slug)
+     */
+    private function valueMatchesInString($value, $commaSeparatedString)
+    {
+        if (empty($commaSeparatedString) || empty($value)) {
+            return false;
+        }
+        
+        $valueSlug = $this->slugValue($value);
+        if (empty($valueSlug)) {
+            return false;
+        }
+        
+        $values = array_map('trim', explode(',', $commaSeparatedString));
+        foreach ($values as $dbValue) {
+            if (!empty($dbValue) && $this->slugValue($dbValue) === $valueSlug) {
+                return true;
+            }
+        }
+        
+        return false;
     }
 
     public function getMajorById(int $id = 0, $language_id = 0)
@@ -243,31 +310,64 @@ class MajorRepository extends BaseRepository
             }
         }
         
-        // Filter theo Đối Tượng Tuyển Sinh (admission_subject)
+        // Chuẩn bị filter values cho admission_subject và exam_location (sử dụng slug)
+        $admissionSubjectFilters = [];
+        $examLocationFilters = [];
+        
         if ($request->has('admission_subject')) {
-            $admissionSubjects = $request->input('admission_subject');
-            if (is_array($admissionSubjects) && count($admissionSubjects) > 0) {
-                $query->where(function($q) use ($admissionSubjects) {
-                    foreach ($admissionSubjects as $subject) {
-                        $q->orWhere('majors.admission_subject', '=', trim($subject));
-                    }
-                });
-            } elseif (is_string($admissionSubjects) && !empty(trim($admissionSubjects))) {
-                $query->where('majors.admission_subject', '=', trim($admissionSubjects));
-            }
+            $admissionSubject = $request->input('admission_subject');
+            $admissionSubjectFilters = is_array($admissionSubject) ? $admissionSubject : [$admissionSubject];
+            $admissionSubjectFilters = array_filter(array_map('trim', $admissionSubjectFilters));
         }
         
-        // Filter theo Địa Điểm Thi (exam_location)
         if ($request->has('exam_location')) {
-            $examLocations = $request->input('exam_location');
-            if (is_array($examLocations) && count($examLocations) > 0) {
-                $query->where(function($q) use ($examLocations) {
-                    foreach ($examLocations as $location) {
-                        $q->orWhere('majors.exam_location', '=', trim($location));
+            $examLocation = $request->input('exam_location');
+            $examLocationFilters = is_array($examLocation) ? $examLocation : [$examLocation];
+            $examLocationFilters = array_filter(array_map('trim', $examLocationFilters));
+        }
+        
+        // Nếu có filter admission_subject hoặc exam_location, filter bằng slug
+        if (!empty($admissionSubjectFilters) || !empty($examLocationFilters)) {
+            $allMajors = $this->model->select('id', 'admission_subject', 'exam_location')
+                ->where('publish', '=', 2)
+                ->whereNull('deleted_at')
+                ->get();
+            
+            $filteredIds = [];
+            foreach ($allMajors as $major) {
+                $matchAdmission = empty($admissionSubjectFilters);
+                $matchLocation = empty($examLocationFilters);
+                
+                // Kiểm tra admission_subject
+                if (!empty($admissionSubjectFilters)) {
+                    foreach ($admissionSubjectFilters as $subject) {
+                        if ($this->valueMatchesInString($subject, $major->admission_subject)) {
+                            $matchAdmission = true;
+                            break;
+                        }
                     }
-                });
-            } elseif (is_string($examLocations) && !empty(trim($examLocations))) {
-                $query->where('majors.exam_location', '=', trim($examLocations));
+                }
+                
+                // Kiểm tra exam_location
+                if (!empty($examLocationFilters)) {
+                    foreach ($examLocationFilters as $location) {
+                        if ($this->valueMatchesInString($location, $major->exam_location)) {
+                            $matchLocation = true;
+                            break;
+                        }
+                    }
+                }
+                
+                // Chỉ thêm vào nếu match cả 2 điều kiện (nếu có)
+                if ($matchAdmission && $matchLocation) {
+                    $filteredIds[] = $major->id;
+                }
+            }
+            
+            if (!empty($filteredIds)) {
+                $query->whereIn('majors.id', $filteredIds);
+            } else {
+                $query->whereRaw('1 = 0'); // Không có kết quả
             }
         }
 
@@ -351,24 +451,58 @@ class MajorRepository extends BaseRepository
             ->whereNull('deleted_at')
             ->get();
         
-        $admissionSubjects = [];
-        $examLocations = [];
+        $admissionSubjectsMap = []; // key: slug, value: giá trị gốc
+        $examLocationsMap = [];
         
         foreach ($majors as $major) {
-            // Xử lý admission_subject (TEXT field)
+            // Xử lý admission_subject (TEXT field) - explode các giá trị cách nhau bởi dấu phẩy
             if ($major->admission_subject && !empty(trim($major->admission_subject))) {
-                $admissionSubjects[] = trim($major->admission_subject);
+                // Explode bằng dấu phẩy và trim từng giá trị
+                $values = array_map('trim', explode(',', $major->admission_subject));
+                // Lọc bỏ các giá trị rỗng và thêm vào mảng
+                foreach ($values as $value) {
+                    if (!empty($value)) {
+                        $slug = $this->slugValue($value);
+                        if (!empty($slug) && !isset($admissionSubjectsMap[$slug])) {
+                            // Lưu giá trị gốc đầu tiên tìm thấy
+                            $admissionSubjectsMap[$slug] = $value;
+                        }
+                    }
+                }
             }
             
-            // Xử lý exam_location (TEXT field)
+            // Xử lý exam_location (TEXT field) - explode các giá trị cách nhau bởi dấu phẩy
             if ($major->exam_location && !empty(trim($major->exam_location))) {
-                $examLocations[] = trim($major->exam_location);
+                // Explode bằng dấu phẩy và trim từng giá trị
+                $values = array_map('trim', explode(',', $major->exam_location));
+                // Lọc bỏ các giá trị rỗng và thêm vào mảng
+                foreach ($values as $value) {
+                    if (!empty($value)) {
+                        $slug = $this->slugValue($value);
+                        if (!empty($slug) && !isset($examLocationsMap[$slug])) {
+                            // Lưu giá trị gốc đầu tiên tìm thấy
+                            $examLocationsMap[$slug] = $value;
+                        }
+                    }
+                }
             }
         }
         
+        // Chuyển từ map về array và sắp xếp
+        $admissionSubjects = array_values($admissionSubjectsMap);
+        $examLocations = array_values($examLocationsMap);
+        
+        // Sắp xếp theo thứ tự alphabet (không phân biệt hoa thường)
+        usort($admissionSubjects, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        usort($examLocations, function($a, $b) {
+            return strcasecmp($a, $b);
+        });
+        
         return [
-            'admission_subject' => array_values(array_unique(array_filter($admissionSubjects))),
-            'exam_location' => array_values(array_unique(array_filter($examLocations))),
+            'admission_subject' => $admissionSubjects,
+            'exam_location' => $examLocations,
         ];
     }
 }
