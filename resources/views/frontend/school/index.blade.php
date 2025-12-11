@@ -270,7 +270,7 @@
                                             <i class="fa fa-chevron-down"></i>
                                         </h3>
                                         <div class="uk-accordion-content announce-section-content">
-                                            <p>{{ $announceAddress }}</p>
+                                            {!! $announceAddress !!}
                                         </div>
                                     </div>
                                 @endif

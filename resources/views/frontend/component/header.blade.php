@@ -77,6 +77,112 @@
     </div>
 </div>
 
+{{-- Fallback script for search toggle (in case jQuery loads late) --}}
+<script>
+(function() {
+    // Wait for DOM to be ready
+    function initSearchToggle() {
+        var searchBtn = document.querySelector('.btn-search-header');
+        var searchForm = document.querySelector('.header-search-form');
+        var searchClose = document.querySelector('.search-close');
+        
+        if (!searchBtn || !searchForm) {
+            return;
+        }
+        
+        // Remove any existing event listeners by cloning
+        var newSearchBtn = searchBtn.cloneNode(true);
+        searchBtn.parentNode.replaceChild(newSearchBtn, searchBtn);
+        searchBtn = newSearchBtn;
+        
+        // Add click handler for search button
+        searchBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (searchForm.style.display === 'none' || !searchForm.style.display) {
+                searchForm.style.display = 'block';
+                // Use jQuery slideDown if available, otherwise use CSS transition
+                if (typeof jQuery !== 'undefined' && jQuery.fn.slideDown) {
+                    jQuery(searchForm).slideDown(300);
+                } else {
+                    searchForm.style.display = 'block';
+                    searchForm.style.opacity = '0';
+                    searchForm.style.transition = 'opacity 0.3s';
+                    setTimeout(function() {
+                        searchForm.style.opacity = '1';
+                    }, 10);
+                }
+                
+                setTimeout(function() {
+                    var searchInput = searchForm.querySelector('.search-input');
+                    if (searchInput) {
+                        searchInput.focus();
+                    }
+                }, 350);
+            } else {
+                // Use jQuery slideUp if available, otherwise hide directly
+                if (typeof jQuery !== 'undefined' && jQuery.fn.slideUp) {
+                    jQuery(searchForm).slideUp(300);
+                } else {
+                    searchForm.style.opacity = '0';
+                    setTimeout(function() {
+                        searchForm.style.display = 'none';
+                    }, 300);
+                }
+            }
+        });
+        
+        // Add click handler for close button
+        if (searchClose) {
+            var newSearchClose = searchClose.cloneNode(true);
+            searchClose.parentNode.replaceChild(newSearchClose, searchClose);
+            searchClose = newSearchClose;
+            
+            searchClose.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (typeof jQuery !== 'undefined' && jQuery.fn.slideUp) {
+                    jQuery(searchForm).slideUp(300);
+                } else {
+                    searchForm.style.opacity = '0';
+                    setTimeout(function() {
+                        searchForm.style.display = 'none';
+                    }, 300);
+                }
+            });
+        }
+        
+        // Close when clicking outside
+        document.addEventListener('click', function(e) {
+            if (searchForm && searchForm.style.display !== 'none' && searchForm.style.display) {
+                if (!searchForm.contains(e.target) && !searchBtn.contains(e.target)) {
+                    if (typeof jQuery !== 'undefined' && jQuery.fn.slideUp) {
+                        jQuery(searchForm).slideUp(300);
+                    } else {
+                        searchForm.style.opacity = '0';
+                        setTimeout(function() {
+                            searchForm.style.display = 'none';
+                        }, 300);
+                    }
+                }
+            }
+        });
+    }
+    
+    // Try to initialize immediately
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSearchToggle);
+    } else {
+        initSearchToggle();
+    }
+    
+    // Also try after a short delay to ensure elements are available
+    setTimeout(initSearchToggle, 100);
+})();
+</script>
+
 <div class="mobile-header uk-hidden-large">
     <div class="mobile-upper"  data-uk-sticky>
         <div class="uk-container uk-container-center">

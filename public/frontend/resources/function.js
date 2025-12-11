@@ -1454,18 +1454,33 @@
     };
 
     HT.headerSearchToggle = () => {
+        // Ensure jQuery is loaded
+        if (typeof jQuery === 'undefined' || typeof $ === 'undefined') {
+            console.error('jQuery is not loaded. Search toggle will not work.');
+            return;
+        }
+
         // Toggle search form when search button is clicked
         $(document).on('click', '.btn-search-header', function(e) {
             e.preventDefault();
-            $('.header-search-form').slideToggle(300);
-            if ($('.header-search-form').is(':visible')) {
-                $('.header-search-form .search-input').focus();
+            e.stopPropagation();
+            var $searchForm = $('.header-search-form');
+            if ($searchForm.length === 0) {
+                console.error('Search form not found');
+                return;
+            }
+            $searchForm.slideToggle(300);
+            if ($searchForm.is(':visible')) {
+                setTimeout(function() {
+                    $searchForm.find('.search-input').focus();
+                }, 350);
             }
         });
 
         // Close search form when close button is clicked
         $(document).on('click', '.search-close', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             $('.header-search-form').slideUp(300);
         });
 

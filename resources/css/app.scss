@@ -4344,7 +4344,8 @@
 
                         .news-image {
                             width: 100%;
-                            height: 200px;
+                            aspect-ratio: 16/9;
+                            height: auto;
                             display: block;
                             overflow: hidden;
                             position: relative;
@@ -4363,10 +4364,6 @@
 
                             &:hover img {
                                 transform: scale(1.05);
-                            }
-
-                            @media (max-width: 768px) {
-                                height: 180px;
                             }
                         }
 
@@ -4509,7 +4506,8 @@
 
                 .news-image {
                     width: 100%;
-                    height: 200px;
+                    aspect-ratio: 16/9;
+                    height: auto;
                     display: block;
                     overflow: hidden;
                     position: relative;
@@ -4528,10 +4526,6 @@
 
                     &:hover img {
                         transform: scale(1.05);
-                    }
-
-                    @media (max-width: 768px) {
-                        height: 180px;
                     }
                 }
 
@@ -4739,7 +4733,8 @@
             .news-outstanding-grid {
                 .news-item {
                     .news-image {
-                        height: 160px;
+                        aspect-ratio: 16/9;
+                        height: auto;
                     }
                 }
             }
@@ -5475,7 +5470,8 @@
 
                 .news-image {
                     width: 100%;
-                    height: 400px;
+                    aspect-ratio: 16/9;
+                    height: auto;
                     display: block;
                     overflow: hidden;
                     position: relative;
@@ -5494,10 +5490,6 @@
 
                     &:hover img {
                         transform: scale(1.05);
-                    }
-
-                    @media (max-width: 768px) {
-                        height: 250px;
                     }
                 }
 
@@ -17763,7 +17755,7 @@ button{
             background: #fff;
             border-radius: 8px;
             overflow: hidden;
-            table-layout: auto;
+            table-layout: fixed;
 
             thead {
                 background: rgb(0, 141, 194); // Màu xanh nhạt giống ảnh
@@ -17795,30 +17787,30 @@ button{
                         left: 0;
                         z-index: 10;
                         background: rgb(0, 141, 194); // Màu xanh nhạt giống ảnh
-                        min-width: 60px;
-                        max-width: 60px;
-                        width: 60px;
+                        min-width: 125px;
+                        max-width: 125px;
+                        width: 125px;
                         text-align: center;
                         padding: 15px 10px;
                         border-right: 1px solid rgba(0, 0, 0, 0.1);
 
                         @media (max-width: 768px) {
-                            min-width: 50px;
-                            max-width: 50px;
-                            width: 50px;
+                            min-width: 125px;
+                            max-width: 125px;
+                            width: 125px;
                             padding: 12px 8px;
                         }
                     }
 
-                    &:nth-child(2) {
-                        min-width: 300px;
-                        max-width: 300px;
-                        width: 300px;
-
+                    // Các cột từ thứ 2 trở đi (sau cột TRƯỜNG) sẽ có width bằng nhau
+                    // Sử dụng calc để chia đều không gian còn lại
+                    &:not(:first-child) {
+                        width: calc((100% - 125px) / var(--total-columns, 4));
+                        min-width: 0;
+                        max-width: none;
+                        
                         @media (max-width: 768px) {
-                            min-width: 250px;
-                            max-width: 250px;
-                            width: 250px;
+                            width: calc((100% - 125px) / var(--total-columns, 4));
                         }
                     }
                 }
@@ -17845,6 +17837,8 @@ button{
                         border-right: 1px solid #e0e0e0;
                         word-wrap: break-word;
                         white-space: normal;
+                        overflow: visible;
+                        max-width: none;
 
                         @media (max-width: 768px) {
                             padding: 12px 15px;
@@ -17876,26 +17870,32 @@ button{
                             }
                         }
 
+                        // Các cột từ thứ 2 trở đi (sau cột TRƯỜNG) sẽ có width bằng nhau
+                        &:not(:first-child) {
+                            width: calc((100% - 125px) / var(--total-columns, 4));
+                            min-width: 0;
+                            max-width: none;
+                            white-space: normal;
+                            word-wrap: break-word;
+                            
+                            @media (max-width: 768px) {
+                                width: calc((100% - 125px) / var(--total-columns, 4));
+                            }
+                        }
+                        
+                        // Cột thứ 2 vẫn giữ sticky nếu cần
                         &:nth-child(2) {
                             position: sticky;
-                            left: 300px;
+                            left: 125px; // Khớp với width của cột đầu tiên
                             z-index: 4;
                             background: #fff;
                             font-weight: 600;
                             color: #008DC2;
-                            min-width: 300px;
-                            max-width: 300px;
-                            width: 300px;
-                            white-space: normal;
-                            word-wrap: break-word;
                             border-right: 2px solid #008DC2;
                             box-shadow: 2px 0 4px rgba(0, 0, 0, 0.05);
-
+                            
                             @media (max-width: 768px) {
-                                left: 250px;
-                                min-width: 250px;
-                                max-width: 250px;
-                                width: 250px;
+                                left: 125px; // Giữ nguyên trên mobile
                             }
                         }
 
@@ -18174,7 +18174,8 @@ button{
 
                 .news-image {
                     width: 100%;
-                    height: 200px;
+                    aspect-ratio: 16/9;
+                    height: auto;
                     display: block;
                     overflow: hidden;
                     position: relative;
@@ -18193,10 +18194,6 @@ button{
 
                     &:hover img {
                         transform: scale(1.05);
-                    }
-
-                    @media (max-width: 768px) {
-                        height: 180px;
                     }
                 }
 
@@ -18593,6 +18590,7 @@ button{
         border-collapse: collapse;
         width: 100%;
         min-width: 1200px;
+        table-layout: fixed; // Sử dụng fixed layout để chia đều các cột
     }
     
     /* Header chính (TRƯỜNG, THÁI NGUYÊN, HÀ NỘI, ...) */
@@ -18616,7 +18614,7 @@ button{
         font-size: 13px;
     }
     
-    /* Cột đầu tiên (tên trường) */
+    /* Cột đầu tiên (tên trường) - giữ nguyên width cố định */
     tbody td:first-child {
         background: #e8f0f7;
         font-weight: bold;
@@ -18633,6 +18631,11 @@ button{
         width: 125px;
     }
     
+    /* Các cột từ thứ 2 trở đi - chia đều width */
+    thead th:not(:first-child) {
+        width: auto; // Browser sẽ tự động chia đều
+    }
+    
     /* Các ô dữ liệu */
     tbody td {
         padding: 10px 8px;
@@ -18640,6 +18643,15 @@ button{
         text-align: center;
         font-size: 13px;
         line-height: 1.6;
+        overflow: visible;
+        word-wrap: break-word;
+        white-space: normal;
+        vertical-align: middle;
+    }
+    
+    /* Các cột từ thứ 2 trở đi - chia đều width */
+    tbody td:not(:first-child) {
+        width: auto; // Browser sẽ tự động chia đều
     }
     
     /* Hàng chú thích */
