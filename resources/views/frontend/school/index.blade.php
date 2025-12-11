@@ -1058,7 +1058,14 @@
             <div class="degree-notice-banner">
                 <div class="degree-notice-main-button">
                     <span class="degree-notice-text">KHÔNG GHI HÌNH THỨC ĐÀO TẠO TRÊN BẰNG TỐT NGHIỆP</span>
-                    <a href="#register-modal" class="degree-notice-trial-button" data-uk-modal>
+                    @php
+                        $formHocThu = $school->form_hoc_thu ?? [];
+                        $formHocThuTitle = $formHocThu['title'] ?? '';
+                        $formHocThuScript = trim($formHocThu['script'] ?? '');
+                        $hasFormHocThu = !empty($formHocThuScript) || !empty($formHocThuTitle);
+                        $modalTarget = $hasFormHocThu ? '#school-hoc-thu-modal' : '#register-modal';
+                    @endphp
+                    <a href="{{ $modalTarget }}" class="degree-notice-trial-button" data-uk-modal>
                         Học thử miễn phí
                     </a>
                 </div>
