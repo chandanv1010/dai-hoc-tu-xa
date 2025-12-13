@@ -290,12 +290,55 @@ if(!function_exists('write_url')){
 
 if(!function_exists('seo')){
     function seo($model = null, $page = 1){
-        $canonical = ($page > 1) ? write_url($model->canonical, true, false).'/trang-'.$page.config('apps.general.suffix'): write_url($model->canonical, true, true);
+        // Kiểm tra xem model có relationship languages và pivot không (Major, School, etc.)
+        $pivot = null;
+        $canonicalValue = null;
+        $metaTitle = null;
+        $metaKeyword = null;
+        $metaDescription = null;
+        $name = null;
+        $description = null;
+        
+        if ($model && method_exists($model, 'languages') && $model->languages && $model->languages->count() > 0) {
+            $pivot = $model->languages->first()->pivot ?? null;
+            if ($pivot) {
+                $canonicalValue = $pivot->canonical ?? null;
+                $metaTitle = $pivot->meta_title ?? null;
+                $metaKeyword = $pivot->meta_keyword ?? null;
+                $metaDescription = $pivot->meta_description ?? null;
+                $name = $pivot->name ?? null;
+                $description = $pivot->description ?? null;
+            }
+        }
+        
+        // Nếu không có từ pivot, lấy từ model trực tiếp
+        $canonicalValue = $canonicalValue ?? ($model->canonical ?? null);
+        $metaTitle = $metaTitle ?? ($model->meta_title ?? null);
+        $metaKeyword = $metaKeyword ?? ($model->meta_keyword ?? null);
+        $metaDescription = $metaDescription ?? ($model->meta_description ?? null);
+        $name = $name ?? ($model->name ?? null);
+        $description = $description ?? ($model->description ?? null);
+        
+        // Fallback: nếu không có meta_title thì dùng name
+        if (empty($metaTitle)) {
+            $metaTitle = $name ?? '';
+        }
+        
+        // Fallback: nếu không có meta_description thì dùng description
+        if (empty($metaDescription)) {
+            $metaDescription = !empty($description) ? cut_string_and_decode($description, 168) : '';
+        }
+        
+        // Xử lý canonical
+        $canonical = ($page > 1) 
+            ? write_url($canonicalValue, true, false).'/trang-'.$page.config('apps.general.suffix')
+            : write_url($canonicalValue, true, true);
+        
         return [
-            'meta_title' => ($model->meta_title) ?? $model->name,
-            'meta_keyword' => ($model->meta_keyword) ?? '',
-            'meta_description' => ($model->meta_description) ?? cut_string_and_decode($model->descipriont, 168),
-            'meta_image' => $model->image,
+            'meta_title' => $metaTitle,
+            'meta_keyword' => $metaKeyword ?? '',
+            'meta_description' => $metaDescription,
+            'meta_image' => $model->image ?? null,
             'canonical' => $canonical,
         ];
     }
