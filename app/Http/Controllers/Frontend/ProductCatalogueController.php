@@ -184,12 +184,7 @@ class ProductCatalogueController extends FrontendController
             'canonical' => write_url('tim-kiem')
         ];
 
-        if (Agent::isMobile()) {
-            $template = 'mobile.product.catalogue.search';
-        } else {
-            $template = 'frontend.product.catalogue.search';
-        }
-
+        $template = 'frontend.product.catalogue.search';
 
         return view($template, compact(
             'config',
