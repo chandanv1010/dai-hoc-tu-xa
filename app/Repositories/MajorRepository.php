@@ -178,16 +178,21 @@ class MajorRepository extends BaseRepository
 
     public function getHomeMajors($language_id = 0, $limit = 6)
     {
+        // Join với major_language để chỉ lấy majors có dữ liệu với language_id tương ứng
         $majors = $this->model->select([
                 'majors.id',
                 'majors.image',
                 'majors.publish',
-                'majors.is_home',
             ]
         )
+        ->distinct()
+        ->join('major_language as ml', function($join) use ($language_id) {
+            $join->on('ml.major_id', '=', 'majors.id')
+                 ->where('ml.language_id', '=', $language_id);
+        })
         ->where('majors.publish', '=', 2)
-        ->where('majors.is_home', '=', 2)
         ->whereNull('majors.deleted_at')
+        ->whereNotNull('ml.name') // Đảm bảo có tên
         ->orderBy('majors.id', 'asc')
         ->limit($limit)
         ->get();
@@ -243,6 +248,11 @@ class MajorRepository extends BaseRepository
                 }
             }
         }
+        
+        // Filter lại để chỉ giữ majors có languages relationship
+        $majors = $majors->filter(function($major) {
+            return $major->languages && $major->languages->count() > 0;
+        })->values();
 
         return $majors;
     }

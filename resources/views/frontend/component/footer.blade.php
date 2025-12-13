@@ -82,11 +82,12 @@
                     <div class="footer-right">
                         @if(!empty($footerMenu) && is_array($footerMenu))
                             <div class="footer-menu">
-                                @foreach($footerMenu as $menuItem)
+                                @foreach($footerMenu as $index => $menuItem)
                                     @php
                                         $itemName = '';
                                         $itemCanonical = '';
                                         $itemChildren = [];
+                                        $isLastItem = ($index === count($footerMenu) - 1); // Kiểm tra item cuối cùng
                                         
                                         if (isset($menuItem['item'])) {
                                             $item = $menuItem['item'];
@@ -128,9 +129,14 @@
                                                         }
                                                     @endphp
                                                     <li>
-                                                        <a href="{{ write_url($subCanonical) }}">
-                                                            {{ $subName }}
-                                                        </a>
+                                                        @if($isLastItem)
+                                                            {{-- Item cuối cùng: dùng span thay vì a (địa chỉ không cần click) --}}
+                                                            <span>{{ $subName }}</span>
+                                                        @else
+                                                            <a href="{{ write_url($subCanonical) }}">
+                                                                {{ $subName }}
+                                                            </a>
+                                                        @endif
                                                     </li>
                                                 @endforeach
                                             </ul>

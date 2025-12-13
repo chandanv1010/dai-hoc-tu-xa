@@ -2574,7 +2574,7 @@
 
         .schools-list-swiper {
             position: relative;
-            padding: 0 70px;
+            padding: 0 28px;
 
             .swiper-wrapper {
                 display: flex;
@@ -2792,7 +2792,7 @@
 
         .schools-list-grid {
             .schools-list-swiper {
-                padding: 0 60px;
+                padding: 0; // Tablet: padding 2 bên = 0
 
                 .swiper-button-prev,
                 .swiper-button-next {
@@ -2869,7 +2869,7 @@
 
         .schools-list-grid {
             .schools-list-swiper {
-                padding: 0 50px;
+                padding: 0; // Mobile: padding 2 bên = 0
 
                 .swiper-button-prev,
                 .swiper-button-next {
@@ -3203,19 +3203,25 @@
         // Swiper wrapper cho tab "Tất cả ngành"
         .majors-list-swiper-wrapper {
             position: relative;
-            padding: 0 100px; // Tăng padding để tạo không gian cho mũi tên
-
-            @media (max-width: 960px) {
-                padding: 0 90px;
-            }
-
-            @media (max-width: 768px) {
-                padding: 0 80px;
-            }
+            overflow: hidden; // Ẩn phần tràn ra ngoài
 
             .majors-list-swiper {
-                overflow: visible; // Để mũi tên hiển thị bên ngoài
+                overflow: hidden; // Ẩn phần tràn ra ngoài
                 position: relative;
+                padding: 0 20px; // Padding để hiển thị mũi tên
+                width: 100%;
+                box-sizing: border-box;
+
+                @media (max-width: 768px) {
+                    padding: 0; // Mobile: padding = 0
+                }
+
+                .swiper-wrapper {
+                    display: flex;
+                    align-items: stretch; // Cân độ cao các slide
+                    width: 100%;
+                    margin: 0;
+                }
 
                 .swiper-button-prev,
                 .swiper-button-next {
@@ -3252,10 +3258,10 @@
                 }
 
                 .swiper-button-prev {
-                    left: -100px !important; // Đẩy ra xa hơn nữa
+                    left: 0 !important; // Nằm trong padding
 
                     @media (max-width: 960px) {
-                        left: -90px !important;
+                        left: 0 !important;
                         width: 40px;
                         height: 40px;
                         &:after {
@@ -3264,20 +3270,29 @@
                     }
 
                     @media (max-width: 768px) {
-                        left: -80px !important;
+                        left: 0 !important;
                         width: 35px;
                         height: 35px;
                         &:after {
                             font-size: 16px;
+                        }
+                    }
+                    
+                    @media (max-width: 480px) {
+                        left: 0 !important;
+                        width: 30px;
+                        height: 30px;
+                        &:after {
+                            font-size: 14px;
                         }
                     }
                 }
 
                 .swiper-button-next {
-                    right: -100px !important; // Đẩy ra xa hơn nữa
+                    right: 0 !important; // Nằm trong padding
 
                     @media (max-width: 960px) {
-                        right: -90px !important;
+                        right: 0 !important;
                         width: 40px;
                         height: 40px;
                         &:after {
@@ -3286,20 +3301,40 @@
                     }
 
                     @media (max-width: 768px) {
-                        right: -80px !important;
+                        right: 0 !important;
                         width: 35px;
                         height: 35px;
                         &:after {
                             font-size: 16px;
+                        }
+                    }
+                    
+                    @media (max-width: 480px) {
+                        right: 0 !important;
+                        width: 30px;
+                        height: 30px;
+                        &:after {
+                            font-size: 14px;
                         }
                     }
                 }
 
                 .swiper-slide {
                     height: auto;
+                    display: flex;
+                    align-items: stretch; // Cân độ cao
+                    width: auto; // Để swiper tự tính width
+                    flex-shrink: 0; // Không cho slide bị co lại
+                    
+                    .major-card-wrapper {
+                        width: 100%;
+                        display: flex;
+                        height: 100%;
+                    }
                     
                     .major-card {
                         height: 100%;
+                        width: 100%;
                     }
                 }
             }
@@ -3678,8 +3713,7 @@
                 cursor: pointer;
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                 transition: transform 0.3s ease;
-                height: 500px; // Cao bằng ảnh bên phải
-                min-height: 500px;
+                aspect-ratio: 16 / 9; // Tỉ lệ 16/9
                 width: 100%;
 
                 &:hover {
@@ -3834,10 +3868,7 @@
                 margin-top: 25px;
 
                 .video-thumbnail-wrapper {
-                    @media (max-width: 768px) {
-                        height: 300px;
-                        aspect-ratio: 16/9;
-                    }
+                    // Đã dùng aspect-ratio: 16/9 ở desktop, không cần override trên mobile
 
                     .video-play-overlay {
                         width: 60px;
@@ -4249,7 +4280,7 @@
             padding: 0 80px;
 
             @media (max-width: 768px) {
-                padding: 0 60px;
+                padding: 0;
             }
 
             .event-swiper {
@@ -14319,6 +14350,12 @@ button{
         width: 100%;
         height: 100%;
         object-fit: contain; // Hiển thị đầy đủ ảnh, tự căn chỉnh
+    }
+    
+    @media (max-width: 768px) {
+        height: 375px;
+        min-height: 375px;
+        margin-top: 25px;
     }
 }
 

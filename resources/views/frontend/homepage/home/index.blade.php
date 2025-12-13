@@ -349,7 +349,7 @@
                     <div class="majors-list-grid">
                         @if($majorsList->isNotEmpty())
                             <!-- Swiper cho tab "Tất cả ngành" -->
-                            <div class="majors-list-swiper-wrapper" id="majors-swiper-wrapper" style="display: none;">
+                            <div class="majors-list-swiper-wrapper" id="majors-swiper-wrapper">
                                 <div class="swiper-container majors-list-swiper">
                                     <div class="swiper-wrapper">
                                         @foreach($majorsList as $major)
@@ -430,12 +430,17 @@
                             </div>
                             
                             <!-- Grid cho các tab khác -->
-                            <div class="majors-list-grid-wrapper" id="majors-grid-wrapper">
+                            <div class="majors-list-grid-wrapper" id="majors-grid-wrapper" style="display: none;">
                                 <div class="uk-grid uk-grid-medium" data-uk-grid-match>
                                     @foreach($majorsList as $major)
                                         @include('frontend.component.major-item', ['major' => $major])
                                     @endforeach
                                 </div>
+                            </div>
+                        @else
+                            <!-- Không có dữ liệu -->
+                            <div class="no-majors-message" style="text-align: center; padding: 60px 20px;">
+                                <p style="font-size: 18px; color: #666;">Không có ngành học nào để hiển thị.</p>
                             </div>
                         @endif
                         
@@ -653,6 +658,7 @@
                         nextEl: '.majors-list-swiper .swiper-button-next',
                         prevEl: '.majors-list-swiper .swiper-button-prev',
                     },
+                    watchOverflow: true, // Chỉ enable navigation khi có nhiều slide
                     breakpoints: {
                         0: {
                             slidesPerView: 1,
@@ -781,19 +787,40 @@
         }
         
         $(document).ready(function() {
+            // Khởi tạo swiper cho dữ liệu ban đầu nếu có
+            var $swiperWrapper = $('#majors-swiper-wrapper');
+            var $gridWrapper = $('#majors-grid-wrapper');
+            
+            if ($swiperWrapper.find('.swiper-slide').length > 0) {
+                // Có dữ liệu ban đầu trong swiper - khởi tạo swiper
+                setTimeout(function() {
+                    initMajorsSwiper();
+                }, 100);
+            }
+            
             // Kiểm tra tab active khi trang load
             var $activeTab = $('.major-catalogue-filter .filter-tab.active');
             var isAllMajorsOnLoad = $activeTab.length > 0 && ($activeTab.data('catalogue-id') === '' || $activeTab.data('catalogue-id') === undefined);
             
             if (isAllMajorsOnLoad) {
-                // Tab "Tất cả ngành" đang active - gọi AJAX để lấy tất cả majors
-                var catalogueId = '';
-                var canonical = '';
-                loadMajorsByCatalogue(catalogueId, canonical, true);
+                // Tab "Tất cả ngành" đang active - hiển thị swiper với dữ liệu ban đầu
+                $swiperWrapper.show();
+                $gridWrapper.hide();
+                // Có thể gọi AJAX để load thêm nếu cần (tất cả majors thay vì chỉ 6)
+                // loadMajorsByCatalogue('', '', true);
             } else {
-                // Tab khác active - hiển thị grid với dữ liệu hiện có
-                $('#majors-swiper-wrapper').hide();
-                $('#majors-grid-wrapper').show();
+                // Tab khác active - hiển thị grid với dữ liệu hiện có (nếu có)
+                if ($gridWrapper.find('.major-card').length > 0) {
+                    $swiperWrapper.hide();
+                    $gridWrapper.show();
+                } else {
+                    // Không có dữ liệu, gọi AJAX
+                    var catalogueId = $activeTab.data('catalogue-id') || '';
+                    var canonical = $activeTab.data('canonical') || '';
+                    if (catalogueId) {
+                        loadMajorsByCatalogue(catalogueId, canonical, false);
+                    }
+                }
             }
             
             $('.major-catalogue-filter .filter-tab').on('click', function(e) {
