@@ -20,7 +20,8 @@ class MajorLanguage extends Pivot
         'school' => 'array',
         'value' => 'array',
         'feedback' => 'array',
-        'event' => 'array',
+        // event không phải JSON nữa, chỉ là số ID
+        // 'event' => 'array', // Đã xóa - event giờ là integer
     ];
 
     /**
@@ -41,7 +42,9 @@ class MajorLanguage extends Pivot
         $value = parent::getAttribute($key);
         
         // Nếu là JSON field và chưa được cast, decode thủ công
-        if (in_array($key, ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'])) {
+        // event không phải JSON nữa, chỉ là số ID
+        $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
+        if (in_array($key, $jsonFields)) {
             if (is_string($value)) {
                 $decoded = json_decode($value, true);
                 if (json_last_error() === JSON_ERROR_NONE) {

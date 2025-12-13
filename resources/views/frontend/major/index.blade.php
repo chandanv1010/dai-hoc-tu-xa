@@ -15,10 +15,13 @@
         $trainingSystem = $pivot->training_system ?? '';
         $studyMethod = $pivot->study_method ?? '';
         $admissionMethod = $pivot->admission_method ?? '';
+        $admissionType = $pivot->admission_type ?? '';
         $trainingDuration = $pivot->training_duration ?? '';
         $degreeType = $pivot->degree_type ?? '';
         $enrollmentQuota = $pivot->enrollment_quota ?? '';
         $enrollmentPeriod = $pivot->enrollment_period ?? '';
+        // Tổng số tín chỉ tích lũy - lấy từ pivot, nếu không có thì dùng giá trị mặc định
+        $totalCredits = $pivot->total_credits ?? '75-131 Tín Chỉ Tùy Trường';
         
         // Lấy dữ liệu JSON từ pivot
         $overview = ($pivot && isset($pivot->overview)) ? (is_array($pivot->overview) ? $pivot->overview : json_decode($pivot->overview, true)) : [];
@@ -45,6 +48,11 @@
             $system['form_tu_van_mien_phi_footer'] = $formTuVan['footer'] ?? $system['form_tu_van_mien_phi_footer'] ?? '';
         }
     @endphp
+
+    {{-- Hidden H1 for SEO - Tên ngành --}}
+    @if($name)
+        <h1 style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">{{ $name }}</h1>
+    @endif
 
     {{-- Khối Banner Hero --}}
     @if(!empty($major->banner))
@@ -157,7 +165,7 @@
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
                                 <div class="info-box">
                                     <div class="info-box-label">Tổng số tín chỉ</div>
-                                    <div class="info-box-value">{{ $admissionMethod ?: 'Xét học bạ' }}</div>
+                                    <div class="info-box-value">{{ $totalCredits }}</div>
                                 </div>
                             </div>
                             <div class="uk-width-medium-1-4 uk-width-small-1-2">
@@ -296,7 +304,7 @@
                                     <i class="fa fa-users"></i>
                                     <div class="sidebar-item-content">
                                         <span class="sidebar-item-label">Hình thức tuyển sinh</span>
-                                        <span class="sidebar-item-value">{{ $admissionMethod ?: 'Xét tuyển hồ sơ' }}</span>
+                                        <span class="sidebar-item-value">{{ $admissionType ?: ($admissionMethod ?: 'Xét tuyển hồ sơ') }}</span>
                                     </div>
                                 </div>
                                 <div class="sidebar-item">
@@ -1092,7 +1100,7 @@
         @php
             $eventName = 'Sự Kiện Hoạt Động';
         @endphp
-        <div class="panel-news-outstanding wow fadeInUp" data-wow-delay="1.3s">
+        <div class="panel-news-outstanding wow fadeInUp" data-wow-delay="0.6s">
             <div class="uk-container uk-container-center">
                 <div class="news-outstanding-wrapper">
                     <!-- Header -->
@@ -1100,74 +1108,65 @@
                         <h2 class="news-outstanding-title">{{ $eventName }}</h2>
                     </div>
 
-                    <!-- News Grid -->
-                    <div class="news-outstanding-grid">
-                        <div class="uk-grid uk-grid-medium" data-uk-grid-match>
-                            @foreach($eventPosts as $index => $post)
-                                @php
-                                    $postName = $post->name ?? '';
-                                    $postDescription = $post->description ?? '';
-                                    $postCanonical = $post->canonical ?? '';
-                                    $postUrl = $postCanonical ? write_url($postCanonical) : '#';
-                                    $postImage = $post->image ?? '';
-                                    $hasPostImage = !empty($postImage);
-                                    $postImageUrl = $hasPostImage ? (function_exists('thumb') ? thumb($postImage, 400, 300) : asset($postImage)) : '';
-                                    
-                                    // Lấy ngày tháng
-                                    $postDate = $post->created_at ?? now();
-                                    $formattedDate = $postDate ? date('d/m/Y', strtotime($postDate)) : '';
-                                    
-                                    // Ẩn các sự kiện từ thứ 4 trở đi
-                                    $isHidden = $index >= 3;
-                                @endphp
-                                @php
-                                    $eventDelay = (1.4 + ($index * 0.15)) . 's';
-                                @endphp
-                                <div class="uk-width-medium-1-2 uk-width-large-1-3 event-item {{ $isHidden ? 'event-item-hidden' : '' }}" data-event-index="{{ $index }}">
-                                    <div class="news-item wow fadeInUp" data-wow-delay="{{ $eventDelay }}">
-                                        <a href="{{ $postUrl }}" class="news-image img-cover {{ !$hasPostImage ? 'no-image' : '' }}">
-                                            @if($hasPostImage)
-                                                <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
-                                            @endif
-                                        </a>
-                                        <div class="news-content">
-                                            <span class="news-category-label">{{ $eventName }}</span>
-                                            <h3 class="news-title">
-                                                <a href="{{ $postUrl }}" title="{{ $postName }}">{{ $postName }}</a>
-                                            </h3>
-                                            @if($postDescription)
-                                                @php
-                                                    $cleanDescription = strip_tags($postDescription);
-                                                    $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
-                                                @endphp
-                                                <p class="news-description">{!! $shortDescription !!}</p>
-                                            @endif
-                                            <div class="news-meta">
-                                                <span class="news-date">
-                                                    <i class="fa fa-calendar"></i>
-                                                    {{ $formattedDate }}
-                                                </span>
-                                                <a href="{{ $postUrl }}" class="news-detail-link">Xem chi tiết →</a>
+                    <!-- News Swiper -->
+                    <div class="news-outstanding-swiper">
+                        <div class="swiper-container event-swiper">
+                            <div class="swiper-button-next"></div>
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-wrapper">
+                                @foreach($eventPosts as $index => $post)
+                                    @php
+                                        $postName = $post->name ?? '';
+                                        $postDescription = $post->description ?? '';
+                                        $postCanonical = $post->canonical ?? '';
+                                        $postUrl = $postCanonical ? write_url($postCanonical) : '#';
+                                        $postImage = $post->image ?? '';
+                                        $hasPostImage = !empty($postImage);
+                                        $postImageUrl = $hasPostImage ? (function_exists('thumb') ? thumb($postImage, 400, 300) : asset($postImage)) : '';
+                                        
+                                        // Lấy ngày tháng
+                                        $postDate = $post->created_at ?? now();
+                                        $formattedDate = $postDate ? date('d/m/Y', strtotime($postDate)) : '';
+                                    @endphp
+                                    <div class="swiper-slide">
+                                        <div class="news-item wow fadeInUp" data-wow-delay="{{ (0.7 + ($index * 0.15)) . 's' }}">
+                                            <a href="{{ $postUrl }}" class="news-image img-cover {{ !$hasPostImage ? 'no-image' : '' }}">
+                                                @if($hasPostImage)
+                                                    <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
+                                                @endif
+                                            </a>
+                                            <div class="news-content">
+                                                <span class="news-category-label">{{ $eventName }}</span>
+                                                <h3 class="news-title">
+                                                    <a href="{{ $postUrl }}" title="{{ $postName }}">{{ $postName }}</a>
+                                                </h3>
+                                                @if($postDescription)
+                                                    @php
+                                                        $cleanDescription = strip_tags($postDescription);
+                                                        $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
+                                                    @endphp
+                                                    <p class="news-description">{!! $shortDescription !!}</p>
+                                                @endif
+                                                <div class="news-meta">
+                                                    <span class="news-date">
+                                                        <i class="fa fa-calendar"></i>
+                                                        {{ $formattedDate }}
+                                                    </span>
+                                                    <a href="{{ $postUrl }}" class="news-detail-link">Xem chi tiết →</a>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            @endforeach
+                                @endforeach
+                            </div>
+                            <div class="swiper-pagination"></div>
                         </div>
                     </div>
-
-                    <!-- Footer: Xem thêm button -->
-                    @if($eventPosts->count() > 3)
-                        <div class="news-outstanding-footer">
-                            <button type="button" class="news-outstanding-cta-button" id="show-more-events-btn">
-                                Xem thêm
-                            </button>
-                        </div>
-                    @endif
                 </div>
             </div>
         </div>
     @endif
+
 
     <!-- Register Modal -->
     <div id="register-modal" class="uk-modal">
@@ -1440,6 +1439,42 @@ document.addEventListener('DOMContentLoaded', function() {
             showMoreEventsBtn.style.display = 'none';
         });
     }
+
+    // Khởi tạo Swiper cho event (nếu có)
+    @if(isset($major) && isset($major->is_show_event) && $major->is_show_event == 2 && !empty($eventPosts) && $eventPosts->count() > 0)
+        var eventSlideContainer = document.querySelector(".panel-news-outstanding .event-swiper");
+        if (eventSlideContainer) {
+            var eventSlides = eventSlideContainer.querySelectorAll('.swiper-slide');
+            var eventSlideCount = eventSlides.length;
+            var enableEventLoop = eventSlideCount >= 2;
+
+            var eventSwiper = new Swiper(".panel-news-outstanding .event-swiper", {
+                loop: enableEventLoop,
+                pagination: {
+                    el: '.swiper-pagination',
+                    clickable: true,
+                },
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+                autoplay: enableEventLoop ? {
+                    delay: 4000,
+                    disableOnInteraction: false,
+                } : false,
+                spaceBetween: 30,
+                slidesPerView: 1,
+                breakpoints: {
+                    768: {
+                        slidesPerView: 2,
+                    },
+                    1024: {
+                        slidesPerView: 3,
+                    }
+                }
+            });
+        }
+    @endif
 
     // Khởi tạo Swiper cho feedback (nếu có)
     @if(isset($major) && $major->is_show_feedback == 2 && isset($feedback) && !empty($feedback) && isset($feedback['items']) && count($feedback['items']) > 0)

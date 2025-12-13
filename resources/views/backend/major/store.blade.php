@@ -14,10 +14,10 @@
     $admissionMethod = $pivot->admission_method ?? '';
     $enrollmentQuota = $pivot->enrollment_quota ?? '';
     $enrollmentPeriod = $pivot->enrollment_period ?? '';
-    $admissionType = $pivot->admission_type ?? '';
-    $degreeType = $pivot->degree_type ?? '';
-    $trainingDuration = $pivot->training_duration ?? '';
-    $canonical = $pivot->canonical ?? '';
+        $admissionType = $pivot->admission_type ?? '';
+        $degreeType = $pivot->degree_type ?? '';
+        $trainingDuration = $pivot->training_duration ?? '';
+        $canonical = $pivot->canonical ?? '';
     $metaTitle = $pivot->meta_title ?? '';
     $metaKeyword = $pivot->meta_keyword ?? '';
     $metaDescription = $pivot->meta_description ?? '';
@@ -34,7 +34,25 @@
     $school = ($pivot && isset($pivot->school)) ? (is_array($pivot->school) ? $pivot->school : null) : null;
     $value = ($pivot && isset($pivot->value)) ? (is_array($pivot->value) ? $pivot->value : null) : null;
     $feedback = ($pivot && isset($pivot->feedback)) ? (is_array($pivot->feedback) ? $pivot->feedback : null) : null;
-    $event = ($pivot && isset($pivot->event)) ? (is_array($pivot->event) ? $pivot->event : []) : [];
+    // Event: lưu trực tiếp là số ID (post_catalogue_id), không phải JSON
+    $eventPostCatalogueId = null;
+    if ($pivot && isset($pivot->event)) {
+        $eventValue = $pivot->event;
+        if (is_numeric($eventValue)) {
+            $eventPostCatalogueId = (int)$eventValue;
+        } elseif (is_string($eventValue)) {
+            // Xử lý trường hợp cũ (JSON string) - tương thích ngược
+            $decoded = json_decode($eventValue, true);
+            if (is_array($decoded) && isset($decoded['post_catalogue_id'])) {
+                $eventPostCatalogueId = (int)$decoded['post_catalogue_id'];
+            } elseif (is_numeric($eventValue)) {
+                $eventPostCatalogueId = (int)$eventValue;
+            }
+        } elseif (is_array($eventValue) && isset($eventValue['post_catalogue_id'])) {
+            // Xử lý trường hợp cũ (JSON array) - tương thích ngược
+            $eventPostCatalogueId = (int)$eventValue['post_catalogue_id'];
+        }
+    }
 @endphp
 <form action="{{ $url }}" method="post" class="box" id="majorForm">
     @csrf
@@ -169,14 +187,14 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Hình thức tuyển</strong></td>
+                                            <td><strong>Tổng số tín chỉ</strong></td>
                                             <td>
                                                 <input 
                                                     type="text"
                                                     name="admission_method"
                                                     value="{{ old('admission_method', $admissionMethod) }}"
                                                     class="form-control"
-                                                    placeholder="Nhập hình thức tuyển"
+                                                    placeholder="Nhập tổng số tín chỉ"
                                                 >
                                             </td>
                                         </tr>
@@ -211,14 +229,14 @@
                                             </td>
                                         </tr>
                                         <tr>
-                                            <td><strong>Loại tuyển sinh</strong></td>
+                                            <td><strong>Hình thức tuyển sinh</strong></td>
                                             <td>
                                                 <input 
                                                     type="text"
                                                     name="admission_type"
                                                     value="{{ old('admission_type', $admissionType) }}"
                                                     class="form-control"
-                                                    placeholder="Nhập loại tuyển sinh"
+                                                    placeholder="Nhập hình thức tuyển sinh"
                                                 >
                                             </td>
                                         </tr>
@@ -884,8 +902,7 @@
                     </div>
                 </div>
 
-                {{-- Tắt phần Sự kiện (Events) --}}
-                {{-- <!-- Events Section -->
+                <!-- Khối 9: Event -->
                 <div class="ibox">
                     <div class="ibox-title">
                         <h5>Sự kiện</h5>
@@ -901,22 +918,29 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="form-row">
-                                    <label for="" class="control-label text-left">Chọn bài viết</label>
+                                    <label for="" class="control-label text-left">Chọn chuyên mục</label>
                                     <select 
-                                        name="event[]"
-                                        id="event_post_ids" 
+                                        name="event[post_catalogue_id]"
+                                        id="event_post_catalogue_id" 
                                         class="form-control select2" 
-                                        multiple
-                                        data-placeholder="Chọn các bài viết"
+                                        data-placeholder="Chọn chuyên mục"
                                     >
-                                        @if(isset($posts) && count($posts) > 0)
-                                            @foreach($posts as $post)
-                                                <option 
-                                                    value="{{ $post->id }}"
-                                                    {{ (old('event') && in_array($post->id, old('event'))) || (isset($event) && is_array($event) && in_array($post->id, $event)) ? 'selected' : '' }}
-                                                >
-                                                    {{ $post->name }}
-                                                </option>
+                                        <option value="">-- Chọn chuyên mục --</option>
+                                        @if(isset($postCatalogues) && count($postCatalogues) > 0)
+                                            @foreach($postCatalogues as $postCatalogue)
+                                                @php
+                                                    $catalogueId = is_object($postCatalogue) ? $postCatalogue->id : ($postCatalogue['id'] ?? '');
+                                                    $catalogueName = is_object($postCatalogue) ? $postCatalogue->name : ($postCatalogue['name'] ?? '');
+                                                    $isSelected = (old('event.post_catalogue_id') == $catalogueId) || ($eventPostCatalogueId == $catalogueId);
+                                                @endphp
+                                                @if(!empty($catalogueId) && !empty($catalogueName))
+                                                    <option 
+                                                        value="{{ $catalogueId }}"
+                                                        {{ $isSelected ? 'selected' : '' }}
+                                                    >
+                                                        {{ $catalogueName }}
+                                                    </option>
+                                                @endif
                                             @endforeach
                                         @endif
                                     </select>
@@ -924,7 +948,7 @@
                             </div>
                         </div>
                     </div>
-                </div> --}}
+                </div>
 
                 {{-- Cấu hình nâng cao (SEO) --}}
                 @php
@@ -975,6 +999,72 @@
 .toggle-items-btn.collapsed i {
     transform: rotate(180deg);
 }
+.what-learn-items-container {
+    overflow: visible !important;
+    max-height: none !important;
+}
+.what-learn-items-container.collapsed {
+    display: none;
+}
+.toggle-learn-items-btn {
+    cursor: pointer;
+    text-decoration: none;
+}
+.toggle-learn-items-btn:hover {
+    text-decoration: underline;
+}
+.toggle-learn-items-btn i {
+    transition: transform 0.3s ease;
+}
+.toggle-learn-items-btn.collapsed i {
+    transform: rotate(180deg);
+}
+.learn-item-content {
+    display: block;
+}
+.learn-item-content.collapsed {
+    display: none;
+}
+.toggle-item-icon {
+    transition: transform 0.3s ease;
+}
+.what-learn-item.collapsed .toggle-item-icon {
+    transform: rotate(-90deg);
+}
+.sortable-items .what-learn-item {
+    cursor: move;
+}
+.sortable-items .what-learn-item.ui-sortable-helper {
+    opacity: 0.8;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.ui-state-highlight {
+    height: 100px;
+    background: #f0f0f0;
+    border: 2px dashed #1ab394;
+    margin-bottom: 10px;
+}
+.what-learn-item .fa-grip-vertical {
+    cursor: move !important;
+    font-size: 16px;
+    user-select: none;
+}
+.what-learn-item .fa-grip-vertical:hover {
+    color: #1ab394;
+}
+.what-learn-item .learn-item-name {
+    cursor: move !important;
+}
+.what-learn-item .learn-item-name:focus {
+    cursor: text !important;
+}
+.what-learn-item .fa-grip-vertical {
+    cursor: move;
+    font-size: 16px;
+}
+.what-learn-item .fa-grip-vertical:hover {
+    color: #1ab394;
+}
 </style>
 
 <script>
@@ -1015,6 +1105,29 @@ document.addEventListener('DOMContentLoaded', function() {
     let advantageItemIndex = {{ $priorityItemsCount }};
     let whatLearnCategoryIndex = {{ count(old('learn.items', (isset($learn) && isset($learn['items']) && is_array($learn['items'])) ? $learn['items'] : [])) }};
     let whatLearnItemIndexes = {}; // Object to track item indexes per category
+    
+    // Khởi tạo whatLearnItemIndexes cho các category đã có sẵn
+    @if(old('learn.items'))
+        @foreach(old('learn.items') as $categoryIndex => $category)
+            @php
+                $itemCount = 0;
+                if (isset($category['items']) && is_array($category['items'])) {
+                    $itemCount = count($category['items']);
+                }
+            @endphp
+            whatLearnItemIndexes[{{ $categoryIndex }}] = {{ $itemCount }};
+        @endforeach
+    @elseif(isset($learn) && isset($learn['items']) && is_array($learn['items']) && count($learn['items']) > 0)
+        @foreach($learn['items'] as $categoryIndex => $category)
+            @php
+                $itemCount = 0;
+                if (is_array($category) && isset($category['items']) && is_array($category['items'])) {
+                    $itemCount = count($category['items']);
+                }
+            @endphp
+            whatLearnItemIndexes[{{ $categoryIndex }}] = {{ $itemCount }};
+        @endforeach
+    @endif
     let careerTagIndex = {{ count(old('chance.tags', (isset($chance) && isset($chance['tags']) && is_array($chance['tags'])) ? $chance['tags'] : [])) }};
     let careerJobIndex = {{ count(old('chance.job', (isset($chance) && isset($chance['job']) && is_array($chance['job'])) ? $chance['job'] : [])) }};
     let degreeValueItemIndex = {{ count(old('value.items', (isset($value) && isset($value['items']) && is_array($value['items'])) ? $value['items'] : [])) }};
@@ -1500,17 +1613,29 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="row mb15">
                         <div class="col-lg-12">
                             <div class="form-row">
-                                <h6>Danh sách bài <a href="javascript:void(0)" class="addWhatLearnItemBtn" data-category-index="${whatLearnCategoryIndex}" style="margin-left: 10px;"><i class="fa fa-plus"></i> Thêm bài</a></h6>
+                                <h6>
+                                    Danh sách bài 
+                                    <a href="javascript:void(0)" class="addWhatLearnItemBtn" data-category-index="${whatLearnCategoryIndex}" style="margin-left: 10px;"><i class="fa fa-plus"></i> Thêm bài</a>
+                                    <a href="javascript:void(0)" class="toggle-learn-items-btn" data-category-index="${whatLearnCategoryIndex}" style="margin-left: 10px; color: #1ab394;">
+                                        <i class="fa fa-chevron-down"></i> <span class="toggle-text">Thu gọn</span>
+                                    </a>
+                                </h6>
                             </div>
                         </div>
                     </div>
-                    <div class="what-learn-items-container" data-category-index="${whatLearnCategoryIndex}">
+                    <div class="what-learn-items-container sortable-items" data-category-index="${whatLearnCategoryIndex}" style="overflow: visible; max-height: none;">
                     </div>
                 </div>
             </div>
         `;
         container.insertAdjacentHTML('beforeend', categoryHtml);
         whatLearnItemIndexes[whatLearnCategoryIndex] = 0;
+        
+        // Khởi tạo sortable cho category mới
+        setTimeout(function() {
+            initSortableForCategory(whatLearnCategoryIndex);
+        }, 200);
+        
         whatLearnCategoryIndex++;
     });
 
@@ -1522,59 +1647,68 @@ document.addEventListener('DOMContentLoaded', function() {
             const categoryIndex = btn.getAttribute('data-category-index');
             const container = btn.closest('.what-learn-category').querySelector('.what-learn-items-container');
             
+            // Khởi tạo index nếu chưa có, hoặc tính lại dựa trên số items hiện có
             if (!whatLearnItemIndexes[categoryIndex]) {
-                whatLearnItemIndexes[categoryIndex] = 0;
+                const existingItems = container.querySelectorAll('.what-learn-item');
+                whatLearnItemIndexes[categoryIndex] = existingItems.length;
             }
             
             const itemIndex = whatLearnItemIndexes[categoryIndex];
             const itemHtml = `
-                <div class="what-learn-item mb10" data-category-index="${categoryIndex}" data-item-index="${itemIndex}">
-                    <div class="ibox" style="background: #f9f9f9; padding: 10px; border-radius: 3px; margin-left: 20px;">
-                        <div class="row mb10">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label class="control-label text-left">Hình ảnh</label>
-                                    <input 
-                                        type="text"
-                                        name="learn[items][${categoryIndex}][items][${itemIndex}][image]"
-                                        class="form-control upload-image"
-                                        placeholder="Chọn ảnh"
-                                        readonly
-                                    >
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row mb10">
+                <div class="what-learn-item mb10" data-category-index="${categoryIndex}" data-item-index="${itemIndex}" style="cursor: move;">
+                    <div class="ibox" style="background: #f9f9f9; padding: 10px; border-radius: 3px; margin-left: 20px; position: relative;">
+                        <div class="row mb10" style="cursor: pointer;" onclick="toggleLearnItemContent(this)">
                             <div class="col-lg-11">
                                 <div class="form-row">
-                                    <label class="control-label text-left">Tiêu đề</label>
+                                    <label class="control-label text-left">
+                                        <i class="fa fa-grip-vertical" style="color: #999; margin-right: 5px;"></i>
+                                        <i class="fa fa-chevron-down toggle-item-icon" style="color: #1ab394; margin-right: 5px;"></i>
+                                        Tên
+                                    </label>
                                     <input 
                                         type="text"
                                         name="learn[items][${categoryIndex}][items][${itemIndex}][name]"
-                                        class="form-control"
-                                        placeholder="Nhập tiêu đề"
+                                        class="form-control learn-item-name"
+                                        placeholder="Nhập tên"
+                                        onclick="event.stopPropagation();"
                                     >
                                 </div>
                             </div>
                             <div class="col-lg-1">
                                 <div class="form-row">
                                     <label class="control-label text-left">&nbsp;</label>
-                                    <button type="button" class="btn btn-danger btn-sm removeWhatLearnItemBtn" style="width: 100%;">
+                                    <button type="button" class="btn btn-danger btn-sm removeWhatLearnItemBtn" style="width: 100%;" onclick="event.stopPropagation();">
                                         <i class="fa fa-trash"></i>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-lg-12">
-                                <div class="form-row">
-                                    <label class="control-label text-left">Nội dung</label>
-                                    <textarea 
-                                        name="learn[items][${categoryIndex}][items][${itemIndex}][description]"
-                                        class="form-control"
-                                        rows="3"
-                                        placeholder="Nhập nội dung"
-                                    ></textarea>
+                        <div class="learn-item-content">
+                            <div class="row mb10">
+                                <div class="col-lg-12">
+                                    <div class="form-row">
+                                        <label class="control-label text-left">Hình ảnh</label>
+                                        <input 
+                                            type="text"
+                                            name="learn[items][${categoryIndex}][items][${itemIndex}][image]"
+                                            class="form-control upload-image"
+                                            placeholder="Chọn ảnh"
+                                            readonly
+                                        >
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <div class="form-row">
+                                        <label class="control-label text-left">Mô tả</label>
+                                        <textarea 
+                                            name="learn[items][${categoryIndex}][items][${itemIndex}][description]"
+                                            class="form-control"
+                                            rows="3"
+                                            placeholder="Nhập mô tả"
+                                        ></textarea>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1583,8 +1717,92 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             container.insertAdjacentHTML('beforeend', itemHtml);
             whatLearnItemIndexes[categoryIndex]++;
+            
+            // Khởi tạo lại sortable cho container này
+            setTimeout(function() {
+                initSortableForCategory(categoryIndex);
+            }, 100);
         }
     });
+    
+    // Function để toggle collapse/expand item
+    window.toggleLearnItemContent = function(element) {
+        const item = element.closest('.what-learn-item');
+        const content = item.querySelector('.learn-item-content');
+        const icon = element.querySelector('.toggle-item-icon');
+        
+        if (content) {
+            content.classList.toggle('collapsed');
+            item.classList.toggle('collapsed');
+            if (content.classList.contains('collapsed')) {
+                icon.classList.remove('fa-chevron-down');
+                icon.classList.add('fa-chevron-up');
+            } else {
+                icon.classList.remove('fa-chevron-up');
+                icon.classList.add('fa-chevron-down');
+            }
+        }
+    };
+    
+    // Function để khởi tạo sortable cho một category
+    function initSortableForCategory(categoryIndex) {
+        const container = document.querySelector(`.what-learn-items-container[data-category-index="${categoryIndex}"]`);
+        if (!container) return;
+        
+        // Kiểm tra jQuery UI sortable đã load chưa
+        if (typeof $ === 'undefined' || typeof $.fn.sortable === 'undefined') {
+            console.warn('jQuery UI sortable not loaded');
+            return;
+        }
+        
+        // Destroy sortable cũ nếu đã có
+        if ($(container).hasClass('ui-sortable')) {
+            $(container).sortable('destroy');
+        }
+        
+        // Khởi tạo sortable mới
+        $(container).sortable({
+            items: '.what-learn-item',
+            handle: '.fa-grip-vertical, .learn-item-name',
+            cursor: 'move',
+            opacity: 0.8,
+            tolerance: 'pointer',
+            axis: 'y',
+            placeholder: 'ui-state-highlight',
+            cancel: 'input, textarea, button',
+            update: function(event, ui) {
+                // Cập nhật lại index và name attribute sau khi sort
+                const categoryIdx = container.getAttribute('data-category-index');
+                const items = container.querySelectorAll('.what-learn-item');
+                items.forEach(function(item, newIndex) {
+                    item.setAttribute('data-item-index', newIndex);
+                    // Cập nhật tất cả input/textarea trong item
+                    const inputs = item.querySelectorAll('input, textarea');
+                    inputs.forEach(function(input) {
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            // Thay thế index cũ bằng index mới
+                            const newName = name.replace(
+                                /learn\[items\]\[(\d+)\]\[items\]\[(\d+)\]/,
+                                `learn[items][${categoryIdx}][items][${newIndex}]`
+                            );
+                            input.setAttribute('name', newName);
+                        }
+                    });
+                });
+            }
+        });
+    }
+    
+    // Khởi tạo sortable cho tất cả category khi page load
+    setTimeout(function() {
+        document.querySelectorAll('.what-learn-items-container').forEach(function(container) {
+            const categoryIndex = container.getAttribute('data-category-index');
+            if (categoryIndex) {
+                initSortableForCategory(categoryIndex);
+            }
+        });
+    }, 500);
 
     // Add career tag
     document.getElementById('addCareerTagBtn').addEventListener('click', function(e) {
@@ -1754,7 +1972,57 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         if (e.target.closest('.removeWhatLearnItemBtn')) {
             e.preventDefault();
-            e.target.closest('.what-learn-item').remove();
+            const item = e.target.closest('.what-learn-item');
+            const container = item.closest('.what-learn-items-container');
+            const categoryIndex = container ? container.getAttribute('data-category-index') : null;
+            
+            item.remove();
+            
+            // Cập nhật lại index và name attribute sau khi xóa
+            if (container && categoryIndex) {
+                const items = container.querySelectorAll('.what-learn-item');
+                items.forEach(function(remainingItem, newIndex) {
+                    remainingItem.setAttribute('data-item-index', newIndex);
+                    const inputs = remainingItem.querySelectorAll('input, textarea');
+                    inputs.forEach(function(input) {
+                        const name = input.getAttribute('name');
+                        if (name) {
+                            const newName = name.replace(
+                                /learn\[items\]\[(\d+)\]\[items\]\[(\d+)\]/,
+                                `learn[items][${categoryIndex}][items][${newIndex}]`
+                            );
+                            input.setAttribute('name', newName);
+                        }
+                    });
+                });
+                // Cập nhật whatLearnItemIndexes
+                whatLearnItemIndexes[categoryIndex] = items.length;
+            }
+        }
+        // Toggle learn items container
+        if (e.target.closest('.toggle-learn-items-btn')) {
+            e.preventDefault();
+            const btn = e.target.closest('.toggle-learn-items-btn');
+            const categoryIndex = btn.getAttribute('data-category-index');
+            const container = document.querySelector(`.what-learn-items-container[data-category-index="${categoryIndex}"]`);
+            const toggleText = btn.querySelector('.toggle-text');
+            const toggleIcon = btn.querySelector('i');
+            
+            if (container) {
+                if (container.classList.contains('collapsed')) {
+                    container.classList.remove('collapsed');
+                    toggleText.textContent = 'Thu gọn';
+                    toggleIcon.classList.remove('fa-chevron-up');
+                    toggleIcon.classList.add('fa-chevron-down');
+                    btn.classList.remove('collapsed');
+                } else {
+                    container.classList.add('collapsed');
+                    toggleText.textContent = 'Mở rộng';
+                    toggleIcon.classList.remove('fa-chevron-down');
+                    toggleIcon.classList.add('fa-chevron-up');
+                    btn.classList.add('collapsed');
+                }
+            }
         }
         if (e.target.closest('.removeCareerTagBtn')) {
             e.preventDefault();
@@ -1774,15 +2042,36 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    // Tắt phần Select2 cho event posts (đã tắt phần Events)
-    // setTimeout(function() {
-    //     if (typeof $.fn.select2 !== 'undefined' && $('.select2').length) {
-    //         $('.select2').select2({
-    //             placeholder: 'Chọn các bài viết',
-    //             allowClear: true
-    //         });
-    //     }
-    // }, 500);
+    // Initialize Select2 for event post catalogue
+    $(document).ready(function() {
+        setTimeout(function() {
+            var $select = $('#event_post_catalogue_id');
+            if ($select.length === 0) {
+                console.warn('Event post catalogue select not found');
+                return;
+            }
+            
+            if (typeof $.fn.select2 !== 'undefined') {
+                // Destroy select2 cũ nếu đã có
+                if ($select.hasClass('select2-hidden-accessible')) {
+                    try {
+                        $select.select2('destroy');
+                    } catch(e) {
+                        console.warn('Error destroying select2:', e);
+                    }
+                }
+                // Khởi tạo select2 mới
+                $select.select2({
+                    placeholder: 'Chọn chuyên mục',
+                    allowClear: true,
+                    width: '100%'
+                });
+                console.log('Select2 initialized for event post catalogue');
+            } else {
+                console.warn('Select2 library not loaded');
+            }
+        }, 1000);
+    });
 
     // Switchery đã được khởi tạo bởi library.js
     // Chỉ cần thêm event handler để cập nhật hidden input

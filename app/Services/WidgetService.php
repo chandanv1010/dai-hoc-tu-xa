@@ -730,8 +730,24 @@ class WidgetService extends BaseService
                 AND o.publish = 2 
                 AND o.deleted_at IS NULL
                 GROUP BY o.id, p.{$catalogueIdField}
-                ORDER BY o.order DESC, o.id DESC
             ";
+            
+            // Kiểm tra nếu là widget news-outstanding (PostCatalogue) thì orderBy theo created_at desc hoặc id desc
+            $isNewsOutstanding = false;
+            foreach ($widgets as $widget) {
+                if (isset($widget->keyword) && $widget->keyword === 'news-outstanding' && $catalogueModel === 'PostCatalogue') {
+                    $isNewsOutstanding = true;
+                    break;
+                }
+            }
+            
+            if ($isNewsOutstanding && $objectModel === 'post') {
+                // Cho tin tức nổi bật: sắp xếp theo created_at desc hoặc id desc để bài mới nhất hiển thị trước
+                $sql .= " ORDER BY o.created_at DESC, o.id DESC";
+            } else {
+                // Các widget khác: giữ nguyên orderBy theo order
+                $sql .= " ORDER BY o.order DESC, o.id DESC";
+            }
 
             // Query DB
             $rows = collect(DB::select($sql, [$language, $language]));

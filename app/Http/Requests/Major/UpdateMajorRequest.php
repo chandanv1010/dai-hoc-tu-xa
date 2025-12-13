@@ -61,6 +61,7 @@ class UpdateMajorRequest extends FormRequest
             'admission_type' => 'nullable|string|max:255',
             'degree_type' => 'nullable|string|max:255',
             'training_duration' => 'nullable|string|max:255',
+            'total_credits' => 'nullable|string|max:255',
             
             // Toàn Cảnh Ngành
             'overview_title' => 'nullable|string|max:255',

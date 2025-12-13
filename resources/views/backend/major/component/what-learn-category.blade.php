@@ -25,11 +25,17 @@
         <div class="row mb15">
             <div class="col-lg-12">
                 <div class="form-row">
-                    <h6>Danh sách bài <a href="javascript:void(0)" class="addWhatLearnItemBtn" data-category-index="{{ $categoryIndex }}" style="margin-left: 10px;"><i class="fa fa-plus"></i> Thêm bài</a></h6>
+                    <h6>
+                        Danh sách bài 
+                        <a href="javascript:void(0)" class="addWhatLearnItemBtn" data-category-index="{{ $categoryIndex }}" style="margin-left: 10px;"><i class="fa fa-plus"></i> Thêm bài</a>
+                        <a href="javascript:void(0)" class="toggle-learn-items-btn" data-category-index="{{ $categoryIndex }}" style="margin-left: 10px; color: #1ab394;">
+                            <i class="fa fa-chevron-down"></i> <span class="toggle-text">Thu gọn</span>
+                        </a>
+                    </h6>
                 </div>
             </div>
         </div>
-        <div class="what-learn-items-container" data-category-index="{{ $categoryIndex }}">
+        <div class="what-learn-items-container sortable-items" data-category-index="{{ $categoryIndex }}" style="overflow: visible; max-height: none;">
             @if(old("learn.items.{$categoryIndex}.items"))
                 @foreach(old("learn.items.{$categoryIndex}.items") as $itemIndex => $item)
                     @include('backend.major.component.what-learn-item', ['categoryIndex' => $categoryIndex, 'itemIndex' => $itemIndex, 'item' => $item])

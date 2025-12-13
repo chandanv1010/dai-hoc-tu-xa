@@ -8,6 +8,7 @@ use App\Services\MajorService;
 use App\Repositories\MajorRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\MajorCatalogueRepository;
+use App\Repositories\PostCatalogueRepository;
 use App\Http\Requests\Major\StoreMajorRequest;
 use App\Http\Requests\Major\UpdateMajorRequest;
 use App\Models\Language;
@@ -19,13 +20,15 @@ class MajorController extends Controller
     protected $majorRepository;
     protected $postRepository;
     protected $majorCatalogueRepository;
+    protected $postCatalogueRepository;
     protected $language;
 
     public function __construct(
         MajorService $majorService,
         MajorRepository $majorRepository,
         PostRepository $postRepository,
-        MajorCatalogueRepository $majorCatalogueRepository
+        MajorCatalogueRepository $majorCatalogueRepository,
+        PostCatalogueRepository $postCatalogueRepository
     ) {
         $this->middleware(function ($request, $next) {
             $locale = app()->getLocale();
@@ -38,6 +41,7 @@ class MajorController extends Controller
         $this->majorRepository = $majorRepository;
         $this->postRepository = $postRepository;
         $this->majorCatalogueRepository = $majorCatalogueRepository;
+        $this->postCatalogueRepository = $postCatalogueRepository;
     }
 
     public function index(Request $request)
@@ -72,12 +76,14 @@ class MajorController extends Controller
         $config['method'] = 'create';
         $posts = $this->postRepository->getAllByLanguage($this->language);
         $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
+        $postCatalogues = $this->postCatalogueRepository->getAllByLanguage($this->language);
         $template = 'backend.major.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'config',
             'posts',
             'majorCatalogues',
+            'postCatalogues',
         ));
     }
 
@@ -106,6 +112,8 @@ class MajorController extends Controller
         $config['method'] = 'edit';
         $posts = $this->postRepository->getAllByLanguage($this->language);
         $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
+        $postCatalogues = $this->postCatalogueRepository->getAllByLanguage($this->language);
+
         $template = 'backend.major.store';
         return view('backend.dashboard.layout', compact(
             'template',
@@ -113,6 +121,7 @@ class MajorController extends Controller
             'major',
             'posts',
             'majorCatalogues',
+            'postCatalogues',
         ));
     }
 

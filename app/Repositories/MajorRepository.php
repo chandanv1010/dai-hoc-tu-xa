@@ -121,15 +121,39 @@ class MajorRepository extends BaseRepository
             }]);
             
             // Đảm bảo pivot được cast đúng - decode JSON thủ công nếu cần
+            // event không phải JSON nữa, chỉ là số ID
             if ($major->languages && $major->languages->count() > 0) {
                 $pivot = $major->languages->first()->pivot;
-                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
                 foreach ($jsonFields as $field) {
                     if (isset($pivot->$field) && is_string($pivot->$field)) {
                         $decoded = json_decode($pivot->$field, true);
                         if (json_last_error() === JSON_ERROR_NONE) {
                             $pivot->$field = $decoded;
                         }
+                    }
+                }
+                // Xử lý event riêng - nếu là string JSON cũ thì convert sang số
+                if (isset($pivot->event) && is_string($pivot->event)) {
+                    $decoded = json_decode($pivot->event, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        // Tương thích ngược: nếu là array cũ có post_catalogue_id
+                        if (isset($decoded['post_catalogue_id'])) {
+                            $pivot->event = (int)$decoded['post_catalogue_id'];
+                        } else {
+                            $pivot->event = null;
+                        }
+                    } elseif (is_numeric($pivot->event)) {
+                        $pivot->event = (int)$pivot->event;
+                    } else {
+                        $pivot->event = null;
+                    }
+                } elseif (isset($pivot->event) && is_array($pivot->event)) {
+                    // Tương thích ngược: nếu là array cũ
+                    if (isset($pivot->event['post_catalogue_id'])) {
+                        $pivot->event = (int)$pivot->event['post_catalogue_id'];
+                    } else {
+                        $pivot->event = null;
                     }
                 }
             }
@@ -182,15 +206,39 @@ class MajorRepository extends BaseRepository
             }]);
             
             // Decode JSON fields nếu cần
+            // event không phải JSON nữa, chỉ là số ID
             if ($major->languages && $major->languages->count() > 0) {
                 $pivot = $major->languages->first()->pivot;
-                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
                 foreach ($jsonFields as $field) {
                     if (isset($pivot->$field) && is_string($pivot->$field)) {
                         $decoded = json_decode($pivot->$field, true);
                         if (json_last_error() === JSON_ERROR_NONE) {
                             $pivot->$field = $decoded;
                         }
+                    }
+                }
+                // Xử lý event riêng - nếu là string JSON cũ thì convert sang số
+                if (isset($pivot->event) && is_string($pivot->event)) {
+                    $decoded = json_decode($pivot->event, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        // Tương thích ngược: nếu là array cũ có post_catalogue_id
+                        if (isset($decoded['post_catalogue_id'])) {
+                            $pivot->event = (int)$decoded['post_catalogue_id'];
+                        } else {
+                            $pivot->event = null;
+                        }
+                    } elseif (is_numeric($pivot->event)) {
+                        $pivot->event = (int)$pivot->event;
+                    } else {
+                        $pivot->event = null;
+                    }
+                } elseif (isset($pivot->event) && is_array($pivot->event)) {
+                    // Tương thích ngược: nếu là array cũ
+                    if (isset($pivot->event['post_catalogue_id'])) {
+                        $pivot->event = (int)$pivot->event['post_catalogue_id'];
+                    } else {
+                        $pivot->event = null;
                     }
                 }
             }
@@ -393,15 +441,39 @@ class MajorRepository extends BaseRepository
             }]);
             
             // Decode JSON fields nếu cần
+            // event không phải JSON nữa, chỉ là số ID
             if ($major->languages && $major->languages->count() > 0) {
                 $pivot = $major->languages->first()->pivot;
-                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+                $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
                 foreach ($jsonFields as $field) {
                     if (isset($pivot->$field) && is_string($pivot->$field)) {
                         $decoded = json_decode($pivot->$field, true);
                         if (json_last_error() === JSON_ERROR_NONE) {
                             $pivot->$field = $decoded;
                         }
+                    }
+                }
+                // Xử lý event riêng - nếu là string JSON cũ thì convert sang số
+                if (isset($pivot->event) && is_string($pivot->event)) {
+                    $decoded = json_decode($pivot->event, true);
+                    if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
+                        // Tương thích ngược: nếu là array cũ có post_catalogue_id
+                        if (isset($decoded['post_catalogue_id'])) {
+                            $pivot->event = (int)$decoded['post_catalogue_id'];
+                        } else {
+                            $pivot->event = null;
+                        }
+                    } elseif (is_numeric($pivot->event)) {
+                        $pivot->event = (int)$pivot->event;
+                    } else {
+                        $pivot->event = null;
+                    }
+                } elseif (isset($pivot->event) && is_array($pivot->event)) {
+                    // Tương thích ngược: nếu là array cũ
+                    if (isset($pivot->event['post_catalogue_id'])) {
+                        $pivot->event = (int)$pivot->event['post_catalogue_id'];
+                    } else {
+                        $pivot->event = null;
                     }
                 }
             }

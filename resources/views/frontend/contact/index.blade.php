@@ -41,8 +41,8 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="email">Email <span class="required">*</span></label>
-                                <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com" required>
+                                <label for="email">Email</label>
+                                <input type="email" id="email" name="email" class="form-control" placeholder="email@example.com">
                             </div>
                             
                             <div class="form-group">
@@ -51,8 +51,8 @@
                             </div>
                             
                             <div class="form-group">
-                                <label for="content">Tiêu đề <span class="required">*</span></label>
-                                <input type="text" id="content" name="content" class="form-control" placeholder="Tôi cần hỗ trợ về..." required>
+                                <label for="content">Tiêu đề</label>
+                                <input type="text" id="content" name="content" class="form-control" placeholder="Tôi cần hỗ trợ về...">
                             </div>
                             
                             <div class="form-group">
@@ -166,18 +166,38 @@
                         'Accept': 'application/json'
                     }
                 })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => Promise.reject(err));
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.message === 'success') {
-                        alert('Gửi liên hệ thành công! Chúng tôi sẽ liên hệ lại với bạn trong thời gian sớm nhất.');
-                        form.reset();
+                        // Redirect sang trang cảm ơn
+                        window.location.href = '{{ route("contact.thankyou") }}';
                     } else {
                         alert('Có lỗi xảy ra. Vui lòng thử lại.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    if (error.errors) {
+                        // Hiển thị lỗi validation
+                        let errorMessages = [];
+                        if (error.errors.name) {
+                            errorMessages.push(error.errors.name[0]);
+                        }
+                        if (error.errors.phone) {
+                            errorMessages.push(error.errors.phone[0]);
+                        }
+                        if (error.errors.email) {
+                            errorMessages.push(error.errors.email[0]);
+                        }
+                        alert(errorMessages.length > 0 ? errorMessages.join('\n') : 'Vui lòng kiểm tra lại thông tin đã nhập.');
+                    } else {
+                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    }
                 })
                 .finally(() => {
                     submitBtn.disabled = false;

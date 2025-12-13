@@ -61,6 +61,7 @@ class Major extends Model
                 'admission_type',
                 'degree_type',
                 'training_duration',
+                'total_credits',
                 'canonical',
                 'meta_title',
                 'meta_keyword',

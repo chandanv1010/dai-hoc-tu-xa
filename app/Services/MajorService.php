@@ -128,38 +128,130 @@ class MajorService extends BaseService
             $languagePayload = null;
 
             if ($newMajor->id > 0) {
-                // Copy dữ liệu language
+                // Copy dữ liệu language - copy TẤT CẢ các trường từ pivot
                 $pivot = $originalMajor->languages->first()->pivot ?? null;
                 if ($pivot) {
-                    $languagePayload = [];
+                    // Copy trực tiếp vào updateData để tránh mất dữ liệu qua formatLanguagePayload
+                    $updateData = [];
+                    
+                    // Copy tất cả các trường text từ payloadLanguage
                     foreach ($this->payloadLanguage() as $field) {
-                        $languagePayload[$field] = $pivot->$field ?? '';
+                        $value = $pivot->$field ?? null;
+                        if ($field === 'canonical') {
+                            // Xử lý canonical với timestamp
+                            $timestamp = time();
+                            $originalCanonical = $value ?? '';
+                            $updateData[$field] = $originalCanonical . '-' . $timestamp;
+                        } elseif ($field === 'name') {
+                            // Thêm "- clone" vào tiêu đề
+                            $updateData[$field] = ($value ?? '') . ' - clone';
+                        } else {
+                            // Giữ nguyên giá trị, kể cả null - không convert null thành empty string
+                            $updateData[$field] = $value;
+                        }
                     }
                     
-                    // Thêm "- clone" vào tiêu đề
-                    $originalName = $languagePayload['name'] ?? '';
-                    $languagePayload['name'] = $originalName . ' - clone';
-                    
-                    // Xử lý canonical với timestamp
-                    $timestamp = time();
-                    $originalCanonical = $languagePayload['canonical'] ?? '';
-                    $languagePayload['canonical'] = $originalCanonical . '-' . $timestamp;
-                    
-                    // Copy các trường JSON
-                    $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+                    // Copy các trường JSON (decode nếu là string, giữ nguyên nếu là array)
+                    $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
                     foreach ($jsonFields as $field) {
-                        $languagePayload[$field] = $pivot->$field ?? [];
+                        $value = $pivot->$field ?? null;
+                        if ($value !== null) {
+                            // Nếu là string thì decode, nếu là array thì dùng trực tiếp
+                            if (is_string($value)) {
+                                $decoded = json_decode($value, true);
+                                $jsonValue = is_array($decoded) ? $decoded : [];
+                            } elseif (is_array($value)) {
+                                $jsonValue = $value;
+                            } else {
+                                $jsonValue = [];
+                            }
+                            
+                            // Dùng DB::raw() với CAST AS JSON để tránh double encoding
+                            if (!empty($jsonValue)) {
+                                $jsonString = json_encode($jsonValue, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                $updateData[$field] = DB::raw("CAST(" . DB::getPdo()->quote($jsonString) . " AS JSON)");
+                            } else {
+                                $updateData[$field] = null;
+                            }
+                        } else {
+                            $updateData[$field] = null;
+                        }
                     }
                     
-                    // Tạo Request object với dữ liệu
-                    $request = \Illuminate\Http\Request::create('', 'POST', $languagePayload);
-                    $this->updateLanguageForMajor($newMajor, $request, $languageId);
+                    // Copy event - xử lý riêng với tương thích ngược
+                    // Kiểm tra kiểu cột event trong database (JSON hoặc integer)
+                    $eventColumnType = 'json'; // Mặc định là json
+                    try {
+                        $columnInfo = DB::select("SELECT DATA_TYPE FROM INFORMATION_SCHEMA.COLUMNS 
+                            WHERE TABLE_SCHEMA = DATABASE() 
+                            AND TABLE_NAME = 'major_language' 
+                            AND COLUMN_NAME = 'event'");
+                        if (!empty($columnInfo)) {
+                            $eventColumnType = strtolower($columnInfo[0]->DATA_TYPE ?? 'json');
+                        }
+                    } catch (\Exception $e) {
+                        // Nếu không kiểm tra được, mặc định là json
+                        $eventColumnType = 'json';
+                    }
+                    
+                    $eventValue = $pivot->event ?? null;
+                    $finalEventValue = null;
+                    
+                    if ($eventValue !== null) {
+                        // Lấy số ID từ các định dạng khác nhau
+                        $eventId = null;
+                        if (is_numeric($eventValue)) {
+                            $eventId = (int)$eventValue;
+                        } elseif (is_string($eventValue)) {
+                            // Xử lý trường hợp cũ (JSON string) - tương thích ngược
+                            $decoded = json_decode($eventValue, true);
+                            if (is_array($decoded) && isset($decoded['post_catalogue_id'])) {
+                                $eventId = (int)$decoded['post_catalogue_id'];
+                            } elseif (is_numeric($eventValue)) {
+                                $eventId = (int)$eventValue;
+                            }
+                        } elseif (is_array($eventValue) && isset($eventValue['post_catalogue_id'])) {
+                            // Xử lý trường hợp cũ (JSON array) - tương thích ngược
+                            $eventId = (int)$eventValue['post_catalogue_id'];
+                        }
+                        
+                        // Format theo kiểu cột trong database
+                        if ($eventId !== null && $eventId > 0) {
+                            if ($eventColumnType === 'json') {
+                                // Nếu cột vẫn là JSON (chưa chạy migration), format thành JSON
+                                $jsonString = json_encode(['post_catalogue_id' => $eventId], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+                                $updateData['event'] = DB::raw("CAST(" . DB::getPdo()->quote($jsonString) . " AS JSON)");
+                            } else {
+                                // Nếu cột đã là integer (đã chạy migration), insert số trực tiếp
+                                $updateData['event'] = $eventId;
+                            }
+                        } else {
+                            $updateData['event'] = null;
+                        }
+                    } else {
+                        $updateData['event'] = null;
+                    }
+                    
+                    // Lưu trực tiếp vào database
+                    DB::table('major_language')->updateOrInsert(
+                        [
+                            'major_id' => $newMajor->id,
+                            'language_id' => $languageId
+                        ],
+                        array_merge($updateData, [
+                            'updated_at' => now(),
+                            'created_at' => now()
+                        ])
+                    );
+                    
+                    // Lưu lại canonical để tạo router
+                    $canonical = $updateData['canonical'] ?? null;
                 }
 
                 // Tạo router mới với canonical mới
-                if ($languagePayload && isset($languagePayload['canonical'])) {
+                if (isset($canonical) && $canonical) {
                     $routerRequest = \Illuminate\Http\Request::create('', 'POST', [
-                        'canonical' => $languagePayload['canonical'],
+                        'canonical' => $canonical,
                     ]);
                     $this->createRouter($newMajor, $routerRequest, $this->controllerName, $languageId);
                 }
@@ -259,10 +351,14 @@ class MajorService extends BaseService
         // dd($payload);
         
         // Các trường JSON cần json_encode và dùng DB::raw() để tránh double encoding
-        $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback', 'event'];
+        // Event không phải JSON nữa, chỉ là số ID - lưu trực tiếp không CAST
+        $jsonFields = ['feature', 'target', 'address', 'overview', 'who', 'priority', 'learn', 'chance', 'school', 'value', 'feedback'];
         $updateData = [];
         foreach ($payload as $key => $value) {
-            if (in_array($key, $jsonFields) && is_array($value)) {
+            if ($key === 'event') {
+                // Event: lưu trực tiếp là số ID (hoặc null) - KHÔNG CAST AS JSON
+                $updateData[$key] = is_numeric($value) && $value > 0 ? (int)$value : null;
+            } elseif (in_array($key, $jsonFields) && is_array($value)) {
                 // Dùng DB::raw() với CAST AS JSON để tránh double encoding
                 $jsonString = json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
                 $updateData[$key] = DB::raw("CAST(" . DB::getPdo()->quote($jsonString) . " AS JSON)");
@@ -357,8 +453,30 @@ class MajorService extends BaseService
             // Lấy items (các key số hoặc key 'items')
             $learnItems = [];
             if (isset($learnData['items']) && is_array($learnData['items'])) {
-                $learnItems = $learnData['items'];
+                // Xử lý từng category trong items
+                foreach ($learnData['items'] as $categoryKey => $category) {
+                    if (is_array($category)) {
+                        $categoryFormatted = [];
+                        // Lấy name của category
+                        if (isset($category['name'])) {
+                            $categoryFormatted['name'] = $category['name'];
+                        }
+                        // Lấy items trong category (không giới hạn số lượng)
+                        if (isset($category['items']) && is_array($category['items'])) {
+                            $categoryFormatted['items'] = [];
+                            foreach ($category['items'] as $itemKey => $item) {
+                                if (is_array($item) && isset($item['name'])) {
+                                    $categoryFormatted['items'][] = $item;
+                                }
+                            }
+                        }
+                        if (!empty($categoryFormatted['name'])) {
+                            $learnItems[] = $categoryFormatted;
+                        }
+                    }
+                }
             } else {
+                // Fallback: nếu không có cấu trúc items thì lấy trực tiếp
                 foreach ($learnData as $key => $value) {
                     if (is_numeric($key) && is_array($value)) {
                         $learnItems[] = $value;
@@ -374,7 +492,18 @@ class MajorService extends BaseService
         $payload['school'] = $request->input('school', []);
         $payload['value'] = $request->input('value', []);
         $payload['feedback'] = $request->input('feedback', []);
-        $payload['event'] = $request->input('event', []);
+        // Format event data: event giờ là số ID (post_catalogue_id), không phải JSON array nữa
+        $eventInput = $request->input('event');
+        if (is_numeric($eventInput) && $eventInput > 0) {
+            // Nếu là số trực tiếp
+            $payload['event'] = (int)$eventInput;
+        } elseif (is_array($eventInput) && isset($eventInput['post_catalogue_id']) && is_numeric($eventInput['post_catalogue_id']) && $eventInput['post_catalogue_id'] > 0) {
+            // Tương thích ngược: nếu là array có post_catalogue_id
+            $payload['event'] = (int)$eventInput['post_catalogue_id'];
+        } else {
+            // Mặc định là null
+            $payload['event'] = null;
+        }
         
         return $payload;
     }
@@ -438,6 +567,7 @@ class MajorService extends BaseService
             'admission_type',
             'degree_type',
             'training_duration',
+            'total_credits',
             'meta_title',
             'meta_keyword',
             'meta_description',

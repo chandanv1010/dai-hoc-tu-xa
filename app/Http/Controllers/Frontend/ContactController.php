@@ -67,9 +67,25 @@ class ContactController extends FrontendController
     }
 
     public function saveContact(Request $request){
+        // Validation: chỉ bắt buộc name và phone
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:20',
+            'email' => 'nullable|email|max:255',
+            'content' => 'nullable|string|max:255',
+            'description' => 'nullable|string',
+            'address' => 'nullable|string|max:255',
+            'message' => 'nullable|string',
+            'type' => 'nullable|string',
+        ], [
+            'name.required' => 'Vui lòng nhập họ tên.',
+            'phone.required' => 'Vui lòng nhập số điện thoại.',
+            'email.email' => 'Email không hợp lệ.',
+        ]);
+        
         try {
             DB::beginTransaction();
-            $payload = $request->only(['email', 'name', 'phone', 'address', 'message', 'type']);
+            $payload = $request->only(['email', 'name', 'phone', 'address', 'message', 'content', 'description', 'type']);
             Contact::create($payload);
             DB::commit();
             

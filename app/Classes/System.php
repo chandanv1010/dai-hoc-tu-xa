@@ -46,6 +46,25 @@ class System{
             ]
         ];
 
+        $data['statistics'] = [
+            'label' => 'Thống kê trang chủ',
+            'description' => 'Cài đặt các thống kê hiển thị trên trang chủ',
+            'value' => [
+                'stat_1_number' => ['type' => 'text', 'label' => 'Số lượng - Trường Đào Tạo Từ Xa'],
+                'stat_1_label' => ['type' => 'text', 'label' => 'Nhãn - Trường Đào Tạo Từ Xa'],
+                'stat_2_number' => ['type' => 'text', 'label' => 'Số lượng - Ngành Học'],
+                'stat_2_label' => ['type' => 'text', 'label' => 'Nhãn - Ngành Học'],
+                'stat_3_number' => ['type' => 'text', 'label' => 'Số lượng - Học Viên Theo Học'],
+                'stat_3_label' => ['type' => 'text', 'label' => 'Nhãn - Học Viên Theo Học'],
+                'stat_4_number' => ['type' => 'text', 'label' => 'Số lượng - Khóa Khai giảng'],
+                'stat_4_label' => ['type' => 'text', 'label' => 'Nhãn - Khóa Khai giảng'],
+                'stat_5_number' => ['type' => 'text', 'label' => 'Số lượng - Học Viên Hài Lòng (%)'],
+                'stat_5_label' => ['type' => 'text', 'label' => 'Nhãn - Học Viên Hài Lòng'],
+                'stat_6_number' => ['type' => 'text', 'label' => 'Số lượng - Có việc sau tốt nghiệp (%)'],
+                'stat_6_label' => ['type' => 'text', 'label' => 'Nhãn - Có việc sau tốt nghiệp'],
+            ]
+        ];
+
         $data['contact'] = [
             'label' => 'Thông tin liên hệ',
             'description' => 'Cài đặt thông tin liên hệ của website ví dụ: Địa chỉ công ty, Văn phòng giao dịch, Hotline, Bản đồ, vv...',
@@ -124,6 +143,16 @@ class System{
             ]
         ];
 
+        $data['text'] = [
+            'label' => 'Cấu hình Trang Liên Hệ',
+            'description' => '',
+            'value' => [
+                '12' => ['type' => 'textarea', 'label' => 'Mô tả Contact'],
+            ]
+        ];
+
+
+
         $data['social'] = [
             'label' => 'Cấu hình Mạng xã hội dành cho trang chủ',
             'description' => 'Cài đặt đầy đủ thông tin về Mạng xã hội của trang chủ website. Bao gồm tiêu đề Mạng xã hội, Từ Khóa SEO, Mô Tả SEO, Meta images',
@@ -152,24 +181,7 @@ class System{
         ];
 
 
-        $data['statistics'] = [
-            'label' => 'Thống kê trang chủ',
-            'description' => 'Cài đặt các thống kê hiển thị trên trang chủ',
-            'value' => [
-                'stat_1_number' => ['type' => 'text', 'label' => 'Số lượng - Trường Đào Tạo Từ Xa'],
-                'stat_1_label' => ['type' => 'text', 'label' => 'Nhãn - Trường Đào Tạo Từ Xa'],
-                'stat_2_number' => ['type' => 'text', 'label' => 'Số lượng - Ngành Học'],
-                'stat_2_label' => ['type' => 'text', 'label' => 'Nhãn - Ngành Học'],
-                'stat_3_number' => ['type' => 'text', 'label' => 'Số lượng - Học Viên Theo Học'],
-                'stat_3_label' => ['type' => 'text', 'label' => 'Nhãn - Học Viên Theo Học'],
-                'stat_4_number' => ['type' => 'text', 'label' => 'Số lượng - Khóa Khai giảng'],
-                'stat_4_label' => ['type' => 'text', 'label' => 'Nhãn - Khóa Khai giảng'],
-                'stat_5_number' => ['type' => 'text', 'label' => 'Số lượng - Học Viên Hài Lòng (%)'],
-                'stat_5_label' => ['type' => 'text', 'label' => 'Nhãn - Học Viên Hài Lòng'],
-                'stat_6_number' => ['type' => 'text', 'label' => 'Số lượng - Có việc sau tốt nghiệp (%)'],
-                'stat_6_label' => ['type' => 'text', 'label' => 'Nhãn - Có việc sau tốt nghiệp'],
-            ]
-        ];
+       
        
         return $data;
     }

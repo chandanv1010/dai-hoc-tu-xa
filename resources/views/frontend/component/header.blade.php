@@ -191,7 +191,7 @@
                     <a href="." title="{{ $system['seo_meta_title'] }}">
                         <img src="{{ $system['homepage_logo'] }}" alt="Mobile Logo">
                     </a>
-                    <form action="tim-kiem" class="search">
+                    <form action="{{ write_url('tim-kiem') }}" method="GET" class="search">
                         <input type="text" name="keyword" placeholder="Tìm kiếm">
                         <button type="submit" class="btn-search">
                             <img src="/frontend/resources/img/search.svg" alt="">

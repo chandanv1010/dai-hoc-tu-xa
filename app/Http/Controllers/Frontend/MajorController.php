@@ -75,12 +75,30 @@ class MajorController extends FrontendController
             }
         }
 
-        // Decode event từ JSON và lấy posts
+        // Lấy event (post_catalogue_id) và query posts
         $eventPosts = collect();
         if ($pivot && isset($pivot->event)) {
-            $eventIds = is_array($pivot->event) ? $pivot->event : json_decode($pivot->event, true);
-            if (is_array($eventIds) && !empty($eventIds)) {
-                // Lấy posts theo IDs
+            $eventValue = $pivot->event;
+            $postCatalogueId = null;
+            
+            // Event giờ lưu trực tiếp là số ID, không phải JSON
+            if (is_numeric($eventValue)) {
+                $postCatalogueId = (int)$eventValue;
+            } elseif (is_string($eventValue)) {
+                // Xử lý trường hợp cũ (JSON string) - tương thích ngược
+                $decoded = json_decode($eventValue, true);
+                if (is_array($decoded) && isset($decoded['post_catalogue_id'])) {
+                    $postCatalogueId = (int)$decoded['post_catalogue_id'];
+                } elseif (is_numeric($eventValue)) {
+                    $postCatalogueId = (int)$eventValue;
+                }
+            } elseif (is_array($eventValue) && isset($eventValue['post_catalogue_id'])) {
+                // Xử lý trường hợp cũ (JSON array) - tương thích ngược
+                $postCatalogueId = (int)$eventValue['post_catalogue_id'];
+            }
+            
+            // Lấy tất cả posts trong post_catalogue được chọn
+            if ($postCatalogueId) {
                 $eventPosts = Post::select([
                         'posts.id',
                         'posts.post_catalogue_id',
@@ -91,10 +109,11 @@ class MajorController extends FrontendController
                         'tb2.canonical',
                     ])
                     ->join('post_language as tb2', 'tb2.post_id', '=', 'posts.id')
+                    ->join('post_catalogue_post as tb3', 'posts.id', '=', 'tb3.post_id')
                     ->where('tb2.language_id', '=', $this->language)
-                    ->whereIn('posts.id', $eventIds)
+                    ->where('tb3.post_catalogue_id', '=', $postCatalogueId)
                     ->where('posts.publish', '=', 2)
-                    ->orderByRaw('FIELD(posts.id, ' . implode(',', $eventIds) . ')')
+                    ->orderBy('posts.id', 'desc')
                     ->get();
             }
         }
@@ -121,8 +140,12 @@ class MajorController extends FrontendController
     {
         return [
             'language' => $this->language,
-            'js' => [],
-            'css' => []
+            'js' => [
+                'frontend/resources/library/js/swiper.min.js',
+            ],
+            'css' => [
+                'frontend/resources/library/css/swiper.min.css',
+            ],
         ];
     }
 }

@@ -7,6 +7,11 @@
         $canonical = write_url($pivot->canonical ?? '');
     @endphp
 
+    {{-- Hidden H1 for SEO - Tên trường --}}
+    @if($name)
+        <h1 style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">{{ $name }}</h1>
+    @endif
+
     {{-- Khối Slide từ Album - PC và Mobile --}}
     @if(isset($album) && !empty($album) && isset($album[0]) && !empty($album[0]))
         @php
