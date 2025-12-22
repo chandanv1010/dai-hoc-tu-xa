@@ -194,7 +194,7 @@ class MajorRepository extends BaseRepository
         ->whereNull('majors.deleted_at')
         ->whereNotNull('ml.name') // Đảm bảo có tên
         ->orderBy('majors.id', 'asc')
-        ->limit($limit)
+        // ->limit($limit)
         ->get();
 
         // Load languages relationship cho từng major
@@ -367,11 +367,22 @@ class MajorRepository extends BaseRepository
         }
 
         // Filter theo major_catalogue_id (nhóm ngành)
+        // Filter theo major_catalogue_id (nhóm ngành)
         if ($request->has('catalogue_id')) {
-            $catalogueIds = is_array($request->catalogue_id) ? $request->catalogue_id : [$request->catalogue_id];
-            $catalogueIds = array_filter($catalogueIds);
+            $catalogueIds = $request->input('catalogue_id');
+            // Đảm bảo là array
+            if (!is_array($catalogueIds)) {
+                $catalogueIds = [$catalogueIds];
+            }
+            // Filter giá trị rỗng
+            $catalogueIds = array_filter($catalogueIds, function($value) {
+                return !is_null($value) && $value !== '';
+            });
+            
             if (!empty($catalogueIds)) {
-                $query->whereIn('majors.major_catalogue_id', $catalogueIds);
+                $query->where(function($q) use ($catalogueIds) {
+                    $q->whereIn('majors.major_catalogue_id', $catalogueIds);
+                });
             }
         }
         

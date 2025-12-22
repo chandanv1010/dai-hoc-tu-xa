@@ -32,7 +32,7 @@
                                     class="input-checkbox filtering filterCatalogue"
                                     {{ $isChecked ? 'checked' : '' }}
                                 >
-                                <label for="catalogue-{{ $catalogue->id }}">{{ $catalogueName }}</label>
+                                <label for="catalogue-{{ $catalogue->id }}">{{ $catalogueName }} ({{ $catalogue->majors_count }})</label>
                             </div>
                         @endif
                     @endforeach
@@ -59,7 +59,7 @@
                                             class="input-checkbox filtering filterCatalogue"
                                             {{ $isChecked ? 'checked' : '' }}
                                         >
-                                        <label for="catalogue-hidden-{{ $catalogue->id }}">{{ $catalogueName }}</label>
+                                        <label for="catalogue-hidden-{{ $catalogue->id }}">{{ $catalogueName }} ({{ $catalogue->majors_count }})</label>
                                     </div>
                                 @endif
                             @endforeach

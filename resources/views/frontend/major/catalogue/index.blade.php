@@ -1,5 +1,40 @@
 @extends('frontend.homepage.layout')
 @section('content')
+    <style>
+        .major-catalogue-pagination .pagination {
+            justify-content: center;
+        }
+        
+        .major-catalogue-pagination .page-item .page-link {
+            color: #333;
+            border: 1px solid #dee2e6;
+            margin: 0 5px;
+            border-radius: 4px;
+            padding: 8px 16px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .major-catalogue-pagination .page-item .page-link:hover {
+            color: #008DC2;
+            background-color: #f8f9fa;
+            border-color: #008DC2;
+        }
+
+        .major-catalogue-pagination .page-item.active .page-link {
+            background-color: #008DC2 !important;
+            border-color: #008DC2 !important;
+            color: #fff !important;
+        }
+        
+        .major-catalogue-pagination .page-item.disabled .page-link {
+            color: #6c757d;
+            pointer-events: none;
+            cursor: auto;
+            background-color: #fff;
+            border-color: #dee2e6;
+        }
+    </style>
     <!-- Breadcrumb Section -->
     <div class="page-breadcrumb-large">
         <div class="breadcrumb-overlay"></div>
@@ -29,8 +64,64 @@
 
                             <!-- Pagination -->
                             @if($majors->hasPages())
-                                <div class="major-catalogue-pagination" style="margin-top: 40px; text-align: center;">
-                                    {{ $majors->links('pagination::bootstrap-4') }}
+                                <div class="major-catalogue-pagination" style="margin-top: 40px; margin-bottom: 40px; text-align: center;">
+                                    <ul class="pagination">
+                                        @php
+                                            $queryParams = request()->except('page');
+                                        @endphp
+
+                                        {{-- Previous Page Link --}}
+                                        @if ($majors->onFirstPage())
+                                            <li class="page-item disabled" aria-disabled="true">
+                                                <span class="page-link" aria-hidden="true">&lsaquo;</span>
+                                            </li>
+                                        @else
+                                            @php
+                                                $prevPage = $majors->currentPage() - 1;
+                                                $prevUrl = $prevPage == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $prevPage]);
+                                                if (!empty($queryParams)) {
+                                                    $prevUrl .= '?' . http_build_query($queryParams);
+                                                }
+                                            @endphp
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $prevUrl }}" rel="prev" aria-label="@lang('pagination.previous')">&lsaquo;</a>
+                                            </li>
+                                        @endif
+
+                                        {{-- Pagination Elements --}}
+                                        @foreach ($majors->getUrlRange(1, $majors->lastPage()) as $page => $url)
+                                            @php
+                                                $pageUrl = $page == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $page]);
+                                                if (!empty($queryParams)) {
+                                                    $pageUrl .= '?' . http_build_query($queryParams);
+                                                }
+                                            @endphp
+                                            @if ($page == $majors->currentPage())
+                                                <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
+                                            @else
+                                                <li class="page-item">
+                                                    <a class="page-link" href="{{ $pageUrl }}">{{ $page }}</a>
+                                                </li>
+                                            @endif
+                                        @endforeach
+
+                                        {{-- Next Page Link --}}
+                                        @if ($majors->hasMorePages())
+                                            @php
+                                                $nextUrl = route('major.catalogue.page', ['page' => $majors->currentPage() + 1]);
+                                                if (!empty($queryParams)) {
+                                                    $nextUrl .= '?' . http_build_query($queryParams);
+                                                }
+                                            @endphp
+                                            <li class="page-item">
+                                                <a class="page-link" href="{{ $nextUrl }}" rel="next" aria-label="@lang('pagination.next')">&rsaquo;</a>
+                                            </li>
+                                        @else
+                                            <li class="page-item disabled" aria-disabled="true">
+                                                <span class="page-link" aria-hidden="true">&rsaquo;</span>
+                                            </li>
+                                        @endif
+                                    </ul>
                                 </div>
                             @endif
                         @else

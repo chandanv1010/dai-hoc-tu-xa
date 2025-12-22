@@ -25,6 +25,8 @@ class System{
                 ],
                 'homepage_download' => ['type' => 'images', 'label' => 'File tải lộ trình học', 'title' => 'Click vào ô phía dưới để tải file'],
                 'enrollment_text' => ['type' => 'text', 'label' => 'Text thông báo tuyển sinh (Header)'],
+                'why_distance_learning_footer_title' => ['type' => 'text', 'label' => 'Tại sao học từ xa - Tiêu đề Footer'],
+                'why_distance_learning_footer_subtitle' => ['type' => 'text', 'label' => 'Tại sao học từ xa - Mô tả Footer'],
                 'value-bring_name' => ['type' => 'text', 'label' => 'Giá trị bằng đại học - Tiêu đề'],
                 'value-bring_description' => ['type' => 'editor', 'label' => 'Giá trị bằng đại học - Mô tả'],
                 'value-bring_video' => ['type' => 'textarea', 'label' => 'Giá trị bằng đại học - Video (URL hoặc embed code)'],

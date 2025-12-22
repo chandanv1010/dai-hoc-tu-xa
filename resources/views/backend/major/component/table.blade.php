@@ -21,7 +21,9 @@
                 </td>
                
                 <td>
-                    {{ $major->name }}
+                    <a href="{{ route('router.index', ['canonical' => $major->canonical]) }}" target="_blank">
+                        {{ $major->name }}
+                    </a>
                 </td>
                 @include('backend.dashboard.component.languageTd', ['model' => $major, 'modeling' => 'Major'])
                 <td>

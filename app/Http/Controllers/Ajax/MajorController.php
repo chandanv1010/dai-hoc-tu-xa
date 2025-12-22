@@ -106,10 +106,59 @@ class MajorController extends Controller
             return '';
         }
         
-        $paginationView = view('pagination::bootstrap-4', ['paginator' => $majors])->render();
+        $html = '<div class="major-catalogue-pagination" style="margin-top: 40px; margin-bottom: 40px; text-align: center;">';
+        $html .= '<ul class="pagination">';
         
-        $html = '<div class="major-catalogue-pagination" style="margin-top: 40px; text-align: center;">';
-        $html .= $paginationView;
+        // Get current query parameters, exclude 'page'
+        $queryParams = request()->except('page');
+        
+        // Previous Page Link
+        if ($majors->onFirstPage()) {
+            $html .= '<li class="page-item disabled" aria-disabled="true"><span class="page-link" aria-hidden="true">&lsaquo;</span></li>';
+        } else {
+            $prevParams = array_merge($queryParams, ($majors->currentPage() - 1) == 1 ? [] : ['page' => $majors->currentPage() - 1]);
+            $prevRoute = ($majors->currentPage() - 1) == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $majors->currentPage() - 1]);
+            $prevUrl = $prevRoute . (empty($queryParams) ? '' : '?' . http_build_query($queryParams));
+             
+             // For simplicity, let's rebuilt the standard way or use standard route generation? 
+             // Actually, if page > 1, we use route param {page}. But for query string filters, we must append them manually.
+             // Route parameters are different from Query parameters.
+             
+             $prevPage = $majors->currentPage() - 1;
+             $prevUrl = $prevPage == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $prevPage]);
+             if (!empty($queryParams)) {
+                 $prevUrl .= '?' . http_build_query($queryParams);
+             }
+
+            $html .= '<li class="page-item"><a class="page-link" href="' . $prevUrl . '" rel="prev" aria-label="Previous">&lsaquo;</a></li>';
+        }
+        
+        // Pagination Elements
+        foreach ($majors->getUrlRange(1, $majors->lastPage()) as $page => $url) {
+            $pageUrl = $page == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $page]);
+            if (!empty($queryParams)) {
+                $pageUrl .= '?' . http_build_query($queryParams);
+            }
+            
+            if ($page == $majors->currentPage()) {
+                $html .= '<li class="page-item active" aria-current="page"><span class="page-link">' . $page . '</span></li>';
+            } else {
+                $html .= '<li class="page-item"><a class="page-link" href="' . $pageUrl . '">' . $page . '</a></li>';
+            }
+        }
+        
+        // Next Page Link
+        if ($majors->hasMorePages()) {
+            $nextUrl = route('major.catalogue.page', ['page' => $majors->currentPage() + 1]);
+            if (!empty($queryParams)) {
+                $nextUrl .= '?' . http_build_query($queryParams);
+            }
+            $html .= '<li class="page-item"><a class="page-link" href="' . $nextUrl . '" rel="next" aria-label="Next">&rsaquo;</a></li>';
+        } else {
+            $html .= '<li class="page-item disabled" aria-disabled="true"><span class="page-link" aria-hidden="true">&rsaquo;</span></li>';
+        }
+        
+        $html .= '</ul>';
         $html .= '</div>';
         
         return $html;

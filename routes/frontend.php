@@ -30,7 +30,7 @@ Route::post('contact/save-consultation', [FeContactController::class, 'saveConsu
 Route::get('cac-truong-dao-tao-tu-xa.html', [App\Http\Controllers\Frontend\School\SchoolCatalogueController::class, 'index'])->name('school.catalogue.index');
 Route::get('cac-truong-dao-tao-tu-xa/trang-{page}.html', [App\Http\Controllers\Frontend\School\SchoolCatalogueController::class, 'index'])->name('school.catalogue.page')->where('page', '[0-9]+');
 
-Route::get('cac-nganh-dao-tao-tu-xa.html', [App\Http\Controllers\Frontend\Major\MajorCatalogueController::class, 'index'])->name('major.catalogue.index');
+Route::get('cac-nganh-dao-tao-tu-xa.html', [App\Http\Controllers\Frontend\Major\MajorCatalogueController::class, 'index'])->name('fe.major.catalogue.index');
 Route::get('cac-nganh-dao-tao-tu-xa/trang-{page}.html', [App\Http\Controllers\Frontend\Major\MajorCatalogueController::class, 'index'])->name('major.catalogue.page')->where('page', '[0-9]+');
 
 Route::get('giao-vien'.config('apps.general.suffix'), [FeLecturerController::class, 'allLecturer'])->name('lecturer.allLecturer');

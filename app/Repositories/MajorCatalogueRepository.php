@@ -51,6 +51,9 @@ class MajorCatalogueRepository extends BaseRepository
             ]
         )
         ->join('major_catalogue_language as tb2', 'tb2.major_catalogue_id', '=', 'major_catalogues.id')
+        ->withCount(['majors' => function($query) {
+            $query->where('publish', 2)->whereNull('deleted_at');
+        }])
         ->where('tb2.language_id', '=', $language_id)
         ->where('major_catalogues.publish', '=', 2)
         ->orderBy('major_catalogues.order', 'asc')

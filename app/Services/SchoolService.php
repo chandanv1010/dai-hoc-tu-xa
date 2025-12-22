@@ -407,6 +407,15 @@ class SchoolService extends BaseService
             }
         }
         
+        // Remove duplicates
+        $majorIds = array_unique($majorIds);
+        
+        // Filter out non-existent majors to avoid FK error
+        if (count($majorIds) > 0) {
+             $existingIds = DB::table('majors')->whereIn('id', $majorIds)->pluck('id')->toArray();
+             $majorIds = $existingIds;
+        }
+        
         // Xóa tất cả quan hệ cũ
         DB::table('school_major')->where('school_id', $school->id)->delete();
         

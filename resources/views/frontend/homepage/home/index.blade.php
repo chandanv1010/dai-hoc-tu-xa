@@ -153,8 +153,8 @@
 
                     <!-- Footer Text -->
                     <div class="why-distance-learning-footer">
-                        <h3 class="why-distance-learning-footer-title">Chương trình này sẽ giải quyết tất cả!</h3>
-                        <p class="why-distance-learning-footer-subtitle">Hệ Đào Tạo Đại Học Từ Xa – Cơ hội học tập linh hoạt, bằng cấp chính quy, mở ra tương lai</p>
+                        <h3 class="why-distance-learning-footer-title">{{ $system['homepage_why_distance_learning_footer_title'] ?? 'Chương trình này sẽ giải quyết tất cả!' }}</h3>
+                        <p class="why-distance-learning-footer-subtitle">{{ $system['homepage_why_distance_learning_footer_subtitle'] ?? 'Hệ Đào Tạo Đại Học Từ Xa – Cơ hội học tập linh hoạt, bằng cấp chính quy, mở ra tương lai' }}</p>
                     </div>
                 </div>
             </div>

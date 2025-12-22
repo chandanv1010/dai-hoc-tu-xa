@@ -85,7 +85,15 @@ class ContactController extends FrontendController
         
         try {
             DB::beginTransaction();
-            $payload = $request->only(['email', 'name', 'phone', 'address', 'message', 'content', 'description', 'type']);
+            // Map 'description' from form to 'message' column in database
+            $payload = $request->only(['email', 'name', 'phone', 'address', 'type']);
+            $payload['message'] = $request->input('description');
+            
+            // Append content (title) if present
+            if ($request->filled('content')) {
+                $payload['message'] = $request->input('content') . ": " . $payload['message'];
+            }
+
             Contact::create($payload);
             DB::commit();
             
