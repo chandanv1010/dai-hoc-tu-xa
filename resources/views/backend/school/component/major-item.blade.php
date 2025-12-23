@@ -1,18 +1,33 @@
 @php
     $majorId = $majorData['major_id'] ?? (is_array($majorData) ? ($majorData['id'] ?? '') : '');
     $majorName = '';
-    if (isset($majorsList) && is_array($majorsList)) {
-        foreach ($majorsList as $m) {
-            if ($m->id == $majorId) {
-                $majorName = $m->name;
-                break;
+    
+    // Tìm tên ngành từ majorsList (có thể là array hoặc collection)
+    if (isset($majorsList)) {
+        if (is_array($majorsList)) {
+            foreach ($majorsList as $m) {
+                if (isset($m->id) && $m->id == $majorId) {
+                    $majorName = $m->name ?? '';
+                    break;
+                }
+            }
+        } else {
+            // Nếu là collection
+            $major = $majorsList->firstWhere('id', $majorId);
+            if ($major) {
+                $majorName = $major->name ?? '';
             }
         }
+    }
+    
+    // Nếu vẫn chưa có tên, dùng fallback
+    if (empty($majorName)) {
+        $majorName = 'Ngành học #' . ($index + 1);
     }
 @endphp
 <div class="major-item" style="border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 5px;" data-major-id="{{ $majorId }}">
     <input type="hidden" name="majors[{{ $index }}][major_id]" value="{{ $majorId }}">
-    <h5>{{ $majorName ?: 'Ngành học #' . ($index + 1) }}</h5>
+    <h5>{{ $majorName }}</h5>
     <div class="row mb15">
         <div class="col-lg-6">
             <div class="form-row">

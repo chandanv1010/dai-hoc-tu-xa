@@ -1,19 +1,42 @@
 {{-- Fixed Buttons Left Side --}}
+@php
+    $zaloUrl = $system['social_zalo'] ?? '';
+    $facebookUrl = $system['social_messenger'] ?? $system['social_facebook'] ?? '';
+    
+    // Format Zalo URL nếu chưa có https://zalo.me/
+    if ($zaloUrl && !preg_match('/^https?:\/\//', $zaloUrl)) {
+        // Nếu là số điện thoại, thêm zalo.me
+        if (preg_match('/^[0-9+\-\s()]+$/', $zaloUrl)) {
+            $zaloUrl = 'https://zalo.me/' . preg_replace('/[^0-9+]/', '', $zaloUrl);
+        } else {
+            $zaloUrl = 'https://zalo.me/' . $zaloUrl;
+        }
+    }
+    
+    // Format Facebook Messenger URL nếu chưa có https://
+    if ($facebookUrl && !preg_match('/^https?:\/\//', $facebookUrl)) {
+        $facebookUrl = 'https://m.me/' . $facebookUrl;
+    }
+@endphp
 <div class="fixed-buttons-left">
-    <a href="https://zalo.me/your-zalo-id" target="_blank" class="fixed-btn fixed-btn-zalo" title="Chat qua Zalo">
+    @if($zaloUrl)
+    <a href="{{ $zaloUrl }}" target="_blank" class="fixed-btn fixed-btn-zalo" title="Chat qua Zalo">
         <div class="fixed-btn-icon">
             <img src="{{ asset('frontend/resources/img/zalo-icon.png') }}" alt="Zalo" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <span style="display:none;">Z</span>
         </div>
     </a>
+    @endif
     
-    <a href="https://m.me/your-page" target="_blank" class="fixed-btn fixed-btn-facebook" title="Chat qua Facebook">
+    @if($facebookUrl)
+    <a href="{{ $facebookUrl }}" target="_blank" class="fixed-btn fixed-btn-facebook" title="Chat qua Facebook">
         <div class="fixed-btn-icon">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12c0 5.01 3.66 9.15 8.44 9.9v-7H7.9v-2.9h2.54V9.85c0-2.51 1.49-3.89 3.78-3.89 1.09 0 2.23.19 2.23.19v2.47h-1.26c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.45 2.9h-2.33v7C18.34 21.15 22 17.01 22 12c0-5.52-4.48-10-10-10z"/>
             </svg>
         </div>
     </a>
+    @endif
     
     <button type="button" class="fixed-btn fixed-btn-form" id="open-consultation-form" title="Điền form nhận tư vấn">
         <div class="fixed-btn-icon">

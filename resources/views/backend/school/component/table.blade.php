@@ -21,7 +21,18 @@
                 </td>
                
                 <td>
-                    {{ $school->name }}
+                    @php
+                        $schoolName = $school->name ?? '';
+                        $schoolCanonical = $school->canonical ?? '';
+                        $schoolUrl = $schoolCanonical ? write_url($schoolCanonical, true, true) : '#';
+                    @endphp
+                    @if($schoolCanonical)
+                        <a href="{{ $schoolUrl }}" target="_blank" title="Xem trang trường: {{ $schoolName }}">
+                            {{ $schoolName }}
+                        </a>
+                    @else
+                        {{ $schoolName }}
+                    @endif
                 </td>
                 @include('backend.dashboard.component.languageTd', ['model' => $school, 'modeling' => 'School'])
                 <td>

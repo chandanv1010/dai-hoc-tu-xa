@@ -240,6 +240,11 @@ class SchoolService extends BaseService
     {
         $payload = [];
         foreach ($this->payload() as $field) {
+            // Bỏ qua publish - không update publish khi update trường (tránh reset về 1)
+            if ($field === 'publish') {
+                continue;
+            }
+            
             if ($field === 'album') {
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
