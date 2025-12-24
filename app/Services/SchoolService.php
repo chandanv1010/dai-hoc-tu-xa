@@ -245,11 +245,6 @@ class SchoolService extends BaseService
                 continue;
             }
             
-            // Bỏ qua follow nếu không có trong request (tránh reset về default)
-            if ($field === 'follow' && !$request->has('follow')) {
-                continue;
-            }
-            
             if ($field === 'album') {
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
@@ -272,6 +267,16 @@ class SchoolService extends BaseService
                 $fieldData = $request->input($field, '');
                 $fieldData = trim($fieldData);
                 $payload[$field] = !empty($fieldData) ? $fieldData : null;
+            } elseif ($field === 'follow') {
+                // Xử lý follow: luôn lấy giá trị từ request nếu có, nếu không có thì giữ nguyên giá trị cũ
+                if ($request->has('follow')) {
+                    $followValue = $request->input('follow');
+                    // Convert sang integer để đảm bảo đúng kiểu dữ liệu
+                    $payload[$field] = is_numeric($followValue) ? (int)$followValue : ($followValue ? 1 : 2);
+                } else {
+                    // Giữ nguyên giá trị cũ nếu không có trong request
+                    $payload[$field] = $school->follow ?? 1;
+                }
             } else {
                 // Luôn lấy giá trị từ request, kể cả null hoặc empty string
                 $payload[$field] = $request->input($field);

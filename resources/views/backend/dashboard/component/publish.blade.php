@@ -34,7 +34,7 @@
                     <select name="follow" class="form-control setupSelect2" id="">
                         @foreach(__('messages.follow') as $key => $val)
                         <option {{ 
-                            $key == old('follow', (isset($model->follow)) ? $model->follow : '') ? 'selected' : '' 
+                            $key == old('follow', (isset($model->follow) && $model->follow !== null) ? $model->follow : 1) ? 'selected' : '' 
                             }} value="{{ $key }}">{{ $val }}</option>
                         @endforeach
                     </select>

@@ -320,11 +320,6 @@ class MajorService extends BaseService
     {
         $payload = [];
         foreach ($this->payload() as $field) {
-            // Bỏ qua follow nếu không có trong request (tránh reset về default)
-            if ($field === 'follow' && !$request->has('follow')) {
-                continue;
-            }
-            
             if (in_array($field, ['admission_subject', 'exam_location'])) {
                 // Xử lý các field filter là string
                 $fieldData = $request->input($field, '');
@@ -342,6 +337,16 @@ class MajorService extends BaseService
                     }
                 }
                 $payload[$field] = $hasData ? $formJson : null;
+            } elseif ($field === 'follow') {
+                // Xử lý follow: luôn lấy giá trị từ request nếu có, nếu không có thì giữ nguyên giá trị cũ
+                if ($request->has('follow')) {
+                    $followValue = $request->input('follow');
+                    // Convert sang integer để đảm bảo đúng kiểu dữ liệu
+                    $payload[$field] = is_numeric($followValue) ? (int)$followValue : ($followValue ? 1 : 2);
+                } else {
+                    // Giữ nguyên giá trị cũ nếu không có trong request
+                    $payload[$field] = $major->follow ?? 1;
+                }
             } else {
                 $payload[$field] = $request->input($field);
             }
