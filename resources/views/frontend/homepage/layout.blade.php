@@ -4,9 +4,6 @@
         {!! $system['script_1'] !!}
         @include('frontend.component.head')
     </head>
-    @if(isset($schema))
-        {!! $schema !!}
-    @endif
     <body>
         @include('frontend.component.header')
         @yield('content')

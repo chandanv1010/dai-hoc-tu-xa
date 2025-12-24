@@ -62,7 +62,6 @@ class MajorCatalogueController extends FrontendController
         $config = $this->config();
         $system = $this->system;
         $seo = seo($majorCatalogue, $page);
-        $schema = $this->schema($majorCatalogue, $majors);
 
         return view($template, compact(
             'config',
@@ -73,7 +72,6 @@ class MajorCatalogueController extends FrontendController
             'majors',
             'widgets',
             'slides',
-            'schema',
             'page'
         ));
     }
@@ -83,23 +81,6 @@ class MajorCatalogueController extends FrontendController
         return [
             'language' => $this->language,
         ];
-    }
-
-    private function schema($majorCatalogue, $majors)
-    {
-        $name = $majorCatalogue->name;
-        $description = strip_tags($majorCatalogue->description ?? '');
-        $canonical = write_url($majorCatalogue->canonical);
-
-        $schema = [
-            '@context' => 'https://schema.org',
-            '@type' => 'CollectionPage',
-            'name' => $name,
-            'description' => $description,
-            'url' => $canonical,
-        ];
-
-        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
     }
 }
 

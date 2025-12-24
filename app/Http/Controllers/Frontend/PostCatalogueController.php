@@ -101,7 +101,6 @@ class PostCatalogueController extends FrontendController
         $system = $this->system;
         $seo = seo($postCatalogue, $page);
         $introduce = convert_array(Introduce::where('language_id', $this->language)->get(), 'keyword', 'content');
-        $schema = $this->schema($postCatalogue, $posts, $breadcrumb);
         return view($template, compact(
             'config',
             'seo',
@@ -110,114 +109,10 @@ class PostCatalogueController extends FrontendController
             'postCatalogue',
             'posts',
             'widgets',
-            'schema',
             'slides',
             'introduce',
             'schools'
         ));
-    }
-
-    private function schema($postCatalogue, $posts, $breadcrumb)
-    {
-
-        $postCatalogueLanguage = $postCatalogue->languages->first();
-        if (!$postCatalogueLanguage || !$postCatalogueLanguage->pivot) {
-            return '';
-        }
-
-        $cat_name = $postCatalogueLanguage->pivot->name;
-        $cat_canonical = write_url($postCatalogueLanguage->pivot->canonical);
-        $cat_description = strip_tags($postCatalogueLanguage->pivot->description);
-
-        $itemListElements = '';
-
-        $position = 1;
-
-        $authorName = $this->system['homepage_company'] ?? 'An Hưng';
-        foreach ($posts as $post) {
-            $postLanguage = $post->languages->first();
-            if (!$postLanguage || !$postLanguage->pivot) {
-                continue;
-            }
-            $name = $postLanguage->pivot->name;
-            $canonical = write_url($postLanguage->pivot->canonical);
-            $itemListElements .= "
-                {
-                    \"@type\": \"BlogPosting\",
-                    \"headline\": \"" . addslashes($name) . "\",
-                    \"url\": \"" . $canonical . "\",
-                    \"datePublished\": \"" . convertDateTime($post->created_at, 'Y-m-d') . "\",
-                    \"author\": {
-                        \"@type\": \"Person\",
-                        \"name\": \"" . addslashes($authorName) . "\"
-                    }
-                },";
-            $position++;
-        }
-
-        $itemListElements = rtrim($itemListElements, ',');
-
-        $itemBreadcrumbElements = '';
-
-        $positionBreadcrumb = 2;
-
-        foreach ($breadcrumb as $key => $item) {
-            $language = $item->languages->first();
-            if (!$language || !$language->pivot) {
-                continue;
-            }
-            $name = $language->pivot->name;
-            $canonical = write_url($language->pivot->canonical);
-            $itemBreadcrumbElements .= "
-                {
-                    \"@type\": \"ListItem\",
-                    \"position\": $positionBreadcrumb,
-                    \"name\": \"" . $name . "\",
-                    \"item\": \"" . $canonical . "\",
-                },";
-            $positionBreadcrumb++;
-        }
-
-        $itemBreadcrumbElements = rtrim($itemBreadcrumbElements, ',');
-
-        $authorName = $this->system['homepage_company'] ?? 'An Hưng';
-        $logoUrl = isset($this->system['homepage_logo']) && $this->system['homepage_logo'] ? asset($this->system['homepage_logo']) : '';
-        
-        $schema = "<script type='application/ld+json'>
-        [
-            {
-                \"@context\": \"https://schema.org\",
-                \"@type\": \"BreadcrumbList\",
-                \"itemListElement\": [
-                    {
-                        \"@type\": \"ListItem\",
-                        \"position\": 1,
-                        \"name\": \"Trang chủ\",
-                        \"item\": \"" . config('app.url') . "\"
-                    }" . ($itemBreadcrumbElements ? ',' . $itemBreadcrumbElements : '') . "
-                ]
-            },
-            {
-                \"@context\": \"https://schema.org\",
-                \"@type\": \"Blog\",
-                \"name\": \"" . addslashes($cat_name) . "\",
-                \"description\": \"" . addslashes($cat_description) . "\",
-                \"url\": \"" . $cat_canonical . "\",
-                \"publisher\": {
-                    \"@type\": \"Organization\",
-                    \"name\": \"" . addslashes($authorName) . "\"" . ($logoUrl ? ",
-                    \"logo\": {
-                        \"@type\": \"ImageObject\",
-                        \"url\": \"" . $logoUrl . "\"
-                    }" : '') . "
-                }" . ($itemListElements ? ",
-                \"blogPost\": [
-                    $itemListElements
-                ]" : '') . "
-            }
-        ]
-        </script>";
-        return $schema;
     }
 
 

@@ -200,7 +200,6 @@ class ProductController extends FrontendController
 
         $seo = seo($product);
 
-        $schema = $this->schema($product, $productCatalogue, $breadcrumb);
         $template = 'frontend.product.product.index';
 
         return view($template, compact(
@@ -218,125 +217,12 @@ class ProductController extends FrontendController
             'cartSeen',
             'seller',
             'carts',
-            'schema',
             'productRelated',
             'children',
             'promotionLeft',
             'students',
             'lecturer', 
         ));
-    }
-
-    private function schema($product, $productCatalogue, $breadcrumb)
-    {
-        $image = $product->image;
-        $name = $product->languages->first()->pivot->name;
-        $totalReviews = $product->reviews()->where('status', 1)->count();
-        $totalRate = number_format($product->reviews()->where('status', 1)->avg('score'), 1);
-        $description = strip_tags($product->languages->first()->pivot->description);
-        $cat_name = $productCatalogue->languages->first()->pivot->name;
-        $cat_canonical = write_url($productCatalogue->languages->first()->pivot->canonical);
-        $reviewListElements = '';
-        foreach ($product->reviews as $review) {
-            $rating = generateStar($review->score);
-            $created_at = convertDateTime($review->created_at);
-            $reviewListElements .= "
-                {
-                    \"@type\": \"Review\",
-                    \"reviewRating\": {
-                        \"@type\": \"Rating\",
-                        \"ratingValue\": \"" . $rating . "\",
-                        \"bestRating\": \"5\"
-                    },
-                    \"author\": {
-                        \"@type\": \"Person\",
-                        \"name\": \"" . $review->fullname . "\"
-                    },
-                    \"reviewBody\": \"" . $review->description . "\",
-                    \"datePublished\": \"" . $created_at . "\"
-                },";
-        }
-
-        $reviewListElements = rtrim($reviewListElements, ',');
-
-        $itemBreadcrumbElements = '';
-
-        $positionBreadcrumb = 2;
-
-        foreach ($breadcrumb as $key => $item) {
-            $name = $item->languages->first()->pivot->name;
-            $canonical = write_url($item->languages->first()->pivot->canonical);
-            $itemBreadcrumbElements .= "
-                {
-                    \"@type\": \"ListItem\",
-                    \"position\": $positionBreadcrumb,
-                    \"name\": \"" . $name . "\",
-                    \"item\": \"" . $canonical . "\",
-                },";
-            $positionBreadcrumb++;
-        }
-
-        $itemBreadcrumbElements = rtrim($itemBreadcrumbElements, ',');
-
-        $schema = "
-            <script type=\"application/ld+json\">
-                {
-                    \"@type\": \"BreadcrumbList\",
-                    \"itemListElement\": [
-                        {
-                            \"@type\": \"ListItem\",
-                            \"position\": 1,
-                            \"name\": \" Trang chủ  \",
-                            \"item\": \" " . config('app.url') . " \"
-                        },
-                        $itemBreadcrumbElements
-                    ]
-                },
-                {
-                    \"@context\": \"https://schema.org\",
-                    \"@type\": \"Product\",
-                    \"name\": \" " . $name . " \",
-                    \"description\": \"  " . $description . "  \",
-                    \"image\": \"  " . $image . "  \",
-                    \"brand\": {
-                        \"@type\": \"Brand\",
-                        \"name\": \"An Hưng\"
-                    },
-                    \"manufacturer\": {
-                        \"@type\": \"Organization\",
-                        \"name\": \"An Hưng\",
-                        \"url\": \" " . config('app.url') . "\"
-                    },
-                    \"material\": \" " . $cat_name . " \",
-                    \"category\": \" " . $cat_canonical . " \",
-                    \"sku\": \"\",
-                    \"mpn\": \"\",
-                    \"offers\": {
-                        \"@type\": \"Offer\",
-                        \"price\": \"\",
-                        \"priceCurrency\": \"\",
-                        \"availability\": \"\",
-                        \"seller\": {
-                            \"@type\": \"Organization\",
-                            \"name\": \"An Hưng\"
-                        },
-                        \"priceValidUntil\": \"\",
-                        \"itemCondition\": \"https://schema.org/NewCondition\"
-                    },
-                    \"aggregateRating\": {
-                        \"@type\": \"AggregateRating\",
-                        \"ratingValue\": \" " . $totalRate . "  \",
-                        \"reviewCount\": \" " . $totalReviews . "\"
-                    },
-                    \"review\": [
-                        $reviewListElements
-                    ]
-                }
-            </script>
-        ";
-
-        return $schema;
-
     }
 
     private function config()

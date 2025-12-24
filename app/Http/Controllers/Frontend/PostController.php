@@ -94,7 +94,6 @@ class postController extends FrontendController
 
         $template = 'frontend.post.post.index';
 
-        $schema = $this->schema($post, $postCatalogue, $breadcrumb);
         $content = $post->languages->first()->pivot->content;
         // dd($content);
         // dd($content, $cont);
@@ -113,95 +112,9 @@ class postController extends FrontendController
             'asidePosts',
             'relatedPosts',
             'widgets',
-            'schema',
             'contentWithToc'
         ));
     }
-
-    private function schema($post, $postCatalogue, $breadcrumb){
-
-        $image = $post->image;
-
-        $name = $post->languages->first()->pivot->name;
-
-        $description = strip_tags($post->languages->first()->pivot->description);
-
-        $canonical = write_url($post->languages->first()->pivot->canonical);
-
-        $itemBreadcrumbElements = '';
-
-        $positionBreadcrumb = 2;
-
-        foreach ($breadcrumb as $key => $item) {
-
-            $name = $item->languages->first()->pivot->name;
-
-            $canonical = write_url($item->languages->first()->pivot->canonical);
-
-            $itemBreadcrumbElements .= "
-                {
-                    \"@type\": \"ListItem\",
-                    \"position\": $positionBreadcrumb,
-                    \"name\": \"" . $name . "\",
-                    \"item\": \"" . $canonical . "\",
-                },";
-            $positionBreadcrumb++;
-        }
-
-        $itemBreadcrumbElements = rtrim($itemBreadcrumbElements, ',');
-
-        $authorName = $this->system['homepage_company'] ?? 'An Hưng';
-        $logoUrl = isset($this->system['homepage_logo']) && $this->system['homepage_logo'] ? asset($this->system['homepage_logo']) : '';
-        $imageUrl = $image ? (strpos($image, 'http') === 0 ? $image : asset($image)) : '';
-        
-        $schema = "
-            <script type=\"application/ld+json\">
-            [
-                {
-                    \"@context\": \"https://schema.org\",
-                    \"@type\": \"BreadcrumbList\",
-                    \"itemListElement\": [
-                        {
-                            \"@type\": \"ListItem\",
-                            \"position\": 1,
-                            \"name\": \"Trang chủ\",
-                            \"item\": \"" . config('app.url') . "\"
-                        }" . ($itemBreadcrumbElements ? ',' . $itemBreadcrumbElements : '') . "
-                    ]
-                },
-                {
-                    \"@context\": \"https://schema.org\",
-                    \"@type\": \"BlogPosting\",
-                    \"headline\": \"" . addslashes($name) . "\",
-                    \"description\": \"" . addslashes($description) . "\",
-                    \"image\": \"" . $imageUrl . "\",
-                    \"url\": \"" . $canonical . "\",
-                    \"datePublished\": \"" . convertDateTime($post->created_at, 'Y-m-d') . "\",
-                    \"dateModified\": \"" . convertDateTime($post->updated_at ?? $post->created_at, 'Y-m-d') . "\",
-                    \"author\": {
-                        \"@type\": \"Person\",
-                        \"name\": \"" . addslashes($authorName) . "\"
-                    },
-                    \"publisher\": {
-                        \"@type\": \"Organization\",
-                        \"name\": \"" . addslashes($authorName) . "\"" . ($logoUrl ? ",
-                        \"logo\": {
-                            \"@type\": \"ImageObject\",
-                            \"url\": \"" . $logoUrl . "\"
-                        }" : '') . "
-                    },
-                    \"mainEntityOfPage\": {
-                        \"@type\": \"WebPage\",
-                        \"@id\": \"" . $canonical . "\"
-                    },
-                    \"articleSection\": \"" . addslashes($postCatalogue->languages->first()->pivot->name ?? '') . "\"
-                }
-            ]
-            </script>
-        ";
-        return $schema;
-
-    } 
 
     private function config(){
         return [

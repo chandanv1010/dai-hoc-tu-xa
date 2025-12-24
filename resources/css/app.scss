@@ -449,7 +449,7 @@
                     > a {
                         color: #008DC2;
                         text-decoration: none;
-                        font-size: 13px;
+                        font-size: 14px;
                         font-weight: 800;
                         text-transform: uppercase;
                         transition: all 0.3s ease;
@@ -479,7 +479,7 @@
                                 transform: rotate(180deg);
                             }
 
-                            > .dropdown-menu {
+                            > .header-dropdown-menu {
                                 opacity: 1;
                                 visibility: visible;
                                 transform: translateY(0);
@@ -651,8 +651,8 @@
     }
 }
 
-// Dropdown Menu Styles (outside pc-header for specificity)
-.dropdown-menu {
+// Header Dropdown Menu Styles (đổi tên để tránh conflict với Bootstrap)
+.header-dropdown-menu {
     position: absolute;
     top: 100%;
     left: 0;
@@ -660,7 +660,7 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
     min-width: 220px;
     z-index: 1000;
-    padding: 8px 0;
+    padding: 12px 0;
     margin-top: 8px;
     border-radius: 6px;
     opacity: 0;
@@ -668,6 +668,7 @@
     transform: translateY(-10px);
     transition: all 0.3s ease;
     border: 1px solid #e8e8e8;
+    display: block; // Đảm bảo luôn có display block
 
     ul {
         list-style: none;
@@ -679,12 +680,12 @@
 
             a {
                 display: block;
-                padding: 12px 20px;
+                padding: 14px 30px;
                 color: #333;
                 text-decoration: none;
                 font-size: 14px;
                 font-weight: 500;
-                text-transform: none;
+                text-transform: none !important;
                 transition: all 0.2s ease;
                 border-left: 3px solid transparent;
                 position: relative;
@@ -693,7 +694,7 @@
                     background: #f8f9fa;
                     color: #008DC2;
                     border-left-color: #008DC2;
-                    padding-left: 25px;
+                    padding-left: 34px;
                 }
             }
 
@@ -717,19 +718,30 @@
                         transform: translateX(3px);
                     }
 
-                    > .dropdown-menu {
-                        opacity: 1;
-                        visibility: visible;
-                        transform: translateX(0);
+                    > .header-dropdown-menu {
+                        opacity: 1 !important;
+                        visibility: visible !important;
+                        transform: translateX(0) !important;
+                        display: block !important;
                     }
                 }
 
-                > .dropdown-menu {
+                > .header-dropdown-menu {
                     top: 0;
                     left: 100%;
                     margin-top: 0;
                     margin-left: 8px;
                     transform: translateX(-10px);
+                    z-index: 1001; // Cao hơn menu cấp 2
+                    opacity: 0;
+                    visibility: hidden;
+                    transition: all 0.3s ease;
+                    display: block !important; // Đảm bảo luôn có display
+                    pointer-events: none; // Tắt pointer events khi ẩn
+                }
+                
+                &:hover > .header-dropdown-menu {
+                    pointer-events: auto; // Bật lại pointer events khi hiện
                 }
             }
         }
@@ -740,8 +752,10 @@
     .menu-level__3 {
         li {
             a {
-                font-size: 13px;
-                padding: 10px 20px;
+                font-size: 14px;
+                font-weight: 500;
+                padding: 12px 15px !important;
+                text-transform: none !important;
             }
         }
     }
@@ -757,30 +771,46 @@
 }
 
 // Đảm bảo dropdown menu hiển thị khi hover vào parent li
-.header-navigation .main-menu-list > li.children:hover > .dropdown-menu {
+.header-navigation .main-menu-list > li.children:hover > .header-dropdown-menu {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
 }
 
 // Fix cho menu cấp 3 - đảm bảo không bị overflow
-.dropdown-menu .dropdown-menu {
+.header-dropdown-menu .header-dropdown-menu {
     max-height: 400px;
     overflow-y: auto;
     overflow-x: visible;
+    position: absolute;
+    display: block;
+}
+
+// Đảm bảo menu cấp 3 hiển thị khi hover vào parent
+.header-dropdown-menu li.children:hover > .header-dropdown-menu {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: translateX(0) !important;
+    display: block !important;
+    pointer-events: auto !important;
+}
+
+// Đảm bảo menu cấp 3 không bị ẩn khi di chuyển chuột từ menu cấp 2 sang menu cấp 3
+.header-dropdown-menu li.children > .header-dropdown-menu {
+    margin-top: -8px; // Điều chỉnh để có khoảng trống nhỏ giữa menu cấp 2 và 3
 }
 
 // Smooth scrollbar cho dropdown menu
-.dropdown-menu::-webkit-scrollbar {
+.header-dropdown-menu::-webkit-scrollbar {
     width: 6px;
 }
 
-.dropdown-menu::-webkit-scrollbar-track {
+.header-dropdown-menu::-webkit-scrollbar-track {
     background: #f1f1f1;
     border-radius: 3px;
 }
 
-.dropdown-menu::-webkit-scrollbar-thumb {
+.header-dropdown-menu::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 3px;
 

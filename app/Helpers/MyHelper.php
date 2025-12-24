@@ -381,7 +381,7 @@ if(!function_exists('frontend_recursive_menu')){
                         $html .= '<a href="'.(($name == 'Trang chủ') ? '.' : $canonical).'" title="'.$name.'" data-menu-id="'.$val['item']->id.'">'.
                         (($name == 'Trang chủ') ? '' : '').$name.'</a>';
                         if(count($val['children'])){
-                            $html .= '<div class="dropdown-menu">';
+                            $html .= '<div class="header-dropdown-menu">';
                                 $html .= '<ul class="uk-list uk-clearfix menu-style '.$ulClass.'">';
                                     $html .= frontend_recursive_menu($val['children'], $val['item']->parent_id,  $count + 1, $type);
                                 $html .= '</ul>';

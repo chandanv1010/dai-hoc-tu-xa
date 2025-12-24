@@ -96,8 +96,6 @@ class ProductCatalogueController extends FrontendController
         $system = $this->system;
 
         $seo = seo($productCatalogue, $page);
-   
-        $schema = $this->schema($productCatalogue, $products, $breadcrumb);
 
         $template = 'frontend.product.catalogue.index';
 
@@ -111,7 +109,6 @@ class ProductCatalogueController extends FrontendController
             'products',
             'filters',
             'widgets',
-            'schema',
             'lecturers'
         ));
     }
@@ -225,91 +222,6 @@ class ProductCatalogueController extends FrontendController
         ));
     }
 
-    private function schema($productCatalogue, $products, $breadcrumb)
-    {
-
-        $cat_name = $productCatalogue->languages->first()->pivot->name;
-
-        $cat_canonical = write_url($productCatalogue->languages->first()->pivot->canonical);
-
-        $cat_description = strip_tags($productCatalogue->languages->first()->pivot->description);
-
-        $totalProducts = $products->total();
-
-        $itemListElements = '';
-
-        $position = 1;
-
-        foreach ($products as $product) {
-            $image = $product->image;
-            $name = $product->languages->first()->pivot->name;
-            $canonical = write_url($product->languages->first()->pivot->canonical);
-            $itemListElements .= "
-                {
-                    \"@type\": \"ListItem\",
-                    \"position\": $position,
-                    \"item\": {
-                        \"@type\": \"Product\",
-                        \"name\": \"" . $name . "\",
-                        \"url\": \"" . $canonical . "\",
-                        \"image\": \"" . $image . "\"
-                    }
-                },";
-            $position++;
-        }
-
-        $itemListElements = rtrim($itemListElements, ',');
-
-        $itemBreadcrumbElements = '';
-
-        $positionBreadcrumb = 2;
-
-        foreach ($breadcrumb as $key => $item) {
-            $name = $item->languages->first()->pivot->name;
-            $canonical = write_url($item->languages->first()->pivot->canonical);
-            $itemBreadcrumbElements .= "
-                {
-                    \"@type\": \"ListItem\",
-                    \"position\": $positionBreadcrumb,
-                    \"name\": \"" . $name . "\",
-                    \"item\": \"" . $canonical . "\",
-                },";
-            $positionBreadcrumb++;
-        }
-
-        $itemBreadcrumbElements = rtrim($itemBreadcrumbElements, ',');
-
-        $schema = "<script type='application/ld+json'>
-            {
-                \"@type\": \"BreadcrumbList\",
-                \"itemListElement\": [
-                    {
-                        \"@type\": \"ListItem\",
-                        \"position\": 1,
-                        \"name\": \" Trang chủ  \",
-                        \"item\": \" " . config('app.url') . " \"
-                    },
-                    $itemBreadcrumbElements
-                ]
-            },
-            {
-                \"@context\": \"https://schema.org\",
-                \"@type\": \"CollectionPage\",
-                \"name\": \"" . $cat_name . "\",
-                \"description\": \" " . $cat_description . " \",
-                \"url\": \"" . $cat_canonical . "\",
-                \"mainEntity\": {
-                    \"@type\": \"ItemList\",
-                    \"name\": \" " . $cat_name . " \",
-                    \"numberOfItems\": $totalProducts,
-                    \"itemListElement\": [
-                        $itemListElements
-                    ]
-                }
-            }
-            </script>";
-        return $schema;
-    }
 
     private function config()
     {
