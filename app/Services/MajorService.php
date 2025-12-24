@@ -320,6 +320,11 @@ class MajorService extends BaseService
     {
         $payload = [];
         foreach ($this->payload() as $field) {
+            // Bỏ qua follow nếu không có trong request (tránh reset về default)
+            if ($field === 'follow' && !$request->has('follow')) {
+                continue;
+            }
+            
             if (in_array($field, ['admission_subject', 'exam_location'])) {
                 // Xử lý các field filter là string
                 $fieldData = $request->input($field, '');
@@ -532,6 +537,7 @@ class MajorService extends BaseService
             'career_image',
             'image',
             'publish',
+            'follow',
             'is_home',
             'major_catalogue_id',
             'study_path_file',

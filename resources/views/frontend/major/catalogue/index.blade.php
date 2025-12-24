@@ -62,68 +62,7 @@
                                 </div>
                             </div>
 
-                            <!-- Pagination -->
-                            @if($majors->hasPages())
-                                <div class="major-catalogue-pagination" style="margin-top: 40px; margin-bottom: 40px; text-align: center;">
-                                    <ul class="pagination">
-                                        @php
-                                            $queryParams = request()->except('page');
-                                        @endphp
-
-                                        {{-- Previous Page Link --}}
-                                        @if ($majors->onFirstPage())
-                                            <li class="page-item disabled" aria-disabled="true">
-                                                <span class="page-link" aria-hidden="true">&lsaquo;</span>
-                                            </li>
-                                        @else
-                                            @php
-                                                $prevPage = $majors->currentPage() - 1;
-                                                $prevUrl = $prevPage == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $prevPage]);
-                                                if (!empty($queryParams)) {
-                                                    $prevUrl .= '?' . http_build_query($queryParams);
-                                                }
-                                            @endphp
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $prevUrl }}" rel="prev" aria-label="@lang('pagination.previous')">&lsaquo;</a>
-                                            </li>
-                                        @endif
-
-                                        {{-- Pagination Elements --}}
-                                        @foreach ($majors->getUrlRange(1, $majors->lastPage()) as $page => $url)
-                                            @php
-                                                $pageUrl = $page == 1 ? route('fe.major.catalogue.index') : route('major.catalogue.page', ['page' => $page]);
-                                                if (!empty($queryParams)) {
-                                                    $pageUrl .= '?' . http_build_query($queryParams);
-                                                }
-                                            @endphp
-                                            @if ($page == $majors->currentPage())
-                                                <li class="page-item active" aria-current="page"><span class="page-link">{{ $page }}</span></li>
-                                            @else
-                                                <li class="page-item">
-                                                    <a class="page-link" href="{{ $pageUrl }}">{{ $page }}</a>
-                                                </li>
-                                            @endif
-                                        @endforeach
-
-                                        {{-- Next Page Link --}}
-                                        @if ($majors->hasMorePages())
-                                            @php
-                                                $nextUrl = route('major.catalogue.page', ['page' => $majors->currentPage() + 1]);
-                                                if (!empty($queryParams)) {
-                                                    $nextUrl .= '?' . http_build_query($queryParams);
-                                                }
-                                            @endphp
-                                            <li class="page-item">
-                                                <a class="page-link" href="{{ $nextUrl }}" rel="next" aria-label="@lang('pagination.next')">&rsaquo;</a>
-                                            </li>
-                                        @else
-                                            <li class="page-item disabled" aria-disabled="true">
-                                                <span class="page-link" aria-hidden="true">&rsaquo;</span>
-                                            </li>
-                                        @endif
-                                    </ul>
-                                </div>
-                            @endif
+                            {{-- Pagination đã bị loại bỏ - hiển thị tất cả ngành không phân trang --}}
                         @else
                             <div class="no-majors-message" style="text-align: center; padding: 60px 20px;">
                                 <p style="font-size: 18px; color: #666;">Không có ngành học nào trong danh mục này.</p>

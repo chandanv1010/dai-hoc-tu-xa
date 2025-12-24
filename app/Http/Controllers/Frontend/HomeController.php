@@ -109,6 +109,7 @@ class HomeController extends FrontendController
             'meta_description' => $this->system['seo_meta_description'],
             'meta_image' => $this->system['seo_meta_images'],
             'canonical' => config('app.url'),
+            'follow' => 1, // Default là follow cho homepage
         ];
 
         $language = $this->language;

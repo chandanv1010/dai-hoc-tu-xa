@@ -78,6 +78,7 @@ class SchoolController extends FrontendController
             'meta_description' => $pivot->meta_description ?? $pivot->description ?? '',
             'meta_image' => !empty($school->image) ? image($school->image) : ($this->system['homepage_logo'] ?? ''),
             'canonical' => write_url($pivot->canonical, true, true),
+            'follow' => $school->follow ?? 1, // 1 = Follow, 2 = Nofollow, default = 1
         ];
 
         // Lấy widgets (giống như homepage)

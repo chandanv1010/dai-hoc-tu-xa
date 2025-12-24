@@ -318,6 +318,10 @@ class ProductService extends BaseService
             $payload['attribute'] = null;
         }
         $payload['qrcode'] = $this->qrCode($request);
+        // Đảm bảo follow không bị reset nếu không có trong request
+        if (!$request->has('follow')) {
+            unset($payload['follow']);
+        }
         return $this->productRepository->update($id, $payload);
     }
 

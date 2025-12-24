@@ -1,4 +1,4 @@
-﻿// Import all CSS files from public/frontend/resources
+// Import all CSS files from public/frontend/resources
 // These will be processed by Vite and bundled into a single CSS file
 
 // Toastr CSS
@@ -435,7 +435,7 @@
             .main-menu-list {
                 display: flex;
                 align-items: center;
-                gap: 18px;
+                gap: 25px;
                 list-style: none;
                 margin: 0;
                 padding: 0;
@@ -452,8 +452,8 @@
                         font-size: 13px;
                         font-weight: 800;
                         text-transform: uppercase;
-                        transition: color 0.3s;
-                        padding: 5px 0;
+                        transition: all 0.3s ease;
+                        padding: 12px 0;
                         display: block;
                         letter-spacing: 0.3px;
                         white-space: nowrap; // KhÃ´ng xuá»‘ng dÃ²ng
@@ -470,12 +470,25 @@
                             content: '\f107';
                             font-family: 'Font Awesome 6 Free';
                             font-weight: 900;
-                            margin-left: 5px;
-                            font-size: 12px;
+                            margin-left: 6px;
+                            font-size: 11px;
                         }
 
-                        &:hover .dropdown-menu {
-                            display: block;
+                        &:hover {
+                            > a::after {
+                                transform: rotate(180deg);
+                            }
+
+                            > .dropdown-menu {
+                                opacity: 1;
+                                visibility: visible;
+                                transform: translateY(0);
+                            }
+                        }
+
+                        > a::after {
+                            transition: transform 0.3s ease;
+                            display: inline-block;
                         }
                     }
                 }
@@ -640,16 +653,21 @@
 
 // Dropdown Menu Styles (outside pc-header for specificity)
 .dropdown-menu {
-    display: none;
     position: absolute;
     top: 100%;
     left: 0;
     background: #fff;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    min-width: 200px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    min-width: 220px;
     z-index: 1000;
-    padding: 10px 0;
-    margin-top: 5px;
+    padding: 8px 0;
+    margin-top: 8px;
+    border-radius: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.3s ease;
+    border: 1px solid #e8e8e8;
 
     ul {
         list-style: none;
@@ -657,21 +675,117 @@
         padding: 0;
 
         li {
+            position: relative;
+
             a {
                 display: block;
-                padding: 8px 15px;
+                padding: 12px 20px;
                 color: #333;
                 text-decoration: none;
                 font-size: 14px;
+                font-weight: 500;
                 text-transform: none;
-                transition: background 0.3s;
+                transition: all 0.2s ease;
+                border-left: 3px solid transparent;
+                position: relative;
 
                 &:hover {
-                    background: #f5f5f5;
+                    background: #f8f9fa;
                     color: #008DC2;
+                    border-left-color: #008DC2;
+                    padding-left: 25px;
+                }
+            }
+
+            // Menu cấp 3 (nested dropdown)
+            &.children {
+                position: relative;
+
+                > a::after {
+                    content: '\f105';
+                    font-family: 'Font Awesome 6 Free';
+                    font-weight: 900;
+                    float: right;
+                    font-size: 12px;
+                    color: #999;
+                    transition: all 0.2s ease;
+                }
+
+                &:hover {
+                    > a::after {
+                        color: #008DC2;
+                        transform: translateX(3px);
+                    }
+
+                    > .dropdown-menu {
+                        opacity: 1;
+                        visibility: visible;
+                        transform: translateX(0);
+                    }
+                }
+
+                > .dropdown-menu {
+                    top: 0;
+                    left: 100%;
+                    margin-top: 0;
+                    margin-left: 8px;
+                    transform: translateX(-10px);
                 }
             }
         }
+    }
+
+    // Menu level 2, 3 styling
+    .menu-level__2,
+    .menu-level__3 {
+        li {
+            a {
+                font-size: 13px;
+                padding: 10px 20px;
+            }
+        }
+    }
+
+    // Separator cho menu items (nếu cần)
+    li + li {
+        border-top: 1px solid #f0f0f0;
+    }
+
+    li:first-child {
+        border-top: none;
+    }
+}
+
+// Đảm bảo dropdown menu hiển thị khi hover vào parent li
+.header-navigation .main-menu-list > li.children:hover > .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+// Fix cho menu cấp 3 - đảm bảo không bị overflow
+.dropdown-menu .dropdown-menu {
+    max-height: 400px;
+    overflow-y: auto;
+    overflow-x: visible;
+}
+
+// Smooth scrollbar cho dropdown menu
+.dropdown-menu::-webkit-scrollbar {
+    width: 6px;
+}
+
+.dropdown-menu::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.dropdown-menu::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
+
+    &:hover {
+        background: #555;
     }
 }
 

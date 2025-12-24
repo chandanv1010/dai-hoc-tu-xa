@@ -78,6 +78,13 @@ class MajorCatalogueController extends FrontendController
         ));
     }
 
+    private function config()
+    {
+        return [
+            'language' => $this->language,
+        ];
+    }
+
     private function schema($majorCatalogue, $majors)
     {
         $name = $majorCatalogue->name;

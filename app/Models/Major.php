@@ -17,6 +17,7 @@ class Major extends Model
         'career_image',
         'image',
         'publish',
+        'follow',
         'is_home',
         'user_id',
         'major_catalogue_id',

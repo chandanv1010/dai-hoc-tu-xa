@@ -245,6 +245,11 @@ class SchoolService extends BaseService
                 continue;
             }
             
+            // Bỏ qua follow nếu không có trong request (tránh reset về default)
+            if ($field === 'follow' && !$request->has('follow')) {
+                continue;
+            }
+            
             if ($field === 'album') {
                 // Vì School model có cast 'album' => 'array', nên cần truyền array trực tiếp
                 $album = $request->input('album', []);
@@ -359,6 +364,7 @@ class SchoolService extends BaseService
             'enrollment_quota',
             'short_name',
             'publish',
+            'follow',
             'statistics_majors',
             'statistics_students',
             'statistics_courses',

@@ -127,6 +127,7 @@ class SchoolCatalogueController extends FrontendController
             'meta_description' => $metaDescription,
             'meta_image' => $metaImage,
             'canonical' => $canonical,
+            'follow' => 1, // Default là follow cho catalogue page
         ];
     }
 

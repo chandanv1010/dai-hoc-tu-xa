@@ -163,6 +163,10 @@ class PostService extends BaseService
     private function uploadPost($post, $request){
         $payload = $request->only($this->payload());
         $payload['album'] = $this->formatAlbum($request);
+        // Đảm bảo follow không bị reset nếu không có trong request
+        if (!$request->has('follow')) {
+            unset($payload['follow']);
+        }
         return $this->postRepository->update($post->id, $payload);
     }
 

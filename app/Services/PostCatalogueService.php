@@ -161,6 +161,10 @@ class PostCatalogueService extends BaseService
     private function updateCatalogue($postCatalogue, $request){
         $payload = $request->only($this->payload());
         $payload['album'] = $this->formatAlbum($request);
+        // Đảm bảo follow không bị reset nếu không có trong request
+        if (!$request->has('follow')) {
+            unset($payload['follow']);
+        }
         $flag = $this->postCatalogueRepository->update($postCatalogue->id, $payload);
         return $flag;
     }

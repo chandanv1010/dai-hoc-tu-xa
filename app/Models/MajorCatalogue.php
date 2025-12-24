@@ -16,6 +16,7 @@ class MajorCatalogue extends Model
         'icon',
         'album',
         'publish',
+        'follow',
         'order',
         'user_id',
     ];

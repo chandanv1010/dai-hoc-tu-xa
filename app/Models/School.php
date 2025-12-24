@@ -22,6 +22,7 @@ class School extends Model
         'enrollment_quota',
         'short_name',
         'publish',
+        'follow',
         'user_id',
         'statistics_majors',
         'statistics_students',

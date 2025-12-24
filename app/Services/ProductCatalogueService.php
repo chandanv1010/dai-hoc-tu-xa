@@ -157,6 +157,10 @@ class ProductCatalogueService extends BaseService
     private function updateCatalogue($productCatalogue, $request){
         $payload = $request->only($this->payload());
         $payload['album'] = $this->formatAlbum($request);
+        // Đảm bảo follow không bị reset nếu không có trong request
+        if (!$request->has('follow')) {
+            unset($payload['follow']);
+        }
         $flag = $this->productCatalogueRepository->update($productCatalogue->id, $payload);
         return $flag;
     }

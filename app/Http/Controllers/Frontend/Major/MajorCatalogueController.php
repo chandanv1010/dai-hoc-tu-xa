@@ -31,26 +31,15 @@ class MajorCatalogueController extends FrontendController
         parent::__construct();
     }
 
-    public function index(Request $request, $page = null)
+    public function index($id = null, Request $request = null, $page = null)
     {
-        // Lấy page từ route parameter hoặc request
-        if ($page === null) {
-            if ($request->has('page')) {
-                $page = (int) $request->get('page');
-            } else {
-                $page = 1;
-            }
-        } else {
-            $page = (int) $page;
+        // Nếu $request là null, có thể đang được gọi từ RouterController
+        if ($request === null) {
+            $request = request();
         }
-
-        // Set current page resolver cho pagination
-        \Illuminate\Pagination\Paginator::currentPageResolver(function () use ($page) {
-            return $page;
-        });
-
-        // Lấy danh sách majors với phân trang (có filter)
-        $majors = $this->majorRepository->paginate($request, $this->language, 12, 'cac-nganh-dao-tao-tu-xa.html');
+        
+        // Lấy danh sách majors TẤT CẢ (không phân trang) với filter
+        $majors = $this->majorRepository->getAll($request, $this->language);
         
         // Lấy danh sách major catalogues để hiển thị filter tabs
         $majorCatalogues = $this->majorCatalogueRepository->getAllMajorCatalogues($this->language);
@@ -73,8 +62,8 @@ class MajorCatalogueController extends FrontendController
             'duration' => $request->input('duration', []),
         ];
         
-        // Lấy SEO từ system
-        $seo = $this->getSeo($page);
+        // Lấy SEO từ system (không cần page nữa vì không phân trang)
+        $seo = $this->getSeo($id);
         
         $config = $this->config();
         $system = $this->system;
@@ -90,16 +79,22 @@ class MajorCatalogueController extends FrontendController
             'schools',
             'durations',
             'filterOptions',
-            'selectedFilters',
-            'page'
+            'selectedFilters'
         ));
     }
 
-    private function getSeo($page = 1)
+    private function getSeo($id = null)
     {
-        $canonical = ($page > 1) 
-            ? write_url('cac-nganh-dao-tao-tu-xa', true, false) . '/trang-' . $page . config('apps.general.suffix')
-            : write_url('cac-nganh-dao-tao-tu-xa', true, true);
+        $canonical = write_url('cac-nganh-dao-tao-tu-xa', true, true);
+        
+        // Lấy follow từ major catalogue nếu có (khi được gọi từ RouterController với $id)
+        $follow = 1; // Default là follow
+        if ($id !== null) {
+            $majorCatalogue = $this->majorCatalogueRepository->findById($id);
+            if ($majorCatalogue && isset($majorCatalogue->follow)) {
+                $follow = $majorCatalogue->follow ?? 1;
+            }
+        }
         
         // Lấy SEO từ system
         $metaTitle = $this->system['majors_catalogue_meta_title'] ?? null;
@@ -130,6 +125,7 @@ class MajorCatalogueController extends FrontendController
             'meta_description' => $metaDescription,
             'meta_image' => $metaImage,
             'canonical' => $canonical,
+            'follow' => $follow,
         ];
     }
 

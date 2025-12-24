@@ -334,12 +334,19 @@ if(!function_exists('seo')){
             ? write_url($canonicalValue, true, false).'/trang-'.$page.config('apps.general.suffix')
             : write_url($canonicalValue, true, true);
         
+        // Lấy follow từ model (nếu có)
+        $follow = null;
+        if ($model && isset($model->follow)) {
+            $follow = $model->follow;
+        }
+        
         return [
             'meta_title' => $metaTitle,
             'meta_keyword' => $metaKeyword ?? '',
             'meta_description' => $metaDescription,
             'meta_image' => $model->image ?? null,
             'canonical' => $canonical,
+            'follow' => $follow, // 1 = Follow, 2 = Nofollow, null = default Follow
         ];
     }
 }
