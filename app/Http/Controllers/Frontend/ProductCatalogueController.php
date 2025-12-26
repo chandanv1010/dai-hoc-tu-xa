@@ -79,7 +79,10 @@ class ProductCatalogueController extends FrontendController
 
         $products = $this->combineProductValues($products);
 
-        $lecturers = $this->lecturerRepository->all();
+        // Lấy danh sách lecturers đã publish (publish = 2)
+        $lecturers = $this->lecturerRepository->findByCondition([
+            ['publish', '=', 2]
+        ], true);
 
         $config = $this->config();
 

@@ -44,16 +44,6 @@
     
     <div class="course-catalogue-page">
         <div class="uk-container uk-container-center">
-            <!-- Page Header -->
-            <div class="course-page-header">
-                <h1 class="course-page-title">{{ $productCatalogue->name }}</h1>
-                @if(!empty($productCatalogue->description))
-                    <div class="course-page-description">
-                        {!! $productCatalogue->description !!}
-                    </div>
-                @endif
-            </div>
-            
             <!-- Course List -->
             @if (!is_null($products) && $products->count() > 0)
                 <div class="course-list-wrapper">
@@ -78,13 +68,26 @@
                     <p>Không tìm thấy khóa học nào.</p>
                 </div>
             @endif
-            
-            <!-- Content -->
-            @if(!empty($productCatalogue->content))
-                <div class="course-page-content">
-                    {!! $productCatalogue->content !!}
-                </div>
-            @endif
         </div>
     </div>
+
+    {{-- Form Sản Phẩm Modal --}}
+    @php
+        // Lấy dữ liệu từ System config - form sản phẩm
+        $formSanPhamTitle = $system['form_san_pham_title'] ?? 'ĐĂNG KÝ NHẬN TƯ VẤN';
+        $formSanPhamDescription = $system['form_san_pham_description'] ?? '';
+        $formSanPhamFooter = $system['form_san_pham_footer'] ?? '';
+        $formSanPhamScript = trim($system['form_san_pham_script'] ?? '');
+    @endphp
+    
+    @if(!empty($formSanPhamScript) || !empty($formSanPhamTitle))
+        <x-form-modal
+            modalId="product-form-modal"
+            modalClass="download-roadmap-modal"
+            :title="$formSanPhamTitle"
+            :description="$formSanPhamDescription"
+            :script="$formSanPhamScript"
+            :footer="$formSanPhamFooter"
+        />
+    @endif
 @endsection

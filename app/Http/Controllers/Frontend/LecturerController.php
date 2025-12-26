@@ -41,7 +41,13 @@ class LecturerController extends FrontendController
             ['canonical','=', $canonical]
         ]);
 
-        $allLecturers = $lecturers = $this->lecturerRepository->all();
+        // Kiểm tra nếu không tìm thấy lecturer
+        if (is_null($lecturer)) {
+            abort(404);
+        }
+
+        $allLecturers = $this->lecturerRepository->all();
+        $lecturers = $allLecturers;
 
         $products = $this->productRepository->findByCondition([
             ['lecturer_id','=', $lecturer->id]

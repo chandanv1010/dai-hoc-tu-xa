@@ -121,7 +121,21 @@ class ProductController extends FrontendController
         }
         $product = $this->productService->combineProductAndPromotion([$id], $product, true);
         $students = $this->calculateStudent($product);
-        $lecturer = $this->getInfoLecturer($product->lecturer_id);
+        
+        // Load Lecturer model từ product relationship
+        $lecturerModel = null;
+        if (!empty($product->lecturer_id)) {
+            $lecturerModel = $product->lecturers;
+        }
+        
+        // Lấy thông tin thống kê của lecturer
+        $lecturerStats = $this->getInfoLecturer($product->lecturer_id);
+        
+        // Gộp thông tin: model Lecturer + stats
+        $lecturer = $lecturerModel;
+        if ($lecturerModel && $lecturerStats) {
+            $lecturer->stats = $lecturerStats;
+        }
         $promotion_gifts = null;
         $promotion_gifts = $this->promotionService->getProTakeGiftBuyProduct($id);
         $product['promotion_gifts'] = $promotion_gifts;

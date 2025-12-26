@@ -212,25 +212,11 @@
                                 @endif
                             </div>
                             
-                            {{-- Quantity --}}
-                            <div class="product-quantity">
-                                <label class="quantity-label">Số lượng:</label>
-                                <div class="quantity-controls">
-                                    <button type="button" class="btn-qty minus">-</button>
-                                    <input type="number" class="quantity-text input-qty" value="1" min="1">
-                                    <button type="button" class="btn-qty plus">+</button>
-                                </div>
-                            </div>
-                            
                             {{-- Action Buttons --}}
                             <div class="product-detail-actions">
-                                <button type="button" class="btn btn-consult btn-register-red open-register-popup">
+                                <button type="button" class="btn btn-consult btn-register-red open-product-form-modal" style="width: 100%;">
                                     <i class="fa fa-phone"></i>
                                     Nhận tư vấn
-                                </button>
-                                <button type="button" class="btn btn-add-cart addToCart" data-id="{{ $product->id }}">
-                                    <i class="fa fa-shopping-cart"></i>
-                                    Mua ngay
                                 </button>
                             </div>
                             
@@ -261,19 +247,22 @@
                         {{-- Lecturer Section --}}
                         @if($lecturer)
                             <div class="product-lecturer wow fadeInUp" data-wow-duration="0.8s" data-wow-delay="0.35s">
-                                <h2 class="lecturer-section-title">Giáo viên khóa học</h2>
+                                <h2 class="lecturer-section-title">Giới thiệu về giáo viên</h2>
                                 <div class="lecturer-info-box">
                                     <div class="lecturer-text">
                                         <h3 class="lecturer-name-title">{{ $lecturer->name }}</h3>
-                                        @if(!empty($lecturer->experience))
-                                            <div class="lecturer-experience">
-                                                {!! $lecturer->experience !!}
+                                        @if(!empty($lecturer->position))
+                                            <p class="lecturer-position">{{ $lecturer->position }}</p>
+                                        @endif
+                                        @if(!empty($lecturer->description))
+                                            <div class="lecturer-description">
+                                                {!! $lecturer->description !!}
                                             </div>
                                         @endif
                                     </div>
                                     <div class="lecturer-image-box">
                                         @if(!empty($lecturer->image))
-                                            <img src="{{ $lecturer->image }}" alt="{{ $lecturer->name }}" class="lecturer-photo">
+                                            <img src="{{ image($lecturer->image) }}" alt="{{ $lecturer->name }}" class="lecturer-photo">
                                         @else
                                             <div class="lecturer-photo-placeholder">
                                                 <span>{{ strtoupper(substr($lecturer->name, 0, 1)) }}</span>
@@ -382,40 +371,36 @@
         </div>
     </div>
 
+    {{-- Form Sản Phẩm Modal --}}
+    @php
+        // Lấy dữ liệu từ System config - form sản phẩm
+        $formSanPhamTitle = $system['form_san_pham_title'] ?? 'ĐĂNG KÝ NHẬN TƯ VẤN';
+        $formSanPhamDescription = $system['form_san_pham_description'] ?? '';
+        $formSanPhamFooter = $system['form_san_pham_footer'] ?? '';
+        $formSanPhamScript = trim($system['form_san_pham_script'] ?? '');
+    @endphp
+    
+    @if(!empty($formSanPhamScript) || !empty($formSanPhamTitle))
+        <x-form-modal
+            modalId="product-form-modal"
+            modalClass="download-roadmap-modal"
+            :title="$formSanPhamTitle"
+            :description="$formSanPhamDescription"
+            :script="$formSanPhamScript"
+            :footer="$formSanPhamFooter"
+        />
+    @endif
+
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Quantity Controls
-        const minusBtn = document.querySelector('.btn-qty.minus');
-        const plusBtn = document.querySelector('.btn-qty.plus');
-        const qtyInput = document.querySelector('.input-qty');
         
-        if (minusBtn && plusBtn && qtyInput) {
-            minusBtn.addEventListener('click', function() {
-                let currentValue = parseInt(qtyInput.value) || 1;
-                if (currentValue > 1) {
-                    qtyInput.value = currentValue - 1;
-                }
-            });
-            
-            plusBtn.addEventListener('click', function() {
-                let currentValue = parseInt(qtyInput.value) || 1;
-                qtyInput.value = currentValue + 1;
-            });
-        }
-        
-        // Open register popup
-        const registerBtn = document.querySelector('.open-register-popup');
-        if (registerBtn) {
-            registerBtn.addEventListener('click', function() {
-                const modal = document.querySelector('#modal-register');
+        // Open product form modal
+        const productFormBtn = document.querySelector('.open-product-form-modal');
+        if (productFormBtn) {
+            productFormBtn.addEventListener('click', function() {
+                const modal = document.querySelector('#product-form-modal');
                 if (modal) {
                     UIkit.modal(modal).show();
-                } else {
-                    // Fallback to consultation modal
-                    const consultationModal = document.querySelector('#consultation-modal');
-                    if (consultationModal) {
-                        UIkit.modal(consultationModal).show();
-                    }
                 }
             });
         }

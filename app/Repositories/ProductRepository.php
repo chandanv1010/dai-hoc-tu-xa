@@ -166,6 +166,7 @@ class ProductRepository extends BaseRepository
             'reviews' => function ($query) {
                 $query->where('status', '=', 1);
             },
+            'lecturers',
         ])
         ->where('tb2.language_id', '=', $language_id)
         ->find($id);

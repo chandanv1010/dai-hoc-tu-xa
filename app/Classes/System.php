@@ -133,6 +133,31 @@ class System{
                 'footer' => ['type' => 'textarea', 'label' => 'Footer (có thể dùng HTML, ví dụ: Còn <span class="cl">10</span> suất học thử miễn phí)'],
             ]
         ];
+
+        $data['form_san_pham'] = [
+            'label' => 'Cấu Hình Form Sản Phẩm',
+            'description' => 'Cài đặt đầy đủ thông tin ',
+            'value' => [
+                'script' => ['type' => 'textarea', 'label' => 'Mã Nhúng'],
+                'title' => ['type' => 'text', 'label' => 'Tiêu đề Form'],
+                'description' => ['type' => 'text', 'label' => 'Mô tả'],
+                'footer' => ['type' => 'textarea', 'label' => 'Footer (có thể dùng HTML, ví dụ: Còn <span class="cl">10</span> chỉ tiêu tuyển sinh năm 2025)'],
+            ]
+        ];
+
+        $data['product_cta'] = [
+            'label' => 'Cấu Hình Sidebar Sản Phẩm',
+            'description' => 'Cài đặt thông tin sidebar hiển thị trên trang chi tiết sản phẩm',
+            'value' => [
+                'cta_button_text' => ['type' => 'text', 'label' => 'Text nút CTA'],
+                'cta_button_link' => ['type' => 'text', 'label' => 'Link nút CTA'],
+                'overview_title' => ['type' => 'text', 'label' => 'Tiêu đề Tổng quan'],
+                'overview_item_1' => ['type' => 'text', 'label' => 'Mục 1 - Đầu ra'],
+                'overview_item_2' => ['type' => 'text', 'label' => 'Mục 2 - Học online'],
+                'overview_item_3' => ['type' => 'text', 'label' => 'Mục 3 - Nội dung'],
+                'overview_item_4' => ['type' => 'textarea', 'label' => 'Mục 4 - Đặc biệt (có thể dùng HTML)'],
+            ]
+        ];
         
         $data['seo'] = [
             'label' => 'Cấu hình SEO dành cho trang chủ',

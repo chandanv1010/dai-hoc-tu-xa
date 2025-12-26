@@ -6,8 +6,17 @@
     $price = getPrice($product);
     $description = $productLanguage ? ($productLanguage->pivot->description ?? '') : '';
     // Cắt mô tả ngắn
-    $shortDescription = strip_tags($description);
-    $shortDescription = mb_strlen($shortDescription) > 100 ? mb_substr($shortDescription, 0, 100) . '...' : $shortDescription;
+    $shortDescription = html_entity_decode(strip_tags($description), ENT_QUOTES, 'UTF-8');
+    $shortDescription = trim($shortDescription);
+    if (mb_strlen($shortDescription, 'UTF-8') > 100) {
+        $shortDescription = mb_substr($shortDescription, 0, 100, 'UTF-8');
+        // Tìm vị trí khoảng trắng cuối cùng để không cắt giữa từ
+        $lastSpace = mb_strrpos($shortDescription, ' ', 0, 'UTF-8');
+        if ($lastSpace !== false && $lastSpace > 80) {
+            $shortDescription = mb_substr($shortDescription, 0, $lastSpace, 'UTF-8');
+        }
+        $shortDescription .= '...';
+    }
 @endphp
 
 <div class="course-card">
@@ -28,7 +37,7 @@
         </div>
         <div class="course-card-actions">
             <a href="{{ $canonical }}" class="btn-view-detail">Xem chi tiết</a>
-            <a href="{{ $canonical }}" class="btn-buy-now">Mua ngay</a>
+            <a href="#product-form-modal" class="btn-buy-now" data-uk-modal>Nhận tư vấn</a>
         </div>
     </div>
 </div>
