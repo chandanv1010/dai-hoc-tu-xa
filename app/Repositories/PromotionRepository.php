@@ -73,7 +73,12 @@ class PromotionRepository extends BaseRepository
                     SELECT id as product_id, product_catalogue_id FROM products WHERE product_catalogue_id IS NOT NULL
                 ) as all_catalogues
             ) as pcprod'), 'pcprod.product_id', '=', 'products.id')
-            ->leftJoin('promotion_product_catalogue as pcp', 'pcp.product_catalogue_id', '=', 'pcprod.product_catalogue_id')
+            ->leftJoin(DB::raw('(
+                SELECT ppc.promotion_id, pc_child.id as product_catalogue_id
+                FROM promotion_product_catalogue ppc
+                JOIN product_catalogues pc_parent ON pc_parent.id = ppc.product_catalogue_id
+                JOIN product_catalogues pc_child ON pc_child.lft >= pc_parent.lft AND pc_child.rgt <= pc_parent.rgt
+            ) as pcp'), 'pcp.product_catalogue_id', '=', 'pcprod.product_catalogue_id')
             ->leftJoin('promotions as promo2', function($join) use ($now) {
                 $join->on('promo2.id', '=', 'pcp.promotion_id')
                     ->where('promo2.publish', 2)
