@@ -17,13 +17,23 @@
         }
         $shortDescription .= '...';
     }
+    
+    // Tính giá hiển thị
+    $originalPrice = $product->price ?? 0;
+    $salePrice = ($price['priceSale'] > 0) ? $price['priceSale'] : $originalPrice;
+    $hasDiscount = ($price['percent'] > 0 && $price['priceSale'] > 0);
 @endphp
 
-<div class="course-card">
+<div class="course-card{{ $hasDiscount ? ' has-discount' : '' }}">
     <div class="course-card-image">
         <a href="{{ $canonical }}" title="{{ $name }}">
             <img src="{{ $image }}" alt="{{ $name }}" class="img-responsive">
         </a>
+        @if($hasDiscount)
+            <div class="course-discount-badge">
+                <span>-{{ $price['percent'] }}%</span>
+            </div>
+        @endif
     </div>
     <div class="course-card-content">
         <h3 class="course-card-title">
@@ -33,7 +43,19 @@
             <p class="course-card-description">{{ $shortDescription }}</p>
         @endif
         <div class="course-card-price">
-            {!! $price['html'] !!}
+            @if($originalPrice == 0)
+                <div class="price-contact">Liên Hệ</div>
+            @elseif($hasDiscount)
+                <div class="price-wrapper">
+                    <div class="price-original">{{ number_format($originalPrice, 0, ',', '.') }}₫</div>
+                    <div class="price-sale">{{ number_format($salePrice, 0, ',', '.') }}₫</div>
+                </div>
+                <div class="price-save-tag">
+                    <i class="fa fa-tag"></i> Tiết kiệm {{ number_format($originalPrice - $salePrice, 0, ',', '.') }}₫
+                </div>
+            @else
+                <div class="price-current">{{ number_format($originalPrice, 0, ',', '.') }}₫</div>
+            @endif
         </div>
         <div class="course-card-actions">
             <a href="{{ $canonical }}" class="btn-view-detail">Xem chi tiết</a>

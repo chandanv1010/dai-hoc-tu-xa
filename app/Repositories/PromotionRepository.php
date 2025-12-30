@@ -58,17 +58,31 @@ class PromotionRepository extends BaseRepository
             ->leftJoin('promotions as promo1', function($join) use ($now) {
                 $join->on('promo1.id', '=', 'ppv.promotion_id')
                     ->where('promo1.publish', 2)
-                    ->where('promo1.method', 'product_and_quantity') 
-                    ->where('promo1.endDate', '>', $now)
-                    ->where('promo1.startDate', '<=', $now);
+                    ->where('promo1.method', 'product_and_quantity')
+                    ->where('promo1.startDate', '<=', $now)
+                    ->where(function($query) use ($now) {
+                        $query->where('promo1.neverEndDate', '=', 'accept')
+                              ->orWhere('promo1.endDate', '>', $now);
+                    });
             })
-            ->leftJoin('product_catalogue_product as pcprod', 'pcprod.product_id', '=', 'products.id')
+            ->leftJoin(DB::raw('(
+                SELECT DISTINCT product_id, product_catalogue_id 
+                FROM (
+                    SELECT product_id, product_catalogue_id FROM product_catalogue_product
+                    UNION
+                    SELECT id as product_id, product_catalogue_id FROM products WHERE product_catalogue_id IS NOT NULL
+                ) as all_catalogues
+            ) as pcprod'), 'pcprod.product_id', '=', 'products.id')
             ->leftJoin('promotion_product_catalogue as pcp', 'pcp.product_catalogue_id', '=', 'pcprod.product_catalogue_id')
             ->leftJoin('promotions as promo2', function($join) use ($now) {
                 $join->on('promo2.id', '=', 'pcp.promotion_id')
                     ->where('promo2.publish', 2)
-                    ->where('promo2.endDate', '>', $now)
-                    ->where('promo2.startDate', '<=', $now);
+                    ->where('promo2.method', 'product_and_quantity')
+                    ->where('promo2.startDate', '<=', $now)
+                    ->where(function($query) use ($now) {
+                        $query->where('promo2.neverEndDate', '=', 'accept')
+                              ->orWhere('promo2.endDate', '>', $now);
+                    });
             })
             ->leftJoin('promotions', function($join) {
                 $join->on(function($query) {

@@ -411,10 +411,18 @@ class ProductService extends BaseService
 
         $promotions = $this->promotionRepository->findByProduct($productId);
         
-        if($promotions){
+        if($promotions && $promotions->count() > 0){
 
             if($flag == true){
-                $products->promotions = ($promotions[0]) ?? [];
+                // Tìm promotion phù hợp với product id
+                $productPromotion = null;
+                foreach($promotions as $promotion){
+                    if($promotion->product_id == $products->id){
+                        $productPromotion = $promotion;
+                        break;
+                    }
+                }
+                $products->promotions = $productPromotion;
                 return $products;
             }
 

@@ -102,10 +102,33 @@ if(!function_exists('getPrice')){
             return $result;
         }
 
-        if(isset($product->promotions) && isset($product->promotions->discountType)){
-            $result['percent'] = getPercent($product, $product->promotions->discount);
-            if($product->promotions->discountValue > 0){
-                $result['priceSale'] = getPromotionPrice($product->price, $product->promotions->discount);
+        // Kiểm tra promotion - có thể là object hoặc null
+        if(!empty($product->promotions) && is_object($product->promotions)){
+            $promotion = $product->promotions;
+            
+            // Lấy giá trị discount đã tính toán sẵn hoặc tính toán từ discountValue và discountType
+            $discount = 0;
+            
+            // Ưu tiên sử dụng discount đã tính toán sẵn
+            if(isset($promotion->discount) && $promotion->discount > 0){
+                $discount = (float)$promotion->discount;
+            } 
+            // Nếu không có discount, tính từ discountValue và discountType
+            elseif(isset($promotion->discountValue) && $promotion->discountValue > 0 && isset($promotion->discountType)){
+                if($promotion->discountType == 'cash'){
+                    $discount = (float)$promotion->discountValue;
+                } elseif($promotion->discountType == 'percent'){
+                    $discount = ($product->price * (float)$promotion->discountValue) / 100;
+                    // Áp dụng maxDiscountValue nếu có
+                    if(isset($promotion->maxDiscountValue) && $promotion->maxDiscountValue > 0){
+                        $discount = min($discount, (float)$promotion->maxDiscountValue);
+                    }
+                }
+            }
+            
+            if($discount > 0){
+                $result['percent'] = getPercent($product, $discount);
+                $result['priceSale'] = getPromotionPrice($product->price, $discount);
             }
         }
         $result['html'] .= '<div class="price uk-flex uk-flex-middle mt10">';

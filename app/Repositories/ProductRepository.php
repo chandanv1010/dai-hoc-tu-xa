@@ -189,6 +189,9 @@ class ProductRepository extends BaseRepository
         $query->leftJoin('product_variants as tb3','products.id', '=', 'tb3.product_id');
         $query->leftJoin('product_variant_language as tb4', 'tb3.id', '=', 'tb4.product_variant_id');
 
+        // Filter out soft-deleted products
+        $query->whereNull('products.deleted_at');
+
         foreach($condition as $key => $val){
             $query->where($val[0], $val[1], $val[2]);
         }
@@ -226,6 +229,7 @@ class ProductRepository extends BaseRepository
         }
 
         $query->where('products.publish', '=', 2);
+        $query->whereNull('products.deleted_at');
 
         if(isset($param['where']) && count($param['where'])){
             foreach($param['where'] as $key => $val){
@@ -271,6 +275,7 @@ class ProductRepository extends BaseRepository
             'tb2.name',
         ]) ;
         $query->join('product_language as tb2','products.id', '=', 'tb2.product_id');
+        $query->whereNull('products.deleted_at');
 
         foreach($condition as $key => $val){
             $query->where($val[0], $val[1], $val[2]);
@@ -284,7 +289,7 @@ class ProductRepository extends BaseRepository
     }
     
     public function getRelated($limit = 6, $productCatalogueId = 0, $productId = 0){
-        return $this->model->where('publish' , 2)->where('product_catalogue_id', $productCatalogueId)->where('id', '!=', $productId)->orderBy('id', 'desc')->limit($limit)->get();
+        return $this->model->where('publish' , 2)->whereNull('deleted_at')->where('product_catalogue_id', $productCatalogueId)->where('id', '!=', $productId)->orderBy('id', 'desc')->limit($limit)->get();
     }
 
     public function getProductByProductCatalogue(array $productCatalogue = [], $language_id = 0) 
@@ -318,6 +323,7 @@ class ProductRepository extends BaseRepository
             ->join('product_language as tb2', 'tb2.product_id', '=', 'products.id')
             ->leftJoin('lecturers as tb3', 'tb3.id', '=', 'products.lecturer_id')
             ->where('tb2.language_id', '=', $language_id)
+            ->whereNull('products.deleted_at')
             ->get();
             
         return $products;

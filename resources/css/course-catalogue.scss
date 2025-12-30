@@ -170,6 +170,55 @@
         }
     }
 
+    // Badge giảm giá góc trên phải
+    .course-discount-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 10;
+
+        span {
+            display: inline-block;
+            background: linear-gradient(135deg, #E31E24 0%, #ff4757 100%);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(227, 30, 36, 0.4);
+            animation: pulse-badge 2s infinite;
+        }
+
+        @keyframes pulse-badge {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+        }
+    }
+
+    // Class cho sản phẩm có khuyến mãi
+    &.has-discount {
+        border: 2px solid #E31E24;
+
+        .course-card-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(227, 30, 36, 0.1) 0%, transparent 50%);
+            z-index: 1;
+            pointer-events: none;
+        }
+    }
+
     .course-card-content {
         padding: 20px;
         flex: 1;
@@ -227,6 +276,77 @@
                 margin-bottom: 12px;
             }
 
+            // Giá liên hệ
+            .price-contact {
+                font-size: 18px;
+                font-weight: 600;
+                color: #0066CC;
+            }
+
+            // Giá thường (không khuyến mãi)
+            .price-current {
+                font-size: 20px;
+                font-weight: 700;
+                color: #E31E24;
+
+                @media (max-width: 768px) {
+                    font-size: 18px;
+                }
+            }
+
+            // Wrapper chứa giá gốc + giá sale
+            .price-wrapper {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                flex-wrap: wrap;
+                margin-bottom: 8px;
+
+                .price-original {
+                    font-size: 15px;
+                    color: #999;
+                    text-decoration: line-through;
+                    font-weight: 500;
+
+                    @media (max-width: 768px) {
+                        font-size: 13px;
+                    }
+                }
+
+                .price-sale {
+                    font-size: 22px;
+                    font-weight: 700;
+                    color: #E31E24;
+
+                    @media (max-width: 768px) {
+                        font-size: 18px;
+                    }
+                }
+            }
+
+            // Tag tiết kiệm
+            .price-save-tag {
+                display: inline-flex;
+                align-items: center;
+                gap: 6px;
+                background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+                color: #fff;
+                padding: 4px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+
+                @media (max-width: 768px) {
+                    font-size: 11px;
+                    padding: 3px 8px;
+                }
+
+                i {
+                    font-size: 11px;
+                }
+            }
+
+            // Giữ lại CSS cũ cho backward compatibility
             .price {
                 display: flex;
                 align-items: center;
@@ -325,4 +445,3 @@
         }
     }
 }
-

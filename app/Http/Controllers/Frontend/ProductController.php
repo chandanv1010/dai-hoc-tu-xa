@@ -195,6 +195,12 @@ class ProductController extends FrontendController
         ];
 
         $productRelated = $this->productRepository->getRelated(6, $product->product_catalogue_id, $product->id);
+        
+        // Load promotions cho related products
+        if ($productRelated && $productRelated->count() > 0) {
+            $relatedProductIds = $productRelated->pluck('id')->toArray();
+            $productRelated = $this->productService->combineProductAndPromotion($relatedProductIds, $productRelated);
+        }
 
 
         Cart::instance('seen')->add($productSeen);

@@ -283,11 +283,22 @@
                                             $relatedLanguage = $relatedProduct->languages->first();
                                             $relatedName = $relatedLanguage->pivot->name ?? '';
                                             $relatedDescription = $relatedLanguage->pivot->description ?? '';
+                                            // Fix HTML entities - decode trước khi strip_tags
+                                            $relatedDescriptionClean = html_entity_decode(strip_tags($relatedDescription), ENT_QUOTES, 'UTF-8');
+                                            $relatedDescriptionClean = trim($relatedDescriptionClean);
                                             $relatedCanonical = write_url($relatedLanguage->pivot->canonical ?? '');
-                                            $relatedPrice = number_format($relatedProduct->price ?? 0, 0, ',', '.');
                                             $relatedImage = $relatedProduct->image ?? '';
+                                            
+                                            // Lấy giá khuyến mãi
+                                            $relatedPriceData = getPrice($relatedProduct);
+                                            $relatedOriginalPrice = $relatedProduct->price ?? 0;
+                                            $relatedSalePrice = ($relatedPriceData['priceSale'] > 0) ? $relatedPriceData['priceSale'] : $relatedOriginalPrice;
+                                            $relatedHasDiscount = ($relatedPriceData['percent'] > 0 && $relatedPriceData['priceSale'] > 0);
                                         @endphp
-                                        <div class="related-card wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="{{ ($loop->index * 0.1) + 0.5 }}s">
+                                        <div class="related-card{{ $relatedHasDiscount ? ' has-discount' : '' }} wow fadeInUp" data-wow-duration="0.6s" data-wow-delay="{{ ($loop->index * 0.1) + 0.5 }}s">
+                                            @if($relatedHasDiscount)
+                                                <div class="related-discount-badge">-{{ $relatedPriceData['percent'] }}%</div>
+                                            @endif
                                             <a href="{{ $relatedCanonical }}" class="related-link">
                                                 <div class="related-image">
                                                     @if($relatedImage)
@@ -300,10 +311,19 @@
                                                 </div>
                                                 <div class="related-content">
                                                     <h3 class="related-name">{{ $relatedName }}</h3>
-                                                    @if($relatedDescription)
-                                                        <p class="related-description">{{ \Illuminate\Support\Str::limit(strip_tags($relatedDescription), 80) }}</p>
+                                                    @if($relatedDescriptionClean)
+                                                        <p class="related-description">{{ \Illuminate\Support\Str::limit($relatedDescriptionClean, 80) }}</p>
                                                     @endif
-                                                    <div class="related-price">{{ $relatedPrice }}₫</div>
+                                                    <div class="related-price-wrapper">
+                                                        @if($relatedOriginalPrice == 0)
+                                                            <div class="related-price contact">Liên Hệ</div>
+                                                        @elseif($relatedHasDiscount)
+                                                            <div class="related-price-original">{{ number_format($relatedOriginalPrice, 0, ',', '.') }}₫</div>
+                                                            <div class="related-price sale">{{ number_format($relatedSalePrice, 0, ',', '.') }}₫</div>
+                                                        @else
+                                                            <div class="related-price">{{ number_format($relatedOriginalPrice, 0, ',', '.') }}₫</div>
+                                                        @endif
+                                                    </div>
                                                 </div>
                                             </a>
                                         </div>

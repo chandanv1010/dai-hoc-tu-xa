@@ -77,25 +77,25 @@ return [
         //         ],
         //     ]
         // ],
-        // [
-        //     'title' => 'QL Marketing',
-        //     'icon' => 'fa fa-money',
-        //     'name' => ['promotion', 'source'],
-        //     'subModule' => [
-        //         [
-        //             'title' => 'QL Khuyến mại',
-        //             'route' => 'promotion/index'
-        //         ],
-        //         // [
-        //         //     'title' => 'QL Voucher',
-        //         //     'route' => 'voucher/index'
-        //         // ],
-        //         [
-        //             'title' => 'QL nguồn khách',
-        //             'route' => 'source/index'
-        //         ],
-        //     ]
-        // ],
+        [
+            'title' => 'QL Marketing',
+            'icon' => 'fa fa-money',
+            'name' => ['promotion', 'source'],
+            'subModule' => [
+                [
+                    'title' => 'QL Khuyến mại',
+                    'route' => 'promotion/index'
+                ],
+                // [
+                //     'title' => 'QL Voucher',
+                //     'route' => 'voucher/index'
+                // ],
+                [
+                    'title' => 'QL nguồn khách',
+                    'route' => 'source/index'
+                ],
+            ]
+        ],
         [
             'title' => 'QL Bài viết',
             'icon' => 'fa fa-file',
