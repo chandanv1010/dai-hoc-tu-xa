@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::redirect('/hoc-vien-cong-nghe-buu-chinh-vien-thong.html', '/hoc-vien-cong-nghe-buu-chinh-vien-thong-ptit.html', 301);
+
 // Load modular route files
 require __DIR__.'/auth.php';
 require __DIR__.'/frontend.php';
