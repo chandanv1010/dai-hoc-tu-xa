@@ -211,13 +211,8 @@
                                     </div>
                                     
                                     <div class="form-group">
-                                        <label for="aside-email">Email <span class="required">*</span></label>
-                                        <input type="email" name="email" id="aside-email" class="form-control" required>
-                                    </div>
-                                    
-                                    <div class="form-group">
-                                        <label for="aside-address">Địa chỉ</label>
-                                        <input type="text" name="address" id="aside-address" class="form-control">
+                                        <label for="aside-email">Email</label>
+                                        <input type="email" name="email" id="aside-email" class="form-control">
                                     </div>
                                     
                                     <div class="form-group">
@@ -254,15 +249,31 @@
                 submitBtn.disabled = true;
                 submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Đang gửi...';
                 
+                // Lấy CSRF token từ meta tag hoặc form
+                const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') 
+                    || document.querySelector('input[name="_token"]')?.value;
+                
                 fetch(form.action, {
                     method: 'POST',
                     body: formData,
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest',
-                        'Accept': 'application/json'
-                    }
+                        'Accept': 'application/json',
+                        'X-CSRF-TOKEN': csrfToken || ''
+                    },
+                    credentials: 'same-origin'
                 })
-                .then(response => response.json())
+                .then(response => {
+                    // Kiểm tra nếu response không OK
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || 'Có lỗi xảy ra');
+                        }).catch(() => {
+                            throw new Error('Có lỗi xảy ra. Vui lòng thử lại.');
+                        });
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.message === 'success') {
                         if (data.redirect) {
@@ -271,12 +282,12 @@
                             window.location.href = '{{ route("contact.thankyou") }}';
                         }
                     } else {
-                        alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                        alert(data.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
                     }
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    alert('Có lỗi xảy ra. Vui lòng thử lại.');
+                    alert(error.message || 'Có lỗi xảy ra. Vui lòng thử lại.');
                 })
                 .finally(() => {
                     submitBtn.disabled = false;

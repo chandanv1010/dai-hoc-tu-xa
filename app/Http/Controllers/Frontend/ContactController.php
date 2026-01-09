@@ -85,13 +85,20 @@ class ContactController extends FrontendController
         
         try {
             DB::beginTransaction();
-            // Map 'description' from form to 'message' column in database
+            // Map 'description' or 'message' from form to 'message' column in database
             $payload = $request->only(['email', 'name', 'phone', 'address', 'type']);
-            $payload['message'] = $request->input('description');
+            
+            // Ưu tiên lấy 'message', nếu không có hoặc rỗng thì lấy 'description'
+            $messageContent = $request->input('message');
+            if (empty($messageContent)) {
+                $messageContent = $request->input('description');
+            }
             
             // Append content (title) if present
             if ($request->filled('content')) {
-                $payload['message'] = $request->input('content') . ": " . $payload['message'];
+                $payload['message'] = $request->input('content') . ": " . ($messageContent ?? '');
+            } else {
+                $payload['message'] = $messageContent;
             }
 
             Contact::create($payload);

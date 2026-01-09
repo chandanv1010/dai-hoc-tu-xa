@@ -6291,6 +6291,17 @@
                 h2 {
                     font-size: 28px;
                     color: #008DC2;
+                    
+                    // Force tất cả thẻ con bên trong kế thừa font-size từ h2
+                    // Để override các inline styles từ editor
+                    * {
+                        font-size: inherit !important;
+                    }
+                    
+                    // Đảm bảo các thẻ inline như span, b, strong, em cũng kế thừa
+                    span, b, strong, em, i, u {
+                        font-size: inherit !important;
+                    }
                 }
 
                 h3 {
@@ -16412,7 +16423,7 @@ button {
 
     // Class cho sản phẩm có khuyến mãi
     &.has-discount {
-        border: 2px solid #E31E24;
+        border: 2px solid #008DC2;
 
         .course-card-image::before {
             content: '';
@@ -16421,7 +16432,7 @@ button {
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(227, 30, 36, 0.1) 0%, transparent 50%);
+            background: linear-gradient(135deg, rgba(0, 141, 194, 0.1) 0%, transparent 50%);
             z-index: 1;
             pointer-events: none;
         }
@@ -17369,7 +17380,7 @@ button {
 
                     // Has discount state
                     &.has-discount {
-                        border: 2px solid #E31E24;
+                        border: 2px solid #008DC2;
                     }
 
                     .related-link {

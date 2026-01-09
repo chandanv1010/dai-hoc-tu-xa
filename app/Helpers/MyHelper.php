@@ -304,10 +304,12 @@ if(!function_exists('write_url')){
     function write_url($canonical = null, bool $fullDomain = true, $suffix = true){
         $canonical = ($canonical) ?? '';
         if(strpos($canonical, 'http') !== false){
-            return $canonical;
+            // Nếu là external URL, thêm UTM nếu cần
+            return addUtmToUrl($canonical);
         }
         $fullUrl = (($fullDomain === true) ? config('app.url') : '').$canonical.( ($suffix === true) ? config('apps.general.suffix') : '' );
-        return $fullUrl;
+        // Tự động thêm UTM parameters nếu có trong session
+        return addUtmToUrl($fullUrl);
     }
 }
 
@@ -860,5 +862,54 @@ if (!function_exists('calculateCourses')) {
             'totalSession' => $totalSession
         ];
         return $chapters;
+    }
+}
+
+if (!function_exists('addUtmToUrl')) {
+    /**
+     * Thêm UTM parameters vào URL nếu có trong session
+     * Chỉ áp dụng cho frontend URLs
+     */
+    function addUtmToUrl($url) {
+        // Chỉ thêm UTM cho frontend URLs, không thêm cho backend
+        if (str_contains($url, '/admin') || 
+            str_contains($url, '/dashboard') || 
+            str_contains($url, '/backend') ||
+            str_contains($url, '/api/')) {
+            return $url;
+        }
+        
+        // Lấy UTM parameters từ session
+        $utmParams = session('utm_parameters', []);
+        
+        if (empty($utmParams)) {
+            return $url;
+        }
+        
+        // Parse URL
+        $parsedUrl = parse_url($url);
+        $queryParams = [];
+        
+        // Lấy query string hiện tại nếu có
+        if (isset($parsedUrl['query'])) {
+            parse_str($parsedUrl['query'], $queryParams);
+        }
+        
+        // Merge UTM parameters (không ghi đè nếu đã có trong URL)
+        foreach ($utmParams as $key => $value) {
+            if (!isset($queryParams[$key])) {
+                $queryParams[$key] = $value;
+            }
+        }
+        
+        // Rebuild URL
+        $scheme = isset($parsedUrl['scheme']) ? $parsedUrl['scheme'] . '://' : '';
+        $host = isset($parsedUrl['host']) ? $parsedUrl['host'] : '';
+        $port = isset($parsedUrl['port']) ? ':' . $parsedUrl['port'] : '';
+        $path = isset($parsedUrl['path']) ? $parsedUrl['path'] : '';
+        $query = !empty($queryParams) ? '?' . http_build_query($queryParams) : '';
+        $fragment = isset($parsedUrl['fragment']) ? '#' . $parsedUrl['fragment'] : '';
+        
+        return $scheme . $host . $port . $path . $query . $fragment;
     }
 }

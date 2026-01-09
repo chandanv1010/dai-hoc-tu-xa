@@ -33,7 +33,11 @@
                         {{ $contact->address }}
                     </td>
                     <td>
-                        {!! $contact->message !!}
+                        @if(!empty($contact->message))
+                            {!! $contact->message !!}
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
                     </td>
                     
                     <td class="text-center"> 

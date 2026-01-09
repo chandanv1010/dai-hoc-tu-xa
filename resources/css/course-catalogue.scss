@@ -204,7 +204,7 @@
 
     // Class cho sản phẩm có khuyến mãi
     &.has-discount {
-        border: 2px solid #E31E24;
+        border: 2px solid #008DC2;
 
         .course-card-image::before {
             content: '';
@@ -213,7 +213,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, rgba(227, 30, 36, 0.1) 0%, transparent 50%);
+            background: linear-gradient(135deg, rgba(0, 141, 194, 0.1) 0%, transparent 50%);
             z-index: 1;
             pointer-events: none;
         }
