@@ -71,9 +71,20 @@
         return backendPatterns.some(pattern => url.includes(pattern));
     }
     
+    // Kiểm tra xem link có phải là modal/hash link không
+    function isModalOrHashLink(url) {
+        if (!url) return false;
+        // Bỏ qua các link anchor (#), javascript:, và các link rỗng
+        return url.startsWith('#') || 
+               url.startsWith('javascript:') || 
+               url === '' || 
+               url === 'javascript:void(0)' ||
+               url === 'javascript:void(0);';
+    }
+    
     // Thêm UTM vào URL
     function addUtmToUrl(url) {
-        if (!url || isBackendUrl(url)) {
+        if (!url || isBackendUrl(url) || isModalOrHashLink(url)) {
             return url;
         }
         
@@ -117,12 +128,23 @@
     // Lưu UTM khi trang load
     saveUtmToStorage();
     
+    // Kiểm tra xem link có phải là modal trigger không
+    function isModalTrigger(linkElement) {
+        return linkElement.hasAttribute('data-uk-modal') || 
+               linkElement.hasAttribute('uk-modal') ||
+               linkElement.hasAttribute('data-uk-lightbox') ||
+               linkElement.hasAttribute('uk-lightbox') ||
+               linkElement.hasAttribute('data-toggle') ||
+               linkElement.classList.contains('uk-modal-close');
+    }
+    
     // Xử lý tất cả các link trong trang
     function processLinks() {
         const links = document.querySelectorAll('a[href]');
         links.forEach(link => {
             const originalHref = link.getAttribute('href');
-            if (originalHref && !isBackendUrl(originalHref)) {
+            // Bỏ qua modal triggers và hash links
+            if (originalHref && !isBackendUrl(originalHref) && !isModalOrHashLink(originalHref) && !isModalTrigger(link)) {
                 const newHref = addUtmToUrl(originalHref);
                 if (newHref !== originalHref) {
                     link.setAttribute('href', newHref);
@@ -138,6 +160,18 @@
         processLinks();
     }
     
+    // Xử lý một link element
+    function processLinkElement(link) {
+        const originalHref = link.getAttribute('href');
+        // Bỏ qua modal triggers và hash links
+        if (originalHref && !isBackendUrl(originalHref) && !isModalOrHashLink(originalHref) && !isModalTrigger(link)) {
+            const newHref = addUtmToUrl(originalHref);
+            if (newHref !== originalHref) {
+                link.setAttribute('href', newHref);
+            }
+        }
+    }
+    
     // Xử lý các link được thêm động (sử dụng MutationObserver)
     const observer = new MutationObserver(function(mutations) {
         mutations.forEach(function(mutation) {
@@ -145,26 +179,12 @@
                 mutation.addedNodes.forEach(function(node) {
                     if (node.nodeType === 1) { // Element node
                         if (node.tagName === 'A' && node.hasAttribute('href')) {
-                            const originalHref = node.getAttribute('href');
-                            if (originalHref && !isBackendUrl(originalHref)) {
-                                const newHref = addUtmToUrl(originalHref);
-                                if (newHref !== originalHref) {
-                                    node.setAttribute('href', newHref);
-                                }
-                            }
+                            processLinkElement(node);
                         } else {
                             // Kiểm tra các link con
                             const links = node.querySelectorAll && node.querySelectorAll('a[href]');
                             if (links) {
-                                links.forEach(link => {
-                                    const originalHref = link.getAttribute('href');
-                                    if (originalHref && !isBackendUrl(originalHref)) {
-                                        const newHref = addUtmToUrl(originalHref);
-                                        if (newHref !== originalHref) {
-                                            link.setAttribute('href', newHref);
-                                        }
-                                    }
-                                });
+                                links.forEach(processLinkElement);
                             }
                         }
                     }
