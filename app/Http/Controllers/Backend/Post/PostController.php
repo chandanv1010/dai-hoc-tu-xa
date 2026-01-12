@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 
 use App\Services\PostService;
 use App\Repositories\PostRepository;
+use App\Services\TagService;
 use App\Http\Requests\Post\StorePostRequest;
 use App\Http\Requests\Post\UpdatePostRequest;
 use App\Classes\Nestedsetbie;
@@ -16,6 +17,7 @@ class PostController extends Controller
 {
     protected $postService;
     protected $postRepository;
+    protected $tagService;
     protected $languageRepository;
     protected $language;
     protected $nestedset;
@@ -23,6 +25,7 @@ class PostController extends Controller
     public function __construct(
         PostService $postService,
         PostRepository $postRepository,
+        TagService $tagService
     ){
         $this->middleware(function($request, $next){
             $locale = app()->getLocale(); // vn en cn
@@ -34,6 +37,7 @@ class PostController extends Controller
 
         $this->postService = $postService;
         $this->postRepository = $postRepository;
+        $this->tagService = $tagService;
         $this->initialize();
         
     }
@@ -77,11 +81,13 @@ class PostController extends Controller
         $config['seo'] = __('messages.post');
         $config['method'] = 'create';
         $dropdown  = $this->nestedset->Dropdown();
+        $allTags = $this->tagService->getAllTags();
         $template = 'backend.post.post.store';
         return view('backend.dashboard.layout', compact(
             'template',
             'dropdown',
             'config',
+            'allTags',
         ));
     }
 
@@ -103,6 +109,7 @@ class PostController extends Controller
         $config['method'] = 'edit';
         $dropdown  = $this->nestedset->Dropdown();
         $album = json_decode($post->album);
+        $allTags = $this->tagService->getAllTags();
         $template = 'backend.post.post.store';
         return view('backend.dashboard.layout', compact(
             'template',
@@ -110,6 +117,7 @@ class PostController extends Controller
             'dropdown',
             'post',
             'album',
+            'allTags',
         ));
     }
 

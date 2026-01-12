@@ -48,6 +48,7 @@ class PostRepository extends BaseRepository
         )
         ->join('post_language as tb2', 'tb2.post_id', '=','posts.id')
         ->with('post_catalogues')
+        ->with('tags')
         ->where('tb2.language_id', '=', $language_id)
         ->find($id);
     }
@@ -105,6 +106,23 @@ class PostRepository extends BaseRepository
             })
             ->orderBy('posts.id', 'desc')
             ->paginate($perPage)->withQueryString()->withPath(config('app.url'). 'tim-kiem');
+    }
+
+    public function getPostsByTag($tagId, $languageId, $perPage = 15){
+        return $this->model->select([
+                'posts.id',
+                'posts.image',
+                'posts.created_at',
+            ])
+            ->whereHas('tags', function($query) use ($tagId) {
+                $query->where('tags.id', $tagId);
+            })
+            ->where('posts.publish', '=', 2)
+            ->with(['languages' => function($query) use ($languageId) {
+                $query->where('language_id', $languageId);
+            }])
+            ->orderBy('posts.id', 'desc')
+            ->paginate($perPage);
     }
 
 }

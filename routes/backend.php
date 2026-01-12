@@ -30,6 +30,7 @@ use App\Http\Controllers\Backend\Product\ProductController;
 use App\Http\Controllers\Backend\Attribute\AttributeCatalogueController;
 use App\Http\Controllers\Backend\Attribute\AttributeController;
 use App\Http\Controllers\Backend\SystemController;
+use App\Http\Controllers\Backend\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -153,6 +154,17 @@ Route::group(['middleware' => ['admin','locale','backend_default_locale']], func
         Route::post('{id}/update', [PostController::class, 'update'])->where(['id' => '[0-9]+'])->name('post.update');
         Route::get('{id}/delete', [PostController::class, 'delete'])->where(['id' => '[0-9]+'])->name('post.delete');
         Route::delete('{id}/destroy', [PostController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('post.destroy');
+    });
+
+    Route::group(['prefix' => 'tag'], function () {
+        Route::get('index', [TagController::class, 'index'])->name('tag.index');
+        Route::get('create', [TagController::class, 'create'])->name('tag.create');
+        Route::post('store', [TagController::class, 'store'])->name('tag.store');
+        Route::get('{id}/edit', [TagController::class, 'edit'])->where(['id' => '[0-9]+'])->name('tag.edit');
+        Route::post('{id}/update', [TagController::class, 'update'])->where(['id' => '[0-9]+'])->name('tag.update');
+        Route::get('{id}/delete', [TagController::class, 'delete'])->where(['id' => '[0-9]+'])->name('tag.delete');
+        Route::delete('{id}/destroy', [TagController::class, 'destroy'])->where(['id' => '[0-9]+'])->name('tag.destroy');
+        Route::get('getAllTags', [TagController::class, 'getAllTags'])->name('tag.getAllTags');
     });
 
     Route::group(['prefix' => 'major'], function () {

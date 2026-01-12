@@ -28,3 +28,4 @@ Disallow: /report/
 Disallow: /contact/
 Disallow: /lecturer/
 
+Sitemap: https://dhtructuyen.edu.vn/sitemap.xml

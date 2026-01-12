@@ -20,8 +20,9 @@
         $degreeType = $pivot->degree_type ?? '';
         $enrollmentQuota = $pivot->enrollment_quota ?? '';
         $enrollmentPeriod = $pivot->enrollment_period ?? '';
-        // Tổng số tín chỉ tích lũy - lấy từ pivot, nếu không có thì dùng giá trị mặc định
-        $totalCredits = $pivot->total_credits ?? '75-131 Tín Chỉ Tùy Trường';
+        // Tổng số tín chỉ tích lũy - lấy từ pivot.admission_method (field trong major_language table)
+        // Kiểm tra cả isset() và !empty() để tránh NULL hoặc empty string
+        $totalCredits = (isset($pivot->admission_method) && !empty(trim($pivot->admission_method))) ? trim($pivot->admission_method) : '75-131 Tín Chỉ Tùy Trường';
         
         // Lấy dữ liệu JSON từ pivot
         $overview = ($pivot && isset($pivot->overview)) ? (is_array($pivot->overview) ? $pivot->overview : json_decode($pivot->overview, true)) : [];
@@ -775,7 +776,16 @@
     {{-- Chọn Trường Phù Hợp --}}
     @if(isset($major->schools) && $major->schools->count() > 0)
         @php
-            $schoolDescription = isset($school) && isset($school['description']) ? $school['description'] : 'Mỗi trường đào tạo ngành Ngôn ngữ Anh hệ từ xa có thể mạnh riêng về hình thức xét tuyển, hỗ trợ sinh viên và mức học phí. Hãy tham khảo nhanh ưu điểm của từng trường để đưa ra lựa chọn phù hợp nhất.';
+            // Lấy school description từ JSON trong pivot (major_language.school->description)
+            // Đây là nơi admin nhập trong form major edit
+            $schoolDescription = '';
+            if (isset($school) && is_array($school) && isset($school['description']) && !empty(trim($school['description']))) {
+                $schoolDescription = trim($school['description']);
+            } else {
+                // Default: Mô tả động dựa trên tên ngành
+                $majorName = $name ?? 'ngành học';
+                $schoolDescription = "Mỗi trường đào tạo ngành {$majorName} hệ từ xa có thể mạnh riêng về hình thức xét tuyển, hỗ trợ sinh viên và mức học phí. Hãy tham khảo nhanh ưu điểm của từng trường để đưa ra lựa chọn phù hợp nhất.";
+            }
             $schoolImage = isset($school) && isset($school['image']) ? $school['image'] : '';
             $schoolNote = isset($school) && isset($school['note']) ? $school['note'] : 'Lưu ý: Thông tin chi tiết về học phí và địa điểm thi có thể thay đổi theo từng năm. Vui lòng liên hệ trực tiếp với trường để được tư vấn cụ thể.';
         @endphp

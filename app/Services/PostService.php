@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Services\BaseService;
 use App\Repositories\PostRepository;
 use App\Repositories\RouterRepository;
+use App\Services\TagService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Auth;
@@ -18,13 +19,16 @@ class PostService extends BaseService
 {
     protected $postRepository;
     protected $routerRepository;
+    protected $tagService;
     
     public function __construct(
         PostRepository $postRepository,
-        RouterRepository $routerRepository
+        RouterRepository $routerRepository,
+        TagService $tagService
     ){
         $this->postRepository = $postRepository;
         $this->routerRepository = $routerRepository;
+        $this->tagService = $tagService;
         $this->controllerName = 'PostController';
     }
 
@@ -101,6 +105,7 @@ class PostService extends BaseService
             if($post->id > 0){
                 $this->updateLanguageForPost($post, $request, $languageId);
                 $this->updateCatalogueForPost($post, $request);
+                $this->updateTagsForPost($post, $request);
                 $this->createRouter($post, $request, $this->controllerName, $languageId);
             }
             DB::commit();
@@ -120,6 +125,7 @@ class PostService extends BaseService
             if($this->uploadPost($post, $request)){
                 $this->updateLanguageForPost($post, $request, $languageId);
                 $this->updateCatalogueForPost($post, $request);
+                $this->updateTagsForPost($post, $request);
                 $this->updateRouter(
                     $post, $request, $this->controllerName, $languageId
                 );
@@ -179,6 +185,27 @@ class PostService extends BaseService
 
     private function updateCatalogueForPost($post, $request){
         $post->post_catalogues()->sync($this->catalogue($request));
+    }
+
+    private function updateTagsForPost($post, $request){
+        $tagIds = [];
+        
+        // Xử lý tags từ input
+        if ($request->has('tags') && is_array($request->input('tags'))) {
+            $tagNames = array_filter($request->input('tags'), function($tag) {
+                return !empty(trim($tag));
+            });
+            
+            if (!empty($tagNames)) {
+                $tags = $this->tagService->findOrCreateTags($tagNames);
+                $tagIds = array_map(function($tag) {
+                    return $tag->id;
+                }, $tags);
+            }
+        }
+        
+        // Sync tags với post
+        $post->tags()->sync($tagIds);
     }
 
     private function formatLanguagePayload($payload, $postId, $languageId){

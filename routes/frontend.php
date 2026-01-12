@@ -10,6 +10,8 @@ use App\Http\Controllers\Frontend\AuthController as FeAuthController;
 use App\Http\Controllers\Frontend\ProductCatalogueController as FeProductCatalogueController;
 use App\Http\Controllers\Frontend\LecturerController as FeLecturerController;
 use App\Http\Controllers\Frontend\ContactController as FeContactController;
+use App\Http\Controllers\Frontend\SitemapController;
+use App\Http\Controllers\Frontend\TagController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +68,10 @@ Route::get('danh-sach-yeu-thich'.config('apps.general.suffix'), [FeProductCatalo
 Route::get('gio-hang'.config('apps.general.suffix'), [CartController::class, 'checkout'])->name('cart.checkout');
 
 Route::get('thanh-toan'.config('apps.general.suffix'), [CartController::class, 'pay'])->name('cart.pay');
+
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::get('tag/{slug}'.config('apps.general.suffix'), [TagController::class, 'index'])->name('post.tag')->where('slug', '[a-zA-Z0-9-]+');
 
 Route::get('{canonical}'.config('apps.general.suffix'), [RouterController::class, 'index'])->name('router.index')->where('canonical', '[a-zA-Z0-9-]+');
 

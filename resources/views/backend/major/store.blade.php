@@ -194,7 +194,7 @@
                                                     name="admission_method"
                                                     value="{{ old('admission_method', $admissionMethod) }}"
                                                     class="form-control"
-                                                    placeholder="Nhập tổng số tín chỉ"
+                                                    placeholder="Nhập tổng số tín chỉ (VD: 65-137 Tín Chỉ Tùy Trường)"
                                                 >
                                             </td>
                                         </tr>

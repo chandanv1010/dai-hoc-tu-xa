@@ -1,11 +1,11 @@
 @extends('frontend.homepage.layout')
 @section('content')
-    {{-- Hidden H1 for SEO - lấy từ systems homepage_slogan --}}
+    {{-- Hidden H1 for SEO - lấy từ systems homepage_h1, fallback về homepage_slogan --}}
     @php
-        $homepageSlogan = $system['homepage_slogan'] ?? '';
+        $h1Text = $system['homepage_h1'] ?? $system['homepage_slogan'] ?? '';
     @endphp
-    @if($homepageSlogan)
-        <h1 style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">{{ $homepageSlogan }}</h1>
+    @if($h1Text)
+        <h1 style="display: none;">{{ $h1Text }}</h1>
     @endif
     
     @include('frontend.component.slide')

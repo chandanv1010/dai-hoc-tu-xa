@@ -19886,3 +19886,53 @@ button {
         padding: 0 20px;
     }
 }
+
+// Post Tags Styles
+.post-tags-section {
+    margin: 30px 0;
+    padding: 20px 0;
+    border-top: 1px solid #e5e5e5;
+    border-bottom: 1px solid #e5e5e5;
+
+    .tags-wrapper {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 10px;
+
+        .tags-label {
+            font-weight: 600;
+            color: #333;
+            margin-right: 5px;
+
+            i {
+                margin-right: 5px;
+                color: #008dc2;
+            }
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+
+            .tag-item {
+                display: inline-block;
+                padding: 6px 14px;
+                background-color: #f5f5f5;
+                color: #008dc2;
+                text-decoration: none;
+                border-radius: 4px;
+                font-size: 13px;
+                transition: all 0.3s ease;
+
+                &:hover {
+                    background-color: #008dc2;
+                    color: #fff;
+                    transform: translateY(-2px);
+                    box-shadow: 0 2px 8px rgba(0, 141, 194, 0.3);
+                }
+            }
+        }
+    }
+}

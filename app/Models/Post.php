@@ -48,6 +48,8 @@ class Post extends Model
         return $this->belongsToMany(PostCatalogue::class, 'post_catalogue_post' , 'post_id', 'post_catalogue_id');
     }
 
-
+    public function tags(){
+        return $this->belongsToMany(Tag::class, 'post_tag', 'post_id', 'tag_id');
+    }
 
 }

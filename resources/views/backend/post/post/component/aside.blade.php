@@ -86,4 +86,36 @@
     </div>
 </div>
 
+<div class="ibox w">
+    <div class="ibox-title">
+        <h5>Tags</h5>
+    </div>
+    <div class="ibox-content">
+        <div class="row mb15">
+            <div class="col-lg-12">
+                <div class="form-row">
+                    <label class="control-label">Chọn hoặc tạo tags mới</label>
+                    <select multiple name="tags[]" class="form-control setupSelect2" id="post-tags" data-tags-url="{{ route('tag.getAllTags') }}">
+                        @php
+                            $selectedTags = [];
+                            if(isset($post) && $post->tags){
+                                foreach($post->tags as $tag){
+                                    $selectedTags[] = $tag->name;
+                                }
+                            }
+                        @endphp
+                        @foreach($allTags ?? [] as $tag)
+                            <option value="{{ $tag->name }}" 
+                                {{ in_array($tag->name, old('tags', $selectedTags)) ? 'selected' : '' }}>
+                                {{ $tag->name }}
+                            </option>
+                        @endforeach
+                    </select>
+                    <small class="form-text text-muted">Bạn có thể nhập tag mới và nhấn Enter để tạo tag mới</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 @include('backend.dashboard.component.publish', ['model' => ($post) ?? null, 'hideImage' => false])

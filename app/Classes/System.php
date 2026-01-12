@@ -45,6 +45,7 @@ class System{
                 'majors_catalogue_meta_description' => ['type' => 'textarea', 'label' => 'SEO - Danh sách ngành: Meta Description'],
                 'majors_catalogue_meta_keyword' => ['type' => 'text', 'label' => 'SEO - Danh sách ngành: Meta Keyword'],
                 'majors_catalogue_meta_image' => ['type' => 'images', 'label' => 'SEO - Danh sách ngành: Meta Image'],
+                'homepage_h1' => ['type' => 'text', 'label' => 'Tiêu đề H1 (hiển thị display:none cho SEO)'],
             ]
         ];
 

@@ -82,6 +82,22 @@
                             />
                         </div>
 
+                        <!-- Tags Section -->
+                        @if($post->tags && $post->tags->isNotEmpty())
+                            <div class="post-tags-section">
+                                <div class="tags-wrapper">
+                                    <span class="tags-label"><i class="fa fa-tags"></i> Tags:</span>
+                                    <div class="tags-list">
+                                        @foreach($post->tags as $tag)
+                                            <a href="{{ route('post.tag', ['slug' => $tag->slug]) }}" class="tag-item">
+                                                {{ $tag->name }}
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            </div>
+                        @endif
+
                         <!-- Contact Information Block for Post Detail Page -->
                         <div class="post-contact-block">
                             <div class="contact-block-content">
