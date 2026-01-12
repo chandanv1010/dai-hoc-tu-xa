@@ -77,6 +77,11 @@ class ContactController extends FrontendController
             'address' => 'nullable|string|max:255',
             'message' => 'nullable|string',
             'type' => 'nullable|string',
+            'utm_source' => 'nullable|string|max:255',
+            'utm_medium' => 'nullable|string|max:255',
+            'utm_campaign' => 'nullable|string|max:255',
+            'utm_term' => 'nullable|string|max:255',
+            'utm_content' => 'nullable|string|max:255',
         ], [
             'name.required' => 'Vui lòng nhập họ tên.',
             'phone.required' => 'Vui lòng nhập số điện thoại.',
@@ -86,7 +91,7 @@ class ContactController extends FrontendController
         try {
             DB::beginTransaction();
             // Map 'description' or 'message' from form to 'message' column in database
-            $payload = $request->only(['email', 'name', 'phone', 'address', 'type']);
+            $payload = $request->only(['email', 'name', 'phone', 'address', 'type', 'utm_source', 'utm_medium', 'utm_campaign', 'utm_term', 'utm_content']);
             
             // Ưu tiên lấy 'message', nếu không có hoặc rỗng thì lấy 'description'
             $messageContent = $request->input('message');

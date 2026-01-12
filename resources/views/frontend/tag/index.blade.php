@@ -111,6 +111,12 @@
                                     <textarea name="message" class="form-control" rows="3" placeholder="Ghi chú"></textarea>
                                 </div>
                                 <input type="hidden" name="type" value="sidebar_register">
+                                <!-- Hidden fields for UTM parameters -->
+                                <input type="hidden" name="utm_source" id="utm_source">
+                                <input type="hidden" name="utm_medium" id="utm_medium">
+                                <input type="hidden" name="utm_campaign" id="utm_campaign">
+                                <input type="hidden" name="utm_term" id="utm_term">
+                                <input type="hidden" name="utm_content" id="utm_content">
                                 <button type="submit" class="btn-submit">Gửi đăng ký</button>
                             </form>
                         </div>
@@ -182,8 +188,31 @@
 
     <script>
         $(document).ready(function() {
+            // Lấy UTM từ sessionStorage và điền vào hidden fields
+            function loadUtmParams() {
+                try {
+                    const stored = sessionStorage.getItem('utm_parameters');
+                    if (stored) {
+                        const utmParams = JSON.parse(stored);
+                        if (utmParams.utm_source) $('#utm_source').val(utmParams.utm_source);
+                        if (utmParams.utm_medium) $('#utm_medium').val(utmParams.utm_medium);
+                        if (utmParams.utm_campaign) $('#utm_campaign').val(utmParams.utm_campaign);
+                        if (utmParams.utm_term) $('#utm_term').val(utmParams.utm_term);
+                        if (utmParams.utm_content) $('#utm_content').val(utmParams.utm_content);
+                    }
+                } catch (e) {
+                    console.error('Error loading UTM params:', e);
+                }
+            }
+            
+            // Load UTM params khi trang load
+            loadUtmParams();
+            
             $('#sidebar-register-form').on('submit', function(e) {
                 e.preventDefault();
+                
+                // Reload UTM params trước khi submit
+                loadUtmParams();
                 
                 var form = $(this);
                 var formData = form.serialize();

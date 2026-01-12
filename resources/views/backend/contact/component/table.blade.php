@@ -7,8 +7,10 @@
             <th>Họ Tên</th>
             <th>Ngày tạo</th>
             <th>Số điện thoại</th>
+            <th>Email</th>
             <th>Địa chỉ</th>
             <th>Lời nhắn</th>
+            <th>Nguồn UTM</th>
             <th class="text-center">Thao tác</th>
         </tr>
     </thead>
@@ -30,11 +32,34 @@
                         {{ $contact->phone }}
                     </td>
                     <td>
+                        {{ $contact->email ?? '-' }}
+                    </td>
+                    <td>
                         {{ $contact->address }}
                     </td>
                     <td>
                         @if(!empty($contact->message))
                             {!! $contact->message !!}
+                        @else
+                            <span class="text-muted">-</span>
+                        @endif
+                    </td>
+                    <td>
+                        @php
+                            $utmParts = [];
+                            if (!empty($contact->utm_source)) {
+                                $utmParts[] = 'Source: ' . $contact->utm_source;
+                            }
+                            if (!empty($contact->utm_medium)) {
+                                $utmParts[] = 'Medium: ' . $contact->utm_medium;
+                            }
+                            if (!empty($contact->utm_campaign)) {
+                                $utmParts[] = 'Campaign: ' . $contact->utm_campaign;
+                            }
+                            $utmDisplay = !empty($utmParts) ? implode('<br>', $utmParts) : '-';
+                        @endphp
+                        @if($utmDisplay !== '-')
+                            <small>{!! $utmDisplay !!}</small>
                         @else
                             <span class="text-muted">-</span>
                         @endif

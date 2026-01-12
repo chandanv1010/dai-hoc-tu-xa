@@ -22,7 +22,12 @@ class Contact extends Model
         'publish',
         'created_at',
         'type',
-        'message'
+        'message',
+        'utm_source',
+        'utm_medium',
+        'utm_campaign',
+        'utm_term',
+        'utm_content'
     ];
 
     protected $table = 'contacts';
