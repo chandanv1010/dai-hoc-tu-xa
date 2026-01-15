@@ -8,6 +8,7 @@ use App\Services\WidgetService;
 use App\Repositories\SchoolRepository;
 use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Models\Contact;
 
 class ContactController extends FrontendController
@@ -88,8 +89,35 @@ class ContactController extends FrontendController
             // Map 'description' or 'message' from form to 'message' column in database
             $payload = $request->only(['email', 'name', 'phone', 'address', 'type']);
             
-            // Lấy UTM parameters từ session (đã được lưu bởi PreserveUtmParameters middleware)
+            // Lấy UTM parameters từ session hoặc cookie (đã được lưu bởi PreserveUtmParameters middleware)
             $utmParams = session('utm_parameters', []);
+            
+            // Nếu session không có, thử lấy từ cookie
+            if (empty($utmParams)) {
+                $utmParams = [
+                    'utm_source' => $request->cookie('utm_source'),
+                    'utm_medium' => $request->cookie('utm_medium'),
+                    'utm_campaign' => $request->cookie('utm_campaign'),
+                    'utm_term' => $request->cookie('utm_term'),
+                    'utm_content' => $request->cookie('utm_content'),
+                ];
+                // Loại bỏ các giá trị null
+                $utmParams = array_filter($utmParams, function($value) {
+                    return $value !== null;
+                });
+            }
+            
+            // Debug: Log để kiểm tra
+            Log::info('UTM Debug - Session UTM Params:', session('utm_parameters', []));
+            Log::info('UTM Debug - Cookie UTM Params:', [
+                'utm_source' => $request->cookie('utm_source'),
+                'utm_medium' => $request->cookie('utm_medium'),
+                'utm_campaign' => $request->cookie('utm_campaign'),
+                'utm_term' => $request->cookie('utm_term'),
+                'utm_content' => $request->cookie('utm_content'),
+            ]);
+            Log::info('UTM Debug - Final UTM Params to use:', $utmParams);
+            
             if (!empty($utmParams)) {
                 $payload['utm_source'] = $utmParams['utm_source'] ?? null;
                 $payload['utm_medium'] = $utmParams['utm_medium'] ?? null;
@@ -97,6 +125,9 @@ class ContactController extends FrontendController
                 $payload['utm_term'] = $utmParams['utm_term'] ?? null;
                 $payload['utm_content'] = $utmParams['utm_content'] ?? null;
             }
+            
+            // Debug: Log payload trước khi lưu
+            Log::info('UTM Debug - Payload before create:', $payload);
             
             // Ưu tiên lấy 'message', nếu không có hoặc rỗng thì lấy 'description'
             $messageContent = $request->input('message');

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Support\Facades\Log;
 
 class PreserveUtmParameters
 {
@@ -27,9 +28,39 @@ class PreserveUtmParameters
                 }
             }
             
-            // Nếu có UTM parameters trong request, lưu vào session
+            // Nếu có UTM parameters trong request, lưu vào session VÀ cookie
             if (!empty($utmParams)) {
+                // Lưu vào session
                 session(['utm_parameters' => $utmParams]);
+                session()->save();
+                
+                // Lưu vào cookie để đảm bảo persist và dễ debug (30 ngày)
+                $response = $next($request);
+                foreach ($utmParams as $key => $value) {
+                    $response->cookie($key, $value, 60 * 24 * 30); // 30 ngày
+                }
+                
+                Log::info('UTM Middleware - Saved UTM to session and cookie:', $utmParams);
+                return $response;
+            }
+            
+            // Nếu không có UTM trong request, thử lấy từ cookie và lưu vào session
+            $cookieUtmParams = [];
+            foreach ($utmKeys as $key) {
+                if ($request->cookie($key)) {
+                    $cookieUtmParams[$key] = $request->cookie($key);
+                }
+            }
+            
+            if (!empty($cookieUtmParams)) {
+                session(['utm_parameters' => $cookieUtmParams]);
+                Log::info('UTM Middleware - Loaded UTM from cookie to session:', $cookieUtmParams);
+            }
+            
+            // Debug: Log session hiện tại
+            $currentUtm = session('utm_parameters', []);
+            if (!empty($currentUtm)) {
+                Log::info('UTM Middleware - Current session UTM:', $currentUtm);
             }
             
             // Nếu không có UTM trong request nhưng có trong session, giữ lại

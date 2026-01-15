@@ -108,13 +108,19 @@ class ContactService extends BaseService
             'name',
             'address',
             'phone',
+            'email',
             'product_id',
             'post_id',
             'gender',
             'publish',
             'created_at',
             'type',
-            'message'
+            'message',
+            'utm_source',
+            'utm_medium',
+            'utm_campaign',
+            'utm_term',
+            'utm_content'
         ];
     }
 }
