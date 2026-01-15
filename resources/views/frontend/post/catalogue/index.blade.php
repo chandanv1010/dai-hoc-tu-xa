@@ -7,7 +7,7 @@
     @endphp
 
     <!-- Breadcrumb Section -->
-    <div class="page-breadcrumb-large">
+    <div class="page-breadcrumb-large" style="margin-bottom: 25px;">
         <div class="breadcrumb-overlay"></div>
         <div class="uk-container uk-container-center">
             <div class="breadcrumb-content">

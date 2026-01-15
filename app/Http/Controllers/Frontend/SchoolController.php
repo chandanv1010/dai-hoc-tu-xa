@@ -153,6 +153,10 @@ class SchoolController extends FrontendController
         $config = $this->config();
         $system = $this->system;
         
+        // Extract FAQ from entire School object for JSON-LD schema
+        $faqs = extractFaqFromSchool($school, $pivot);
+        $faqSchema = generateFaqSchema($faqs);
+        
         $template = 'frontend.school.index';
         
         return view($template, compact(
@@ -165,7 +169,8 @@ class SchoolController extends FrontendController
             'widgets',
             'schoolMajors',
             'feedback',
-            'eventPosts'
+            'eventPosts',
+            'faqSchema'
         ));
     }
 

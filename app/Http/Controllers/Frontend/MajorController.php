@@ -121,6 +121,10 @@ class MajorController extends FrontendController
         $config = $this->config();
         $system = $this->system;
         $seo = seo($major);
+        
+        // Extract FAQ from entire Major object for JSON-LD schema
+        $faqs = extractFaqFromMajor($major, $pivot);
+        $faqSchema = generateFaqSchema($faqs);
 
         $template = 'frontend.major.index';
 
@@ -132,7 +136,8 @@ class MajorController extends FrontendController
             'allMajors',
             'pivot',
             'feedback',
-            'eventPosts'
+            'eventPosts',
+            'faqSchema'
         ));
     }
 

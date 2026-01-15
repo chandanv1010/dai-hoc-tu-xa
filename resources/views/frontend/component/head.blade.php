@@ -44,3 +44,10 @@
 @vite(['resources/css/app.scss', 'resources/js/app.js'])
 <script src="{{ asset('frontend/resources/library/js/jquery.js') }}"></script>
 <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js?ver=6.8.1" id="pbmit-lottiefiles-script-js"></script>
+
+{{-- FAQ Schema JSON-LD (for Post, Major, and School detail pages) --}}
+@if(isset($faqSchema) && !empty($faqSchema))
+    <script type="application/ld+json">
+    {!! $faqSchema !!}
+    </script>
+@endif

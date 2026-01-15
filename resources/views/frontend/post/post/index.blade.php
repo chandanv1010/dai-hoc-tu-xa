@@ -319,4 +319,11 @@
     
     <!-- Register Form Modal -->
     <x-register-form-modal :system="$system" />
+    
+    {{-- FAQ Schema JSON-LD --}}
+    @if(isset($faqSchema) && !empty($faqSchema))
+        <script type="application/ld+json">
+        {!! $faqSchema !!}
+        </script>
+    @endif
 @endsection

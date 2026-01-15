@@ -913,3 +913,505 @@ if (!function_exists('addUtmToUrl')) {
         return $scheme . $host . $port . $path . $query . $fragment;
     }
 }
+
+if(!function_exists('extractFaqFromContent')){
+    /**
+     * Extract FAQ questions and answers from HTML content
+     * Supports multiple formats:
+     * 1. UIkit Accordion: <ul class="uk-accordion"> with <li><a>question</a><div>answer</div></li>
+     * 2. H2/H3 headings with following content as answers
+     * 3. Custom FAQ structure
+     * 
+     * @param string $htmlContent
+     * @return array Array of ['question' => string, 'answer' => string]
+     */
+    function extractFaqFromContent($htmlContent){
+        $faqs = [];
+        
+        if(empty($htmlContent)){
+            return $faqs;
+        }
+        
+        // Load HTML into DOMDocument
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $htmlContent, LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+        libxml_clear_errors();
+        
+        $xpath = new \DOMXPath($dom);
+        
+        // Method 1: UIkit Accordion
+        $accordionItems = $xpath->query("//ul[contains(@class, 'uk-accordion')]//li");
+        if($accordionItems->length > 0){
+            foreach($accordionItems as $item){
+                $questionNode = $xpath->query(".//a[contains(@class, 'uk-accordion-title')] | .//a[not(contains(@class, 'uk-accordion-content'))]", $item)->item(0);
+                $answerNode = $xpath->query(".//div[contains(@class, 'uk-accordion-content')] | .//div[following-sibling::a[contains(@class, 'uk-accordion-title')]]", $item)->item(0);
+                
+                if($questionNode && $answerNode){
+                    $question = trim(strip_tags($questionNode->textContent));
+                    $answer = trim(strip_tags($answerNode->textContent));
+                    
+                    if(!empty($question) && !empty($answer)){
+                        $faqs[] = [
+                            'question' => html_entity_decode($question, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                            'answer' => html_entity_decode($answer, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                        ];
+                    }
+                }
+            }
+        }
+        
+        // Method 2: H2/H3 headings pattern (if no accordion found)
+        if(empty($faqs)){
+            // Look for H2 or H3 followed by content
+            $headings = $xpath->query("//h2 | //h3");
+            foreach($headings as $heading){
+                $question = trim(strip_tags($heading->textContent));
+                
+                // Get next sibling content as answer
+                $answer = '';
+                $nextSibling = $heading->nextSibling;
+                while($nextSibling && empty($answer)){
+                    if($nextSibling->nodeType === XML_ELEMENT_NODE){
+                        $tagName = strtolower($nextSibling->tagName);
+                        // Stop if we hit another heading
+                        if(in_array($tagName, ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'])){
+                            break;
+                        }
+                        $answer = trim(strip_tags($nextSibling->textContent));
+                        if(!empty($answer)){
+                            break;
+                        }
+                    }
+                    $nextSibling = $nextSibling->nextSibling;
+                }
+                
+                // Also check for p or div immediately after
+                if(empty($answer)){
+                    $nextElement = $xpath->query("following-sibling::p[1] | following-sibling::div[1]", $heading)->item(0);
+                    if($nextElement){
+                        $answer = trim(strip_tags($nextElement->textContent));
+                    }
+                }
+                
+                if(!empty($question) && !empty($answer) && strlen($answer) > 20){
+                    $faqs[] = [
+                        'question' => html_entity_decode($question, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        'answer' => html_entity_decode($answer, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // Method 3: Pattern with FAQ class or data attributes
+        if(empty($faqs)){
+            $faqContainers = $xpath->query("//*[contains(@class, 'faq') or contains(@class, 'question')]");
+            foreach($faqContainers as $container){
+                $questionNode = $xpath->query(".//*[contains(@class, 'question') or contains(@class, 'faq-question')] | .//h3 | .//h4", $container)->item(0);
+                $answerNode = $xpath->query(".//*[contains(@class, 'answer') or contains(@class, 'faq-answer')] | .//p[1] | .//div[contains(@class, 'content')]", $container)->item(0);
+                
+                if($questionNode){
+                    $question = trim(strip_tags($questionNode->textContent));
+                    $answer = $answerNode ? trim(strip_tags($answerNode->textContent)) : '';
+                    
+                    if(!empty($question) && !empty($answer)){
+                        $faqs[] = [
+                            'question' => html_entity_decode($question, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                            'answer' => html_entity_decode($answer, ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                        ];
+                    }
+                }
+            }
+        }
+        
+        return $faqs;
+    }
+}
+
+if(!function_exists('cleanFaqText')){
+    /**
+     * Clean FAQ text: decode HTML entities, remove newlines/tabs, normalize spaces
+     * 
+     * @param string $text
+     * @return string Cleaned text
+     */
+    function cleanFaqText($text){
+        if(empty($text)){
+            return '';
+        }
+        
+        // Decode HTML entities first
+        $text = html_entity_decode($text, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+        
+        // Remove HTML tags if any
+        $text = strip_tags($text);
+        
+        // Remove escape sequences: \r\n, \n, \r, \t (both literal and actual)
+        $text = str_replace(["\r\n", "\r", "\n", "\t", "\\r\\n", "\\n", "\\r", "\\t"], ' ', $text);
+        
+        // Normalize multiple spaces to single space
+        $text = preg_replace('/\s+/', ' ', $text);
+        
+        // Trim
+        $text = trim($text);
+        
+        return $text;
+    }
+}
+
+if(!function_exists('generateFaqSchema')){
+    /**
+     * Generate FAQPage JSON-LD schema from FAQ array
+     * 
+     * @param array $faqs Array of ['question' => string, 'answer' => string]
+     * @return string JSON-LD schema as string
+     */
+    function generateFaqSchema($faqs){
+        if(empty($faqs) || !is_array($faqs)){
+            return '';
+        }
+        
+        $schema = [
+            '@context' => 'https://schema.org',
+            '@type' => 'FAQPage',
+            'mainEntity' => []
+        ];
+        
+        foreach($faqs as $faq){
+            if(isset($faq['question']) && isset($faq['answer']) && !empty(trim($faq['question'])) && !empty(trim($faq['answer']))){
+                $question = cleanFaqText($faq['question']);
+                $answer = cleanFaqText($faq['answer']);
+                
+                if(!empty($question) && !empty($answer)){
+                    $schema['mainEntity'][] = [
+                        '@type' => 'Question',
+                        'name' => $question,
+                        'acceptedAnswer' => [
+                            '@type' => 'Answer',
+                            'text' => $answer
+                        ]
+                    ];
+                }
+            }
+        }
+        
+        if(empty($schema['mainEntity'])){
+            return '';
+        }
+        
+        return json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT);
+    }
+}
+
+if(!function_exists('extractFaqFromMajor')){
+    /**
+     * Extract FAQ from Major object
+     * Builds FAQ from various sections: who, priority, learn, chance, content, etc.
+     *
+     * @param object $major Major model object
+     * @param object|null $pivot Major language pivot object
+     * @return array Array of ['question' => string, 'answer' => string]
+     */
+    function extractFaqFromMajor($major, $pivot = null){
+        $faqs = [];
+        
+        if(!$pivot && $major->languages && $major->languages->count() > 0){
+            $pivot = $major->languages->first()->pivot;
+        }
+        
+        if(!$pivot){
+            return $faqs;
+        }
+        
+        // 1. Extract from content if it has FAQ structure
+        $content = $pivot->content ?? '';
+        if(!empty($content)){
+            $contentFaqs = extractFaqFromContent($content);
+            if(!empty($contentFaqs)){
+                $faqs = array_merge($faqs, $contentFaqs);
+            }
+        }
+        
+        // 2. Build FAQ from "who" section (Đối tượng tuyển sinh)
+        $who = ($pivot && isset($pivot->who)) ? (is_array($pivot->who) ? $pivot->who : json_decode($pivot->who, true)) : [];
+        if(!empty($who) && is_array($who)){
+            $whoItems = isset($who['items']) ? $who['items'] : (is_array($who) && isset($who[0]) ? $who : []);
+            if(!empty($whoItems) && count($whoItems) > 0){
+                $whoTitle = isset($who['title']) && !empty($who['title']) ? $who['title'] : 'Đối tượng tuyển sinh';
+                $whoAnswer = [];
+                foreach($whoItems as $item){
+                    $itemText = is_array($item) ? ($item['text'] ?? $item['name'] ?? '') : $item;
+                    if(!empty($itemText)){
+                        $whoAnswer[] = html_entity_decode(strip_tags($itemText), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    }
+                }
+                if(!empty($whoAnswer)){
+                    $faqs[] = [
+                        'question' => html_entity_decode($whoTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' là gì?',
+                        'answer' => html_entity_decode(implode('. ', $whoAnswer), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // 3. Build FAQ from "priority" section (Ưu điểm)
+        $priority = ($pivot && isset($pivot->priority)) ? (is_array($pivot->priority) ? $pivot->priority : json_decode($pivot->priority, true)) : [];
+        if(!empty($priority) && is_array($priority)){
+            $priorityItems = isset($priority['items']) ? $priority['items'] : [];
+            if(empty($priorityItems) && isset($priority[0])){
+                $priorityItems = $priority;
+            }
+            if(!empty($priorityItems) && count($priorityItems) > 0){
+                $priorityTitle = isset($priority['title']) && !empty($priority['title']) ? $priority['title'] : 'Ưu điểm khi học ngành này';
+                $priorityAnswers = [];
+                foreach(array_slice($priorityItems, 0, 5) as $item){
+                    $itemName = is_array($item) ? ($item['name'] ?? '') : '';
+                    $itemDescription = is_array($item) ? ($item['description'] ?? '') : '';
+                    if(!empty($itemName)){
+                        $answerText = html_entity_decode($itemName, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        if(!empty($itemDescription)){
+                            $answerText .= ': ' . html_entity_decode(strip_tags($itemDescription), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        }
+                        $priorityAnswers[] = $answerText;
+                    }
+                }
+                if(!empty($priorityAnswers)){
+                    $faqs[] = [
+                        'question' => html_entity_decode($priorityTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '?',
+                        'answer' => html_entity_decode(implode('. ', $priorityAnswers), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // 4. Build FAQ from training info
+        $trainingSystem = $pivot->training_system ?? '';
+        $studyMethod = $pivot->study_method ?? '';
+        $admissionMethod = $pivot->admission_method ?? '';
+        $trainingDuration = $pivot->training_duration ?? '';
+        $degreeType = $pivot->degree_type ?? '';
+        
+        if(!empty($studyMethod)){
+            $faqs[] = [
+                'question' => 'Hình thức học của ngành này như thế nào?',
+                'answer' => html_entity_decode(strip_tags($studyMethod), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            ];
+        }
+        
+        if(!empty($trainingDuration)){
+            $faqs[] = [
+                'question' => 'Thời gian đào tạo của ngành này là bao lâu?',
+                'answer' => html_entity_decode(strip_tags($trainingDuration), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            ];
+        }
+        
+        if(!empty($admissionMethod)){
+            $faqs[] = [
+                'question' => 'Hình thức xét tuyển của ngành này là gì?',
+                'answer' => html_entity_decode(strip_tags($admissionMethod), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            ];
+        }
+        
+        if(!empty($degreeType)){
+            $faqs[] = [
+                'question' => 'Bằng cấp sau khi tốt nghiệp là gì?',
+                'answer' => html_entity_decode(strip_tags($degreeType), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+            ];
+        }
+        
+        return $faqs;
+    }
+}
+
+if(!function_exists('extractFaqFromSchool')){
+    /**
+     * Extract FAQ from School object
+     * Builds FAQ from accordion sections: announceTarget, announceType, announceRequest, announceAddress, announceValue
+     *
+     * @param object $school School model object
+     * @param object|null $pivot School language pivot object
+     * @return array Array of ['question' => string, 'answer' => string]
+     */
+    function extractFaqFromSchool($school, $pivot = null){
+        $faqs = [];
+        
+        if(!$pivot && $school->languages && $school->languages->count() > 0){
+            $pivot = $school->languages->first()->pivot;
+        }
+        
+        if(!$pivot){
+            return $faqs;
+        }
+        
+        // 1. Extract from content if it has FAQ structure
+        $content = $pivot->content ?? '';
+        if(!empty($content)){
+            $contentFaqs = extractFaqFromContent($content);
+            if(!empty($contentFaqs)){
+                $faqs = array_merge($faqs, $contentFaqs);
+            }
+        }
+        
+        // 2. Extract from announce accordion sections
+        $announce = ($pivot && isset($pivot->announce)) ? (is_array($pivot->announce) ? $pivot->announce : json_decode($pivot->announce, true)) : [];
+        
+        if(!empty($announce) && is_array($announce)){
+            // Đối tượng tuyển sinh
+            if(!empty($announce['target'])){
+                $targetText = is_string($announce['target']) ? $announce['target'] : '';
+                if(!empty($targetText)){
+                    $faqs[] = [
+                        'question' => 'Đối tượng tuyển sinh là gì?',
+                        'answer' => html_entity_decode(strip_tags($targetText), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+            
+            // Hình thức tuyển sinh
+            if(!empty($announce['type'])){
+                $typeText = is_string($announce['type']) ? $announce['type'] : '';
+                if(!empty($typeText)){
+                    $faqs[] = [
+                        'question' => 'Hình thức tuyển sinh như thế nào?',
+                        'answer' => html_entity_decode(strip_tags($typeText), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+            
+            // Yêu cầu tuyển sinh
+            if(!empty($announce['request'])){
+                $requestText = is_string($announce['request']) ? $announce['request'] : '';
+                if(!empty($requestText)){
+                    $faqs[] = [
+                        'question' => 'Yêu cầu tuyển sinh là gì?',
+                        'answer' => html_entity_decode(strip_tags($requestText), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+            
+            // Nơi tiếp nhận hồ sơ
+            if(!empty($announce['address'])){
+                $addressText = is_string($announce['address']) ? $announce['address'] : '';
+                if(!empty($addressText)){
+                    $faqs[] = [
+                        'question' => 'Nơi tiếp nhận hồ sơ ở đâu?',
+                        'answer' => html_entity_decode(strip_tags($addressText), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+            
+            // Giá trị văn bằng
+            if(!empty($announce['value'])){
+                $valueText = is_string($announce['value']) ? $announce['value'] : '';
+                if(!empty($valueText)){
+                    $faqs[] = [
+                        'question' => 'Giá trị văn bằng như thế nào?',
+                        'answer' => html_entity_decode(strip_tags($valueText), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // 2b. Extract from intro section if available
+        $intro = ($pivot && isset($pivot->intro)) ? (is_array($pivot->intro) ? $pivot->intro : json_decode($pivot->intro, true)) : [];
+        if(!empty($intro) && is_array($intro)){
+            if(!empty($intro['created'])){
+                $faqs[] = [
+                    'question' => 'Trường được thành lập năm nào?',
+                    'answer' => 'Trường được thành lập năm ' . html_entity_decode(strip_tags($intro['created']), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                ];
+            }
+        }
+        
+        // 2c. Extract from suitable section
+        $suitable = ($pivot && isset($pivot->suitable)) ? (is_array($pivot->suitable) ? $pivot->suitable : json_decode($pivot->suitable, true)) : [];
+        if(!empty($suitable) && is_array($suitable)){
+            $suitableName = $suitable['name'] ?? 'Chương trình đào tạo từ xa phù hợp với ai?';
+            $suitableDescription = $suitable['description'] ?? '';
+            $suitableItems = $suitable['items'] ?? [];
+            
+            if(!empty($suitableItems) && count($suitableItems) > 0){
+                $suitableAnswers = [];
+                foreach(array_slice($suitableItems, 0, 3) as $item){
+                    $itemName = is_array($item) ? ($item['name'] ?? '') : '';
+                    $itemDescription = is_array($item) ? ($item['description'] ?? '') : '';
+                    if(!empty($itemName)){
+                        $answerText = html_entity_decode($itemName, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        if(!empty($itemDescription)){
+                            $answerText .= ': ' . html_entity_decode(strip_tags($itemDescription), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        }
+                        $suitableAnswers[] = $answerText;
+                    }
+                }
+                if(!empty($suitableAnswers)){
+                    $faqs[] = [
+                        'question' => html_entity_decode($suitableName, ENT_QUOTES | ENT_HTML5, 'UTF-8'),
+                        'answer' => html_entity_decode(implode('. ', $suitableAnswers), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // 2d. Extract from advantage section
+        $advantage = ($pivot && isset($pivot->advantage)) ? (is_array($pivot->advantage) ? $pivot->advantage : json_decode($pivot->advantage, true)) : [];
+        if(!empty($advantage) && is_array($advantage)){
+            $advantageTitle = $advantage['title'] ?? 'Ưu điểm của hệ đào tạo từ xa';
+            $advantageItems = $advantage['items'] ?? [];
+            
+            if(!empty($advantageItems) && count($advantageItems) > 0){
+                $advantageAnswers = [];
+                foreach(array_slice($advantageItems, 0, 3) as $item){
+                    $itemName = is_array($item) ? ($item['name'] ?? '') : '';
+                    $itemDescription = is_array($item) ? ($item['description'] ?? '') : '';
+                    if(!empty($itemName)){
+                        $answerText = html_entity_decode($itemName, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        if(!empty($itemDescription)){
+                            $answerText .= ': ' . html_entity_decode(strip_tags($itemDescription), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                        }
+                        $advantageAnswers[] = $answerText;
+                    }
+                }
+                if(!empty($advantageAnswers)){
+                    $faqs[] = [
+                        'question' => html_entity_decode($advantageTitle, ENT_QUOTES | ENT_HTML5, 'UTF-8') . '?',
+                        'answer' => html_entity_decode(implode('. ', $advantageAnswers), ENT_QUOTES | ENT_HTML5, 'UTF-8')
+                    ];
+                }
+            }
+        }
+        
+        // 2e. Extract from study_method section
+        $studyMethod = ($pivot && isset($pivot->study_method)) ? (is_array($pivot->study_method) ? $pivot->study_method : json_decode($pivot->study_method, true)) : [];
+        if(!empty($studyMethod) && is_array($studyMethod)){
+            $studyMethodName = $studyMethod['name'] ?? 'Hình thức học';
+            $studyMethodDescription = $studyMethod['description'] ?? '';
+            $studyMethodContent = $studyMethod['content'] ?? '';
+            
+            if(!empty($studyMethodDescription) || !empty($studyMethodContent)){
+                $answerText = !empty($studyMethodDescription) ? strip_tags($studyMethodDescription) : strip_tags($studyMethodContent);
+                if(!empty($answerText)){
+                    $answerText = html_entity_decode($answerText, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                    $faqs[] = [
+                        'question' => html_entity_decode($studyMethodName, ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' như thế nào?',
+                        'answer' => mb_substr($answerText, 0, 500) . (mb_strlen($answerText) > 500 ? '...' : '')
+                    ];
+                }
+            }
+        }
+        
+        // 3. Build FAQ from description
+        $description = $pivot->description ?? '';
+        if(!empty($description)){
+            $cleanDescription = html_entity_decode(strip_tags($description), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+            if(mb_strlen($cleanDescription) > 50){
+                $schoolName = $pivot->name ?? 'Trường';
+                $faqs[] = [
+                    'question' => html_entity_decode($schoolName, ENT_QUOTES | ENT_HTML5, 'UTF-8') . ' là gì?',
+                    'answer' => mb_substr($cleanDescription, 0, 500) . (mb_strlen($cleanDescription) > 500 ? '...' : '')
+                ];
+            }
+        }
+        
+        return $faqs;
+    }
+}

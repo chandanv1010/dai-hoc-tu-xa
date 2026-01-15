@@ -101,6 +101,10 @@ class postController extends FrontendController
         $contentWithToc = null;
         $contentWithToc = TableOfContents::injectIds($content, $items);
         // dd($contentWithToc);
+        
+        // Extract FAQ from content for JSON-LD schema
+        $faqs = extractFaqFromContent($content);
+        $faqSchema = generateFaqSchema($faqs);
 
         return view($template, compact(
             'config',
@@ -112,7 +116,8 @@ class postController extends FrontendController
             'asidePosts',
             'relatedPosts',
             'widgets',
-            'contentWithToc'
+            'contentWithToc',
+            'faqSchema'
         ));
     }
 

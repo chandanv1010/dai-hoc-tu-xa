@@ -778,16 +778,19 @@
         @php
             // Lấy school description từ JSON trong pivot (major_language.school->description)
             // Đây là nơi admin nhập trong form major edit
+            // Đảm bảo lấy lại $school từ pivot để tránh scope issue
+            $schoolData = ($pivot && isset($pivot->school)) ? (is_array($pivot->school) ? $pivot->school : json_decode($pivot->school, true)) : [];
+            
             $schoolDescription = '';
-            if (isset($school) && is_array($school) && isset($school['description']) && !empty(trim($school['description']))) {
-                $schoolDescription = trim($school['description']);
+            if (is_array($schoolData) && isset($schoolData['description']) && !empty(trim($schoolData['description']))) {
+                $schoolDescription = trim($schoolData['description']);
             } else {
                 // Default: Mô tả động dựa trên tên ngành
                 $majorName = $name ?? 'ngành học';
                 $schoolDescription = "Mỗi trường đào tạo ngành {$majorName} hệ từ xa có thể mạnh riêng về hình thức xét tuyển, hỗ trợ sinh viên và mức học phí. Hãy tham khảo nhanh ưu điểm của từng trường để đưa ra lựa chọn phù hợp nhất.";
             }
-            $schoolImage = isset($school) && isset($school['image']) ? $school['image'] : '';
-            $schoolNote = isset($school) && isset($school['note']) ? $school['note'] : 'Lưu ý: Thông tin chi tiết về học phí và địa điểm thi có thể thay đổi theo từng năm. Vui lòng liên hệ trực tiếp với trường để được tư vấn cụ thể.';
+            $schoolImage = isset($schoolData) && isset($schoolData['image']) ? $schoolData['image'] : '';
+            $schoolNote = isset($schoolData) && isset($schoolData['note']) ? $schoolData['note'] : 'Lưu ý: Thông tin chi tiết về học phí và địa điểm thi có thể thay đổi theo từng năm. Vui lòng liên hệ trực tiếp với trường để được tư vấn cụ thể.';
         @endphp
         <div class="panel-major-choose-school wow fadeInUp" data-wow-delay="0.2s">
             <div class="choose-school-background">
