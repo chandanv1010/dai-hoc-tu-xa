@@ -914,6 +914,38 @@ if (!function_exists('addUtmToUrl')) {
     }
 }
 
+if (!function_exists('formatPaginationUrl')) {
+    /**
+     * Format pagination URL với UTM parameters
+     * Chuyển ?page=2 hoặc &page=2 thành /trang-2.html?utm_source=...
+     */
+    function formatPaginationUrl($url, $page) {
+        if (!$url) {
+            return null;
+        }
+        
+        $parsed = parse_url($url);
+        $path = $parsed['path'] ?? '';
+        $query = [];
+        if (isset($parsed['query'])) {
+            parse_str($parsed['query'], $query);
+        }
+        unset($query['page']);
+        
+        if ($page == 1) {
+            $formattedUrl = $path . config('apps.general.suffix');
+        } else {
+            $formattedUrl = $path . '/trang-' . $page . config('apps.general.suffix');
+        }
+        
+        if (!empty($query)) {
+            $formattedUrl .= '?' . http_build_query($query);
+        }
+        
+        return $formattedUrl;
+    }
+}
+
 if(!function_exists('extractFaqFromContent')){
     /**
      * Extract FAQ questions and answers from HTML content

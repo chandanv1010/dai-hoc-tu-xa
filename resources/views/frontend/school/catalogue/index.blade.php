@@ -116,9 +116,18 @@
                                 <ul class="pagination">
                                     {{-- Previous Page Link --}}
                                     @php
-                                        $prevPageUrl = ($schools->currentPage() > 1) ? str_replace('?page=', '/trang-', $schools->previousPageUrl()).config('apps.general.suffix') : null;
-                                        if ($prevPageUrl && $schools->currentPage() == 2) {
-                                            $prevPageUrl = str_replace('/trang-1', '', $prevPageUrl);
+                                        $prevPageUrl = null;
+                                        if ($schools->currentPage() > 1) {
+                                            $prevUrl = $schools->previousPageUrl();
+                                            if ($prevUrl) {
+                                                $parsed = parse_url($prevUrl);
+                                                $query = [];
+                                                if (isset($parsed['query'])) {
+                                                    parse_str($parsed['query'], $query);
+                                                }
+                                                $pageNum = $query['page'] ?? ($schools->currentPage() - 1);
+                                                $prevPageUrl = formatPaginationUrl($prevUrl, $pageNum);
+                                            }
                                         }
                                     @endphp
                                     @if ($prevPageUrl)
@@ -130,15 +139,26 @@
                                     {{-- Pagination Links --}}
                                     @foreach ($schools->getUrlRange(max(1, $schools->currentPage() - 2), min($schools->lastPage(), $schools->currentPage() + 2)) as $page => $url)
                                         @php
-                                            $paginationUrl = str_replace('?page=', '/trang-', $url).config('apps.general.suffix');
-                                            $paginationUrl = ($page == 1) ? str_replace('/trang-'.$page, '', $paginationUrl) : $paginationUrl;
+                                            $paginationUrl = formatPaginationUrl($url, $page);
                                         @endphp
                                         <li class="page-item {{ ($page == $schools->currentPage()) ? 'active' : '' }}"><a class="page-link" href="{{ $paginationUrl }}">{{ $page }}</a></li>
                                     @endforeach
 
                                     {{-- Next Page Link --}}
                                     @php
-                                        $nextPageUrl = ($schools->hasMorePages()) ? str_replace('?page=', '/trang-', $schools->nextPageUrl()).config('apps.general.suffix') : null;
+                                        $nextPageUrl = null;
+                                        if ($schools->hasMorePages()) {
+                                            $nextUrl = $schools->nextPageUrl();
+                                            if ($nextUrl) {
+                                                $parsed = parse_url($nextUrl);
+                                                $query = [];
+                                                if (isset($parsed['query'])) {
+                                                    parse_str($parsed['query'], $query);
+                                                }
+                                                $pageNum = $query['page'] ?? ($schools->currentPage() + 1);
+                                                $nextPageUrl = formatPaginationUrl($nextUrl, $pageNum);
+                                            }
+                                        }
                                     @endphp
                                     @if ($nextPageUrl)
                                         <li class="page-item"><a class="page-link" href="{{ $nextPageUrl }}">Sau ›</a></li>

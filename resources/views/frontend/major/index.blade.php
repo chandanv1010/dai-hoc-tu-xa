@@ -1200,8 +1200,8 @@
                     </div>
                     
                     <div class="form-group">
-                        <label for="register-email">Email <span class="required">*</span></label>
-                        <input type="email" name="email" id="register-email" class="form-control" placeholder="example@email.com" required>
+                        <label for="register-email">Email</label>
+                        <input type="email" name="email" id="register-email" class="form-control" placeholder="example@email.com">
                     </div>
                     
                     <div class="form-group">

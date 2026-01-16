@@ -27,7 +27,8 @@ class RouterController extends FrontendController
             $method = 'index';
             return app($this->router->controllers)->{$method}($this->router->module_id, $request);
         } else {
-            abort(404);
+            // Return 404 view trực tiếp để đảm bảo Laravel render, không bị nginx intercept
+            return response()->view('errors.404', [], 404);
         }
     }
 
@@ -39,7 +40,8 @@ class RouterController extends FrontendController
             $method = 'index';
             return app($this->router->controllers)->{$method}($this->router->module_id, $request, $page);
         } else {
-            abort(404);
+            // Return 404 view trực tiếp để đảm bảo Laravel render, không bị nginx intercept
+            return response()->view('errors.404', [], 404);
         }
     }
 
