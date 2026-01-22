@@ -2,12 +2,7 @@
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0,maximum-scale=1,user-scalable=0">
 <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0"> -->
-@php
-    // Lấy follow từ SEO array, mặc định là follow (1)
-    $followValue = $seo['follow'] ?? 1;
-    $robotsContent = 'index,' . ($followValue == 2 ? 'nofollow' : 'follow');
-@endphp
-<meta name="robots" content="{{ $robotsContent }}"/>
+<meta name="robots" content="index,follow"/>
 <meta name="author" content="{{ $system['homepage_company'] }}"/>
 <meta name="copyright" content="{{ $system['homepage_company'] }}" />
 <meta name="csrf-token" content="{{ csrf_token() }}">
@@ -33,17 +28,27 @@
 <meta name="twitter:description" content="{!! $seo['meta_description'] !!}" />
 <meta name="twitter:image" content="{{ asset($seo['meta_image']) }}" />
 
-
+{{-- Resource Hints for faster loading --}}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="dns-prefetch" href="https://unpkg.com">
+<link rel="dns-prefetch" href="https://www.googletagmanager.com">
+<link rel="dns-prefetch" href="https://www.google-analytics.com">
+
+{{-- Preload LCP image for homepage --}}
+@if(isset($ishome) && $ishome && isset($slides[App\Enums\SlideEnum::MAIN]['item'][0]['image']))
+    <link rel="preload" as="image" href="{{ $slides[App\Enums\SlideEnum::MAIN]['item'][0]['image'] }}" fetchpriority="high">
+@endif
+
+{{-- Google Fonts with display=swap for better performance --}}
 <link href="https://fonts.googleapis.com/css2?family=Asap:ital,wght@0,100..900;1,100..900&family=Questrial&family=Quicksand:wght@300..700&family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
 
 {{-- <meta name="p:domain_verify" content="bbf6b87e5e83b6aa8d4bc6dab42cba0a"/> --}}
 
 {{-- All CSS files are now imported via Vite in app.scss --}}
 @vite(['resources/css/app.scss', 'resources/js/app.js'])
-<script src="{{ asset('frontend/resources/library/js/jquery.js') }}"></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js?ver=6.8.1" id="pbmit-lottiefiles-script-js"></script>
+<script src="{{ asset('frontend/resources/library/js/jquery.js') }}" defer></script>
+<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js?ver=6.8.1" id="pbmit-lottiefiles-script-js" defer></script>
 
 {{-- FAQ Schema JSON-LD (for Post, Major, and School detail pages) --}}
 @if(isset($faqSchema) && !empty($faqSchema))

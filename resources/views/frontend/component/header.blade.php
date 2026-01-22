@@ -31,7 +31,15 @@
                 <div class="header-logo">
                     <a href="." title="{{ $system['seo_meta_title'] ?? 'Đào tạo từ xa' }}">
                         @if(isset($system['homepage_logo']) && $system['homepage_logo'])
-                            <img src="{{ $system['homepage_logo'] }}" alt="Logo" class="logo-image">
+                            <img 
+                                src="{{ $system['homepage_logo'] }}" 
+                                alt="Logo" 
+                                class="logo-image"
+                                width="200"
+                                height="60"
+                                loading="eager"
+                                fetchpriority="high"
+                            >
                         @endif
                     </a>
                 </div>
@@ -183,7 +191,13 @@
             <div class="uk-flex uk-flex-middle uk-flex-space-between">
                 <div class="mobile-logo">
                     <a href="." title="{{ $system['seo_meta_title'] }}">
-                        <img src="{{ $system['homepage_logo'] }}" alt="Mobile Logo">
+                        <img 
+                            src="{{ $system['homepage_logo'] }}" 
+                            alt="Mobile Logo"
+                            width="150"
+                            height="45"
+                            loading="eager"
+                        >
                     </a>
                     <form action="{{ write_url('tim-kiem') }}" method="GET" class="search">
                         <input type="text" name="keyword" placeholder="Tìm kiếm">

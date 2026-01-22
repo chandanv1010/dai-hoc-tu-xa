@@ -10,7 +10,16 @@
                 @foreach($slides[App\Enums\SlideEnum::MAIN]['item'] as $key => $val )
                     <div class="swiper-slide">
                         <a href="#consultation-modal" class="slide-link" data-uk-modal>
-                            <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                            <span class="image img-cover">
+                                <img 
+                                    src="{{ $val['image'] }}" 
+                                    class="img-ab img-1 wow fadeInDown" 
+                                    data-wow-delay="0.8s" 
+                                    alt="Slide"
+                                    @if($key === 0) fetchpriority="high" @endif
+                                    loading="{{ $key === 0 ? 'eager' : 'lazy' }}"
+                                >
+                            </span>
                         </a>
                     </div>
                 @endforeach
@@ -31,7 +40,16 @@
                 @foreach($slides['mobile-slide']['item'] as $key => $val )
                     <div class="swiper-slide">
                         <a href="#consultation-modal" class="slide-link" data-uk-modal>
-                            <span class="image img-cover"><img src="{{ $val['image'] }}" class="img-ab img-1 wow fadeInDown"  data-wow-delay="0.8s" alt="Slide"></span>
+                            <span class="image img-cover">
+                                <img 
+                                    src="{{ $val['image'] }}" 
+                                    class="img-ab img-1 wow fadeInDown" 
+                                    data-wow-delay="0.8s" 
+                                    alt="Slide"
+                                    @if($key === 0) fetchpriority="high" @endif
+                                    loading="{{ $key === 0 ? 'eager' : 'lazy' }}"
+                                >
+                            </span>
                         </a>
                     </div>
                 @endforeach

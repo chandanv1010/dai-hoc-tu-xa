@@ -246,7 +246,13 @@
                                                     $schoolIcon = $schoolImageUrl;
                                                 @endphp
                                                 <div class="school-card-icon">
-                                                    <img src="{{ $schoolIcon }}" alt="{{ $schoolName }}">
+                                                    <img 
+                                                        src="{{ $schoolIcon }}" 
+                                                        alt="{{ $schoolName }}"
+                                                        width="116"
+                                                        height="116"
+                                                        loading="lazy"
+                                                    >
                                                 </div>
                                                 <div class="school-card-content">
                                                     <h3 class="school-card-name">{{ $schoolName }}</h3>
@@ -393,7 +399,11 @@
                                                     @endphp
                                                     <div class="major-card">
                                                         <div class="major-card-image">
-                                                            <img src="{{ $majorImageUrl }}" alt="{{ $majorName }}">
+                                                            <img 
+                                                                src="{{ $majorImageUrl }}" 
+                                                                alt="{{ $majorName }}"
+                                                                loading="lazy"
+                                                            >
                                                         </div>
                                                         <div class="major-card-content">
                                                             <h3 class="major-card-name">{{ $majorName }}</h3>
