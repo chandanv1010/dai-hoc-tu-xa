@@ -46,9 +46,8 @@
 {{-- <meta name="p:domain_verify" content="bbf6b87e5e83b6aa8d4bc6dab42cba0a"/> --}}
 
 {{-- All CSS files are now imported via Vite in app.scss --}}
+<script src="{{ asset('frontend/resources/library/js/jquery.js') }}"></script>
 @vite(['resources/css/app.scss', 'resources/js/app.js'])
-<script src="{{ asset('frontend/resources/library/js/jquery.js') }}" defer></script>
-<script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js?ver=6.8.1" id="pbmit-lottiefiles-script-js" defer></script>
 
 {{-- FAQ Schema JSON-LD (for Post, Major, and School detail pages) --}}
 @if(isset($faqSchema) && !empty($faqSchema))
