@@ -27,8 +27,22 @@ class RouterController extends FrontendController
             $method = 'index';
             return app($this->router->controllers)->{$method}($this->router->module_id, $request);
         } else {
-            // Return 404 view trực tiếp để đảm bảo Laravel render, không bị nginx intercept
-            return response()->view('errors.404', [], 404);
+            // Return 404 view với layout chung
+            $system = is_array($this->system) ? $this->system : [];
+            $seo = [
+                'meta_title' => '404 - Trang không tìm thấy | ' . ($system['homepage_company'] ?? 'Website'),
+                'meta_description' => 'Trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.',
+                'meta_keyword' => '404, trang không tìm thấy',
+                'meta_image' => $system['homepage_logo'] ?? '',
+                'canonical' => config('app.url') . '/404',
+                'follow' => 0,
+            ];
+            $config = [
+                'language' => $this->language,
+                'js' => [],
+                'css' => []
+            ];
+            return response(view('errors.404', compact('system', 'seo', 'config')), 404);
         }
     }
 
@@ -40,8 +54,22 @@ class RouterController extends FrontendController
             $method = 'index';
             return app($this->router->controllers)->{$method}($this->router->module_id, $request, $page);
         } else {
-            // Return 404 view trực tiếp để đảm bảo Laravel render, không bị nginx intercept
-            return response()->view('errors.404', [], 404);
+            // Return 404 view với layout chung
+            $system = is_array($this->system) ? $this->system : [];
+            $seo = [
+                'meta_title' => '404 - Trang không tìm thấy | ' . ($system['homepage_company'] ?? 'Website'),
+                'meta_description' => 'Trang bạn đang tìm kiếm không tồn tại hoặc đã bị xóa.',
+                'meta_keyword' => '404, trang không tìm thấy',
+                'meta_image' => $system['homepage_logo'] ?? '',
+                'canonical' => config('app.url') . '/404',
+                'follow' => 0,
+            ];
+            $config = [
+                'language' => $this->language,
+                'js' => [],
+                'css' => []
+            ];
+            return response(view('errors.404', compact('system', 'seo', 'config')), 404);
         }
     }
 
