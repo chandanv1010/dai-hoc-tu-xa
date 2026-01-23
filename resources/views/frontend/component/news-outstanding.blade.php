@@ -49,7 +49,7 @@
                             <div class="uk-width-medium-1-2 uk-width-large-1-3">
                                 <div class="news-item wow fadeInUp">
                                     <a href="{{ $postUrl }}" class="news-image img-cover">
-                                        <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
+                                        <img src="{{ $postImageUrl }}" alt="{{ $postName }}" loading="lazy">
                                     </a>
                                     <div class="news-content">
                                         <span class="news-category-label">{{ $categoryName }}</span>

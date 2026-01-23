@@ -110,7 +110,7 @@
                             <div class="uk-width-medium-1-2">
                                 <div class="why-distance-learning-image">
                                     <div class="main-image">
-                                        <img src="{{ $catalogueImageUrl }}" alt="{{ $catalogueName }}">
+                                        <img src="{{ $catalogueImageUrl }}" alt="{{ $catalogueName }}" loading="lazy">
                                     </div>
                                 </div>
                             </div>
@@ -138,7 +138,7 @@
                                             @endphp
                                             <div class="why-feature-item why-feature-item-{{ $itemNumber }}">
                                                 <div class="why-feature-icon">
-                                                    <img src="{{ $postImageUrl }}" alt="{{ $postName }}">
+                                                    <img src="{{ $postImageUrl }}" alt="{{ $postName }}" loading="lazy">
                                                 </div>
                                                 <div class="why-feature-text">
                                                     <p>{{ $postName }}</p>
@@ -537,7 +537,7 @@
                                 @if($videoEmbed && $videoThumbnail)
                                     <div class="value-bring-video-thumbnail">
                                         <div class="video-thumbnail-wrapper" data-video-embed="{{ htmlspecialchars($videoEmbed, ENT_QUOTES, 'UTF-8') }}">
-                                            <img src="{{ $videoThumbnail }}" alt="Video" class="video-thumbnail-image">
+                                            <img src="{{ $videoThumbnail }}" alt="Video" class="video-thumbnail-image" loading="lazy">
                                             <div class="video-play-overlay">
                                                 <i class="fa fa-play-circle"></i>
                                             </div>
@@ -554,14 +554,14 @@
                                 <!-- Top Right: Graduate Image 2 -->
                                 @if($valueBringImage2Url)
                                     <div class="value-bring-graduate-image image img-scaledown">
-                                        <img src="{{ $valueBringImage2Url }}" alt="Graduate Image 2">
+                                        <img src="{{ $valueBringImage2Url }}" alt="Graduate Image 2" loading="lazy">
                                     </div>
                                 @endif
                                 
                                 <!-- Bottom Right: Graduate Image 1 -->
                                 @if($valueBringImageUrl)
                                     <div class="value-bring-graduate-image-2 image img-cover">
-                                        <img src="{{ $valueBringImageUrl }}" alt="Graduate Image">
+                                        <img src="{{ $valueBringImageUrl }}" alt="Graduate Image" loading="lazy">
                                     </div>
                                 @endif
                             </div>
