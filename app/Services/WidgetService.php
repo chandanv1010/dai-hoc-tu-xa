@@ -671,6 +671,15 @@ class WidgetService extends BaseService
                 $allCategoryIds = array_merge($allCategoryIds, $recursiveIds);
             }
             $allCategoryIds = array_unique(array_filter($allCategoryIds));
+            
+            // Debug: Log category IDs for news-outstanding widget
+            if ($widgets->contains('keyword', 'news-outstanding')) {
+                \Log::info('News Outstanding Widget Debug', [
+                    'catalogues_input' => $catalogues->pluck('id')->toArray(),
+                    'all_category_ids' => $allCategoryIds,
+                    'catalogue_model' => $catalogueModel
+                ]);
+            }
 
             if (empty($allCategoryIds)) {
                 return [];
@@ -729,28 +738,41 @@ class WidgetService extends BaseService
                 WHERE p.{$catalogueIdField} IN ({$categoryIdList})
                 AND o.publish = 2 
                 AND o.deleted_at IS NULL
-                GROUP BY o.id, p.{$catalogueIdField}
+                GROUP BY o.id
             ";
             
-            // Kiểm tra nếu là widget news-outstanding (PostCatalogue) thì orderBy theo created_at desc hoặc id desc
-            $isNewsOutstanding = false;
-            foreach ($widgets as $widget) {
-                if (isset($widget->keyword) && $widget->keyword === 'news-outstanding' && $catalogueModel === 'PostCatalogue') {
-                    $isNewsOutstanding = true;
-                    break;
-                }
-            }
+            // Mặc định sắp xếp theo created_at DESC để lấy bài mới nhất
+            $sql .= " ORDER BY o.created_at DESC, o.id DESC";
             
-            if ($isNewsOutstanding && $objectModel === 'post') {
-                // Cho tin tức nổi bật: sắp xếp theo created_at desc hoặc id desc để bài mới nhất hiển thị trước
-                $sql .= " ORDER BY o.created_at DESC, o.id DESC";
-            } else {
-                // Các widget khác: giữ nguyên orderBy theo order
-                $sql .= " ORDER BY o.order DESC, o.id DESC";
+            // Add limit to prevent loading too many records
+            $sql .= " LIMIT 50";
+
+            // Debug: Log SQL for news-outstanding
+            if ($widgets->contains('keyword', 'news-outstanding')) {
+                \Log::info('News Outstanding SQL Query', [
+                    'sql' => $sql,
+                    'params' => [$language, $language],
+                    'category_ids' => $categoryIdList
+                ]);
             }
 
             // Query DB
             $rows = collect(DB::select($sql, [$language, $language]));
+            
+            // Debug: Log results
+            if ($widgets->contains('keyword', 'news-outstanding')) {
+                \Log::info('News Outstanding Query Results', [
+                    'total_rows' => $rows->count(),
+                    'first_5_posts' => $rows->take(5)->map(function($row) {
+                        return [
+                            'id' => $row->id ?? null,
+                            'name' => $row->language_name ?? null,
+                            'created_at' => $row->created_at ?? null,
+                            'category_id' => $row->category_id ?? null
+                        ];
+                    })->toArray()
+                ]);
+            }
 
             // Gom objects theo category_id
             $objectsByCategory = [];
@@ -962,20 +984,13 @@ class WidgetService extends BaseService
      */
     private function getRecursiveCategoryIds(int $categoryId, string $catalogueModel): array
     {
-        static $recursiveCache = [];
-        $cacheKey = $catalogueModel . '_' . $categoryId;
-
-        if (isset($recursiveCache[$cacheKey])) {
-            return $recursiveCache[$cacheKey];
-        }
-
         $tableName = $this->getTableName($catalogueModel);
 
-        // Fallback: Simple recursive approach (compatible with older MySQL)
+        // Always recalculate to ensure fresh data when widget config changes
         $ids = [$categoryId];
         $this->collectChildrenIds($tableName, $categoryId, $ids);
 
-        return $recursiveCache[$cacheKey] = array_unique($ids);
+        return array_unique($ids);
     }
 
     /**

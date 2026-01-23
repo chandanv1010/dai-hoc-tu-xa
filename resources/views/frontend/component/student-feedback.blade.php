@@ -74,7 +74,7 @@
                                             <div class="feedback-name-wrapper">
                                                 <h3 class="feedback-name">{{ $postName }}</h3>
                                                 @if($postDescription)
-                                                    <p class="feedback-position">{!! $postDescription !!}</p>
+                                                    <div class="feedback-position">{!! $postDescription !!}</div>
                                                 @endif
                                             </div>
                                         </div>

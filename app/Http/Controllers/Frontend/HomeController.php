@@ -9,6 +9,7 @@ use App\Repositories\LecturerRepository;
 use App\Repositories\SchoolRepository;
 use App\Repositories\MajorRepository;
 use App\Repositories\MajorCatalogueRepository;
+use App\Repositories\PostCatalogueRepository;
 use App\Services\WidgetService;
 use App\Services\SlideService;
 use App\Enums\SlideEnum;
@@ -25,6 +26,7 @@ class HomeController extends FrontendController
     protected $schoolRepository;
     protected $majorRepository;
     protected $majorCatalogueRepository;
+    protected $postCatalogueRepository;
     protected $systemRepository;
     protected $widgetService;
     protected $slideService;
@@ -37,6 +39,7 @@ class HomeController extends FrontendController
         SchoolRepository $schoolRepository,
         MajorRepository $majorRepository,
         MajorCatalogueRepository $majorCatalogueRepository,
+        PostCatalogueRepository $postCatalogueRepository,
         WidgetService $widgetService,
         SlideService $slideService,
         SystemRepository $systemRepository,
@@ -47,6 +50,7 @@ class HomeController extends FrontendController
         $this->schoolRepository = $schoolRepository;
         $this->majorRepository = $majorRepository;
         $this->majorCatalogueRepository = $majorCatalogueRepository;
+        $this->postCatalogueRepository = $postCatalogueRepository;
         $this->widgetService = $widgetService;
         $this->slideService = $slideService;
         $this->systemRepository = $systemRepository;
@@ -82,8 +86,10 @@ class HomeController extends FrontendController
             ['keyword' => 'schools-list'],
             ['keyword' => 'majors-list'],
             ['keyword' => 'student-feedback', 'object' => true],
-            ['keyword' => 'news-outstanding', 'object' => true],
         ], $this->language);
+
+        // Lấy dữ liệu news-outstanding trực tiếp
+        $newsOutstanding = $this->getNewsOutstanding();
 
         // Lấy danh sách schools
         $schools = $this->schoolRepository->getAllSchools($this->language, 0);
@@ -123,6 +129,7 @@ class HomeController extends FrontendController
             'config',
             'slides',
             'widgets',
+            'newsOutstanding',
             'seo',
             'system',
             'language',
@@ -131,6 +138,50 @@ class HomeController extends FrontendController
             'schools',
             'majors'
         ));
+    }
+
+    private function getNewsOutstanding()
+    {
+        // Lấy thông tin post catalogue với ID = 18 (tin tức nổi bật)
+        $postCatalogueId = 18;
+        
+        $postCatalogue = $this->postCatalogueRepository->getPostCatalogueById($postCatalogueId, $this->language);
+        
+        if (!$postCatalogue) {
+            return null;
+        }
+        
+        // Lấy các bài viết thuộc danh mục này (bao gồm cả danh mục con)
+        // Sử dụng paginate để tận dụng logic whereRaw xử lý nested categories
+        $request = new \Illuminate\Http\Request();
+        $request->merge(['post_catalogue_id' => $postCatalogueId]);
+        
+        $paginatedPosts = $this->postService->paginate(
+            $request,
+            $this->language,
+            $postCatalogue,
+            1,
+            ['path' => '']
+        );
+        
+        // Lấy 3 bài viết đầu tiên và format lại dữ liệu
+        $posts = collect($paginatedPosts->items())->take(3)->map(function($post) {
+            return (object)[
+                'id' => $post->id,
+                'post_catalogue_id' => $post->post_catalogue_id,
+                'image' => $post->image,
+                'created_at' => $post->created_at,
+                'name' => $post->name,
+                'description' => $post->description,
+                'canonical' => $post->canonical,
+            ];
+        });
+        
+        // Format dữ liệu để trả về
+        return [
+            'catalogue' => $postCatalogue,
+            'posts' => $posts,
+        ];
     }
 
     private function config()

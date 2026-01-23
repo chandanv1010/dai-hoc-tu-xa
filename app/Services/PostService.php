@@ -60,7 +60,7 @@ class PostService extends BaseService
                 return $page;
             });
         }
-        $perPage = (!is_null($postCatalogue))  ? 15 : 20;
+        $perPage = (!is_null($postCatalogue))  ? 16 : 20;
         $condition = [
             'keyword' => addslashes($request->input('keyword')),
             'publish' => $request->integer('publish'),

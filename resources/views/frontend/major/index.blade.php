@@ -186,7 +186,7 @@
                                 $overviewItems = $overview['items'] ?? [];
                             @endphp
                             <div class="major-section major-overview wow fadeInUp" data-wow-delay="0.4s">
-                                <h3 class="section-title">{{ $overviewName }}</h3>
+                                <h3 class="section-title">Tổng quan chương trình</h3>
                                 @if(!empty($content))
                                 <div class="major-overview-content">
                                     {!! $content !!}

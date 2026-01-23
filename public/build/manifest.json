@@ -40,29 +40,13 @@
     "src": "public/frontend/resources/img/major-bg-1.png"
   },
   "resources/css/app.scss": {
-    "assets": [
-      "assets/fontawesome-webfont-7bfcab6d.eot",
-      "assets/fontawesome-webfont-2adefcbc.woff2",
-      "assets/fontawesome-webfont-ba0c59de.woff",
-      "assets/fontawesome-webfont-aa58f33f.ttf",
-      "assets/fontawesome-webfont-fc378232.svg",
-      "assets/uicons-regular-straight-e013f9ca.woff2",
-      "assets/h-bg-a4835258.png",
-      "assets/major-bg-1-47485f03.png",
-      "assets/bg-card-6afff386.png",
-      "assets/form-bg-c6238ed4.png"
-    ],
-    "file": "assets/app-4ed993c7.js",
+    "file": "assets/app-1bfb07ee.css",
     "isEntry": true,
     "src": "resources/css/app.scss"
   },
   "resources/js/app.js": {
-    "file": "assets/app-7cfd0d88.js",
+    "file": "assets/app-2bdd42d5.js",
     "isEntry": true,
     "src": "resources/js/app.js"
-  },
-  "style.css": {
-    "file": "assets/style-1bfb07ee.css",
-    "src": "style.css"
   }
 }

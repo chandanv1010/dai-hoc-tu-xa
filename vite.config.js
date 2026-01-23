@@ -24,7 +24,15 @@ export default defineConfig({
         devSourcemap: true,
     },
     build: {
-        sourcemap: true,
-        cssCodeSplit: false,
+        sourcemap: false, // Disable sourcemaps in production for smaller files
+        cssCodeSplit: true, // Enable CSS code splitting
+        minify: 'terser', // Use terser for better minification
+        terserOptions: {
+            compress: {
+                drop_console: true, // Remove console.log in production
+                drop_debugger: true,
+            },
+        },
+        chunkSizeWarningLimit: 500, // Warn if chunks exceed 500kb
     },
 });

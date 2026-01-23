@@ -1,6 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="vi">
     <head>
+        <base href="{{ config('app.url') }}">
         {!! $system['script_1'] !!}
         @include('frontend.component.head')
     </head>
