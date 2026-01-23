@@ -47,7 +47,7 @@
 
 {{-- All CSS files are now imported via Vite in app.scss --}}
 {{-- jQuery with defer to prevent render blocking - moved to bottom or use defer --}}
-<script src="{{ asset('frontend/resources/library/js/jquery.js') }}" defer></script>
+<script src="{{ asset('frontend/resources/library/js/jquery.js') }}"></script>
 @vite(['resources/css/app.scss', 'resources/js/app.js'])
 
 {{-- FAQ Schema JSON-LD (for Post, Major, and School detail pages) --}}
