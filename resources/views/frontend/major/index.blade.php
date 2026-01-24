@@ -50,11 +50,6 @@
         }
     @endphp
 
-    {{-- Hidden H1 for SEO - Tên ngành --}}
-    @if($name)
-        <h1 style="position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden;">{{ $name }}</h1>
-    @endif
-
     {{-- Khối Banner Hero --}}
     @if(!empty($major->banner))
         <div class="panel-major-hero">

@@ -17,7 +17,7 @@
         <div class="breadcrumb-overlay"></div>
         <div class="uk-container uk-container-center">
             <div class="breadcrumb-content">
-                <h1 class="breadcrumb-title">{{ $catalogueName }}</h1>
+                <h2 class="breadcrumb-title">{{ $catalogueName }}</h2>
                 <nav class="breadcrumb-nav">
                     <ul class="breadcrumb-list">
                         <li><a href="{{ config('app.url') }}">Trang chủ</a></li>

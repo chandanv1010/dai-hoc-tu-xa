@@ -33,18 +33,18 @@ class SitemapController extends Controller
             ],
             [
                 'loc' => $baseUrl . '/lien-he.html',
-                'changefreq' => 'monthly',
-                'priority' => '0.60'
+                'changefreq' => 'daily',
+                'priority' => '0.80'
             ],
             [
                 'loc' => $baseUrl . '/cac-truong-dao-tao-tu-xa.html',
-                'changefreq' => 'weekly',
-                'priority' => '0.80'
+                'changefreq' => 'daily',
+                'priority' => '1.00'
             ],
             [
                 'loc' => $baseUrl . '/cac-nganh-dao-tao-tu-xa.html',
-                'changefreq' => 'weekly',
-                'priority' => '0.80'
+                'changefreq' => 'daily',
+                'priority' => '1.00'
             ],
         ];
         
@@ -118,7 +118,7 @@ class SitemapController extends Controller
             $lastmod = $tag->updated_at 
                 ? Carbon::parse($tag->updated_at)->format('Y-m-d')
                 : $now;
-            $xml .= $this->buildUrlEntry($loc, $lastmod, 'weekly', '0.60');
+            $xml .= $this->buildUrlEntry($loc, $lastmod, 'daily', '0.80');
         }
         
         // Close XML
@@ -149,13 +149,13 @@ class SitemapController extends Controller
     private function determinePriority(string $controller): string
     {
         return match (true) {
-            str_contains($controller, 'SchoolController') => '0.90',
-            str_contains($controller, 'MajorController') => '0.85',
+            str_contains($controller, 'SchoolController') => '1.00',
+            str_contains($controller, 'MajorController') => '1.00',
             str_contains($controller, 'ProductCatalogueController') => '0.80',
-            str_contains($controller, 'ProductController') => '0.75',
-            str_contains($controller, 'PostCatalogueController') => '0.70',
-            str_contains($controller, 'PostController') => '0.65',
-            default => '0.60',
+            str_contains($controller, 'ProductController') => '0.80',
+            str_contains($controller, 'PostCatalogueController') => '0.80',
+            str_contains($controller, 'PostController') => '0.80',
+            default => '0.80',
         };
     }
     
@@ -164,13 +164,6 @@ class SitemapController extends Controller
      */
     private function determineChangefreq(string $controller): string
     {
-        return match (true) {
-            str_contains($controller, 'SchoolController') => 'weekly',
-            str_contains($controller, 'MajorController') => 'weekly',
-            str_contains($controller, 'ProductCatalogueController') => 'weekly',
-            str_contains($controller, 'ProductController') => 'weekly',
-            str_contains($controller, 'PostController') => 'monthly',
-            default => 'monthly',
-        };
+        return 'daily';
     }
 }
