@@ -69,7 +69,7 @@ Route::get('gio-hang'.config('apps.general.suffix'), [CartController::class, 'ch
 
 Route::get('thanh-toan'.config('apps.general.suffix'), [CartController::class, 'pay'])->name('cart.pay');
 
-Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
 
 Route::get('tag/{slug}'.config('apps.general.suffix'), [TagController::class, 'index'])->name('post.tag')->where('slug', '[a-zA-Z0-9-]+');
 

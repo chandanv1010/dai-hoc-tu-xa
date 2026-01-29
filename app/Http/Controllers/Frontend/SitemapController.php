@@ -112,14 +112,14 @@ class SitemapController extends Controller
         }
         
         // Add Tags URLs
-        $tags = Tag::whereNull('deleted_at')->orderBy('updated_at', 'desc')->get();
-        foreach ($tags as $tag) {
-            $loc = $baseUrl . '/tag/' . $tag->slug . '.html';
-            $lastmod = $tag->updated_at 
-                ? Carbon::parse($tag->updated_at)->format('Y-m-d')
-                : $now;
-            $xml .= $this->buildUrlEntry($loc, $lastmod, 'daily', '0.80');
-        }
+        // $tags = Tag::whereNull('deleted_at')->orderBy('updated_at', 'desc')->get();
+        // foreach ($tags as $tag) {
+        //     $loc = $baseUrl . '/tag/' . $tag->slug . '.html';
+        //     $lastmod = $tag->updated_at 
+        //         ? Carbon::parse($tag->updated_at)->format('Y-m-d')
+        //         : $now;
+        //     $xml .= $this->buildUrlEntry($loc, $lastmod, 'daily', '0.80');
+        // }
         
         // Close XML
         $xml .= '</urlset>';

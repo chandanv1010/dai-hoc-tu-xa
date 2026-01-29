@@ -152,7 +152,7 @@
             <!-- Copyright -->
             @if($copyright)
                 <div class="footer-copyright">
-                    <p>{{ $copyright }}</p>
+                    <p>{{ $copyright }} </p>
                 </div>
             @endif
         </div>

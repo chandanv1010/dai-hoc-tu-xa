@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 
+use App\Http\Controllers\Frontend\SitemapController;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -19,6 +21,9 @@ Route::redirect('/hoc-vien-tai-chinh.html', '/hoc-vien-tai-chinh-aof.html', 301)
 Route::redirect('/dai-hoc-kinh-te-quoc-dan.html', '/dai-hoc-kinh-te-quoc-dan-neu.html', 301);
 Route::redirect('/dai-hoc-thai-nguyen.html', '/dai-hoc-thai-nguyen-tnu.html', 301);
 Route::redirect('/dai-hoc-mo-ha-noi.html', '/dai-hoc-mo-ha-noi-hou.html', 301);
+
+// Sitemap
+Route::get('sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
 
 // Load modular route files
 require __DIR__.'/auth.php';
