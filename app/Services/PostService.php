@@ -20,21 +20,22 @@ class PostService extends BaseService
     protected $postRepository;
     protected $routerRepository;
     protected $tagService;
-    
+
     public function __construct(
         PostRepository $postRepository,
         RouterRepository $routerRepository,
         TagService $tagService
-    ){
+    ) {
         $this->postRepository = $postRepository;
         $this->routerRepository = $routerRepository;
         $this->tagService = $tagService;
         $this->controllerName = 'PostController';
     }
 
-    private function whereRaw($request, $languageId, $postCatalogue = null){
+    private function whereRaw($request, $languageId, $postCatalogue = null)
+    {
         $rawCondition = [];
-        if($request->integer('post_catalogue_id') > 0 || !is_null($postCatalogue)){
+        if ($request->integer('post_catalogue_id') > 0 || !is_null($postCatalogue)) {
             $catId = ($request->integer('post_catalogue_id') > 0) ? $request->integer('post_catalogue_id') : $postCatalogue->id;
             $rawCondition['whereRaw'] =  [
                 [
@@ -44,23 +45,23 @@ class PostService extends BaseService
                         JOIN post_catalogue_language ON post_catalogues.id = post_catalogue_language.post_catalogue_id
                         WHERE lft >= (SELECT lft FROM post_catalogues as pc WHERE pc.id = ?)
                         AND rgt <= (SELECT rgt FROM post_catalogues as pc WHERE pc.id = ?)
-                        AND post_catalogue_language.language_id = '.$languageId.'
+                        AND post_catalogue_language.language_id = ' . $languageId . '
                     )',
                     [$catId, $catId]
                 ]
             ];
-            
         }
         return $rawCondition;
     }
 
-    public function paginate($request, $languageId, $postCatalogue = null, $page = 1, $extend = []){
-        if(!is_null($postCatalogue)){
+    public function paginate($request, $languageId, $postCatalogue = null, $page = 1, $extend = [])
+    {
+        if (!is_null($postCatalogue)) {
             Paginator::currentPageResolver(function () use ($page) {
                 return $page;
             });
         }
-        $perPage = (!is_null($postCatalogue))  ? 16 : 20;
+        $perPage = (!is_null($postCatalogue))  ? 18 : 20;
         $condition = [
             'keyword' => addslashes($request->input('keyword')),
             'publish' => $request->integer('publish'),
@@ -70,7 +71,7 @@ class PostService extends BaseService
         ];
 
         $paginationConfig = [
-            'path' => ($extend['path']) ?? 'post/index', 
+            'path' => ($extend['path']) ?? 'post/index',
             'groupBy' => $this->paginateSelect()
         ];
 
@@ -85,24 +86,25 @@ class PostService extends BaseService
         ];
 
         $posts = $this->postRepository->pagination(
-            $this->paginateSelect(), 
-            $condition, 
+            $this->paginateSelect(),
+            $condition,
             $perPage,
-            $paginationConfig,  
+            $paginationConfig,
             $orderBy,
-            $joins,  
+            $joins,
             $relations,
             $rawQuery
-        ); 
+        );
 
         return $posts;
     }
 
-    public function create($request, $languageId){
+    public function create($request, $languageId)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $post = $this->createPost($request);
-            if($post->id > 0){
+            if ($post->id > 0) {
                 $this->updateLanguageForPost($post, $request, $languageId);
                 $this->updateCatalogueForPost($post, $request);
                 $this->updateTagsForPost($post, $request);
@@ -110,39 +112,46 @@ class PostService extends BaseService
             }
             DB::commit();
             return $post;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function update($id, $request, $languageId){
+    public function update($id, $request, $languageId)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $post = $this->postRepository->findById($id);
-            if($this->uploadPost($post, $request)){
+            if ($this->uploadPost($post, $request)) {
                 $this->updateLanguageForPost($post, $request, $languageId);
                 $this->updateCatalogueForPost($post, $request);
                 $this->updateTagsForPost($post, $request);
                 $this->updateRouter(
-                    $post, $request, $this->controllerName, $languageId
+                    $post,
+                    $request,
+                    $this->controllerName,
+                    $languageId
                 );
             }
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
-            echo $e->getMessage();die();
+            echo $e->getMessage();
+            die();
             return false;
         }
     }
 
-    public function destroy($id){
+    public function destroy($id)
+    {
         DB::beginTransaction();
-        try{
+        try {
             $post = $this->postRepository->delete($id);
             $this->routerRepository->forceDeleteByCondition([
                 ['module_id', '=', $id],
@@ -150,7 +159,7 @@ class PostService extends BaseService
             ]);
             DB::commit();
             return true;
-        }catch(\Exception $e ){
+        } catch (\Exception $e) {
             DB::rollBack();
             // Log::error($e->getMessage());
             // echo $e->getMessage();die();
@@ -158,7 +167,8 @@ class PostService extends BaseService
         }
     }
 
-    private function createPost($request){
+    private function createPost($request)
+    {
         $payload = $request->only($this->payload());
         $payload['user_id'] = Auth::id();
         $payload['album'] = $this->formatAlbum($request);
@@ -166,7 +176,8 @@ class PostService extends BaseService
         return $post;
     }
 
-    private function uploadPost($post, $request){
+    private function uploadPost($post, $request)
+    {
         $payload = $request->only($this->payload());
         $payload['album'] = $this->formatAlbum($request);
         // Đảm bảo follow không bị reset nếu không có trong request
@@ -176,39 +187,43 @@ class PostService extends BaseService
         return $this->postRepository->update($post->id, $payload);
     }
 
-    private function updateLanguageForPost($post, $request, $languageId){
+    private function updateLanguageForPost($post, $request, $languageId)
+    {
         $payload = $request->only($this->payloadLanguage());
         $payload = $this->formatLanguagePayload($payload, $post->id, $languageId);
         $post->languages()->detach([$languageId, $post->id]);
         return $this->postRepository->createPivot($post, $payload, 'languages');
     }
 
-    private function updateCatalogueForPost($post, $request){
+    private function updateCatalogueForPost($post, $request)
+    {
         $post->post_catalogues()->sync($this->catalogue($request));
     }
 
-    private function updateTagsForPost($post, $request){
+    private function updateTagsForPost($post, $request)
+    {
         $tagIds = [];
-        
+
         // Xử lý tags từ input
         if ($request->has('tags') && is_array($request->input('tags'))) {
-            $tagNames = array_filter($request->input('tags'), function($tag) {
+            $tagNames = array_filter($request->input('tags'), function ($tag) {
                 return !empty(trim($tag));
             });
-            
+
             if (!empty($tagNames)) {
                 $tags = $this->tagService->findOrCreateTags($tagNames);
-                $tagIds = array_map(function($tag) {
+                $tagIds = array_map(function ($tag) {
                     return $tag->id;
                 }, $tags);
             }
         }
-        
+
         // Sync tags với post
         $post->tags()->sync($tagIds);
     }
 
-    private function formatLanguagePayload($payload, $postId, $languageId){
+    private function formatLanguagePayload($payload, $postId, $languageId)
+    {
         $payload['canonical'] = Str::slug($payload['canonical']);
         $payload['language_id'] =  $languageId;
         $payload['post_id'] = $postId;
@@ -216,18 +231,20 @@ class PostService extends BaseService
     }
 
 
-    private function catalogue($request){
-        if($request->input('catalogue') != null){
+    private function catalogue($request)
+    {
+        if ($request->input('catalogue') != null) {
             return array_unique(array_merge($request->input('catalogue'), [$request->post_catalogue_id]));
         }
         return [$request->post_catalogue_id];
     }
-    
-    
 
-    private function paginateSelect(){
+
+
+    private function paginateSelect()
+    {
         return [
-            'posts.id', 
+            'posts.id',
             'posts.publish',
             'posts.image',
             'posts.order',
@@ -235,13 +252,14 @@ class PostService extends BaseService
             'posts.template',
             'posts.video',
             'posts.viewed',
-            'tb2.name', 
+            'tb2.name',
             'tb2.description',
             'tb2.canonical',
         ];
     }
 
-    private function payload(){
+    private function payload()
+    {
         return [
             'follow',
             'publish',
@@ -255,7 +273,8 @@ class PostService extends BaseService
         ];
     }
 
-    private function payloadLanguage(){
+    private function payloadLanguage()
+    {
         return [
             'name',
             'description',
@@ -266,6 +285,4 @@ class PostService extends BaseService
             'canonical',
         ];
     }
-
-
 }
