@@ -83,10 +83,12 @@ $catalogueDescription = $postCatalogue->languages->first()->pivot->description ?
                                         </h3>
                                         @if($postDescription)
                                         @php
-                                        $cleanDescription = strip_tags($postDescription);
+                                        // Decode HTML entities FIRST, then strip tags and truncate
+                                        $decodedDescription = html_entity_decode($postDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                                        $cleanDescription = strip_tags($decodedDescription);
                                         $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
                                         @endphp
-                                        <p class="news-description">{!! htmlspecialchars_decode(html_entity_decode($shortDescription)) !!}</p>
+                                        <p class="news-description">{{ $shortDescription }}</p>
                                         @endif
                                         <div class="news-meta">
                                             <span class="news-date">
@@ -236,10 +238,12 @@ $catalogueDescription = $postCatalogue->languages->first()->pivot->description ?
                                 </h3>
                                 @if($postDescription)
                                 @php
-                                $cleanDescription = strip_tags($postDescription);
+                                // Decode HTML entities FIRST, then strip tags and truncate
+                                $decodedDescription = html_entity_decode($postDescription, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+                                $cleanDescription = strip_tags($decodedDescription);
                                 $shortDescription = mb_strlen($cleanDescription) > 100 ? mb_substr($cleanDescription, 0, 100) . '...' : $cleanDescription;
                                 @endphp
-                                <p class="news-description">{!! $shortDescription !!}</p>
+                                <p class="news-description">{{ $shortDescription }}</p>
                                 @endif
                                 <div class="news-meta">
                                     <span class="news-date">
