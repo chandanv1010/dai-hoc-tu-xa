@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View;
 
 use App\Models\Language;
 use App\Models\System;
@@ -16,22 +17,23 @@ class FrontendController extends Controller
 
     public function __construct(
         // SystemRepository $systemRepository
-    ){
+    )
+    {
 
         $this->setLanguage();
         $this->setSystem();
-
     }
 
-    public function setLanguage(){
+    public function setLanguage()
+    {
         $locale = app()->getLocale(); // vn en cn
         // $language = Language::where('canonical', $locale)->first();
         $this->language = 1;
     }
 
-    public function setSystem(){
+    public function setSystem()
+    {
         $this->system = convert_array(System::where('language_id', $this->language)->get(), 'keyword', 'content');
+        View::share('system', $this->system);
     }
-   
-
 }

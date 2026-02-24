@@ -8,6 +8,7 @@ use App\Repositories\TagRepository;
 use App\Repositories\PostRepository;
 use App\Repositories\SchoolRepository;
 use App\Services\PostService;
+use Illuminate\Pagination\Paginator;
 
 class TagController extends FrontendController
 {
@@ -21,7 +22,7 @@ class TagController extends FrontendController
         PostRepository $postRepository,
         PostService $postService,
         SchoolRepository $schoolRepository
-    ){
+    ) {
         $this->tagRepository = $tagRepository;
         $this->postRepository = $postRepository;
         $this->postService = $postService;
@@ -29,26 +30,32 @@ class TagController extends FrontendController
         parent::__construct();
     }
 
-    public function index($slug, Request $request){
+    public function index($slug, Request $request, $page = 1)
+    {
         $tag = $this->tagRepository->findBySlug($slug);
-        
+
         if (!$tag) {
             abort(404);
         }
 
+        // Set current page cho pagination
+        Paginator::currentPageResolver(function () use ($page) {
+            return $page;
+        });
+
         // Lấy posts có tag này
         $posts = $this->postRepository->getPostsByTag($tag->id, $this->language, 15);
         $posts->withQueryString();
-        $posts->setPath(route('post.tag', ['slug' => $slug]));
+        $posts->setPath(url('tag/' . $slug));
 
         // Lấy danh sách schools cho sidebar
         $schools = $this->schoolRepository->getAllSchools($this->language, 0);
-        
+
         $config = $this->config();
         $system = $this->system;
-        
+
         $canonicalUrl = route('post.tag', ['slug' => $slug]);
-        
+
         $seo = [
             'meta_title' => 'Bài viết với tag: ' . $tag->name,
             'meta_keyword' => $tag->name,
@@ -70,7 +77,8 @@ class TagController extends FrontendController
         ));
     }
 
-    private function config(){
+    private function config()
+    {
         return [
             'language' => $this->language,
             'js' => [],
