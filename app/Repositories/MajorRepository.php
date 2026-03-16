@@ -120,6 +120,13 @@ class MajorRepository extends BaseRepository
                 $query->where('languages.id', $language_id);
             }]);
             
+            // Load schools relationship với language
+            $major->load(['schools' => function($query) use ($language_id) {
+                $query->with(['languages' => function($q) use ($language_id) {
+                    $q->where('languages.id', $language_id);
+                }]);
+            }]);
+            
             // Đảm bảo pivot được cast đúng - decode JSON thủ công nếu cần
             // event không phải JSON nữa, chỉ là số ID
             if ($major->languages && $major->languages->count() > 0) {
@@ -459,6 +466,13 @@ class MajorRepository extends BaseRepository
         foreach ($majors as $major) {
             $major->load(['languages' => function($query) use ($language_id) {
                 $query->where('languages.id', $language_id);
+            }]);
+            
+            // Load schools relationship with language
+            $major->load(['schools' => function($query) use ($language_id) {
+                $query->with(['languages' => function($q) use ($language_id) {
+                    $q->where('languages.id', $language_id);
+                }]);
             }]);
             
             // Decode JSON fields nếu cần
