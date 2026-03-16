@@ -971,12 +971,12 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    let advantageItemIndex = {{ count(old('advantage.items', (isset($advantage) && isset($advantage['items']) && is_array($advantage['items'])) ? $advantage['items'] : [])) }};
-    let suitableItemIndex = {{ count(old('suitable.items', (isset($suitable) && isset($suitable['items']) && is_array($suitable['items'])) ? $suitable['items'] : [])) }};
-    let majorItemIndex = {{ count(old('majors', (isset($majors) && is_array($majors)) ? $majors : [])) }};
-    let studyMethodItemIndex = {{ count(old('study_method.items', (isset($studyMethod) && isset($studyMethod['items']) && is_array($studyMethod['items'])) ? $studyMethod['items'] : [])) }};
-    let studentFeedbackIndex = {{ count(old('feedback.items', (isset($feedback) && isset($feedback['items']) && is_array($feedback['items'])) ? $feedback['items'] : [])) }};
-    let degreeValueItemIndex = {{ count(old('value.items', (isset($value) && isset($value['items']) && is_array($value['items'])) ? $value['items'] : [])) }};
+    let advantageItemIndex = {{ (isset($advantage['items']) && is_array($advantage['items']) && count($advantage['items']) > 0) ? max(array_keys($advantage['items'])) + 1 : 0 }};
+    let suitableItemIndex = {{ (isset($suitable['items']) && is_array($suitable['items']) && count($suitable['items']) > 0) ? max(array_keys($suitable['items'])) + 1 : 0 }};
+    let majorItemIndex = {{ (isset($majors) && is_array($majors) && count($majors) > 0) ? max(array_keys($majors)) + 1 : 0 }};
+    let studyMethodItemIndex = {{ (isset($studyMethod['items']) && is_array($studyMethod['items']) && count($studyMethod['items']) > 0) ? max(array_keys($studyMethod['items'])) + 1 : 0 }};
+    let studentFeedbackIndex = {{ (isset($feedback['items']) && is_array($feedback['items']) && count($feedback['items']) > 0) ? max(array_keys($feedback['items'])) + 1 : 0 }};
+    let degreeValueItemIndex = {{ (isset($value['items']) && is_array($value['items']) && count($value['items']) > 0) ? max(array_keys($value['items'])) + 1 : 0 }};
     
     // Initialize Select2 for majors and events
     setTimeout(function() {
