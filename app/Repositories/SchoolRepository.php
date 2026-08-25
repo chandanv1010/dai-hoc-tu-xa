@@ -96,6 +96,7 @@ class SchoolRepository extends BaseRepository
                 'schools.enrollment_quota',
                 'schools.short_name',
                 'schools.publish',
+                'schools.follow',
                 'schools.statistics_majors',
                 'schools.statistics_students',
                 'schools.statistics_courses',

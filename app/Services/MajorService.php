@@ -113,6 +113,8 @@ class MajorService extends BaseService
                     $value = 0; // Mặc định không có catalogue
                 } elseif ($field === 'publish' && ($value === null || $value === '')) {
                     $value = 1; // Mặc định không publish
+                } elseif ($field === 'follow' && ($value === null || $value === '')) {
+                    $value = 1; // Mặc định follow
                 }
                 $payload[$field] = $value;
             }

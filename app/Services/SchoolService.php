@@ -107,7 +107,13 @@ class SchoolService extends BaseService
             // Tạo payload từ bản ghi gốc
             $payload = [];
             foreach ($this->payload() as $field) {
-                $payload[$field] = $originalSchool->$field;
+                $value = $originalSchool->$field ?? null;
+                if ($field === 'follow' && ($value === null || $value === '')) {
+                    $value = 1;
+                } elseif ($field === 'publish' && ($value === null || $value === '')) {
+                    $value = 1;
+                }
+                $payload[$field] = $value;
             }
             $payload['user_id'] = Auth::id();
             $payload['publish'] = 1; // Mặc định là không publish

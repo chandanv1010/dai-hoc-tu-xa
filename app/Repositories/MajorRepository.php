@@ -92,6 +92,8 @@ class MajorRepository extends BaseRepository
                 'majors.career_image',
                 'majors.image',
                 'majors.publish',
+                'majors.follow',
+                'majors.is_home',
                 'majors.major_catalogue_id',
                 'majors.study_path_file',
                 'majors.is_show_feature',
